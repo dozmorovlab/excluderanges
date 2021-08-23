@@ -1,0 +1,24 @@
+pkgVer <- function(pkg) {
+    if (!exists("meta") || is.null(meta)) meta <- packageDescription(pkg)
+    ver <- meta$Version
+    paste0('https://github.com/mdozmorov/excluderanges/', pkg, ' - R package version ', ver)
+}
+
+c(
+
+    bibentry(bibtype="manual",
+        title = "excluderanges",
+        author = personList(
+            as.person("Mikhail G. Dozmorov"),
+            as.person("Eric Davis"),
+            as.person("Wancen Mu"),
+            as.person("Stuart Lee"),
+            as.person("Tim Triche"),
+            as.person("Douglas Phanstiel"),
+            as.person("Michael Love")),
+        year = format(Sys.Date(), "%Y"),
+        url = "https://github.com/mdozmorov/excluderanges",
+        note = pkgVer('excluderanges'),
+        doi = ''
+    )
+)
