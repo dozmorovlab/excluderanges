@@ -1,0 +1,20 @@
+﻿Object,Number of regions,Assembly,Lab,Number of columns,Source
+ce10.Kundaje.ce10-Excludable.rds,122,ce10,"Anshul Kundaje, Stanford",3,http://mitra.stanford.edu/kundaje/akundaje/release/Excludables/ce10-C.elegans
+dm3.Kundaje.dm3-Excludable.rds,492,dm3,"Anshul Kundaje, Stanford",3,http://mitra.stanford.edu/kundaje/akundaje/release/Excludables/dm3-D.melanogaster/
+hg19.Bernstein.Mint_Excludable_hg19.rds,9035,hg19,"Bradley Bernstein, Broad",6,https://www.encodeproject.org/files/ENCFF200UUD/
+hg19.Birney.wgEncodeDacMapabilityConsensusExcludable.rds,411,hg19,"Ewan Birney, EBI",6,https://www.encodeproject.org/files/ENCFF001TDO/
+hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable.rds,1649,hg19,"Gregory Crawford, Duke",6,https://www.encodeproject.org/files/ENCFF001THR/
+hg19.Wold.hg19mitoExcludable.rds,295,hg19,"Barbara Wold, Caltech",3,https://www.encodeproject.org/files/ENCFF055QTV/
+hg19.Yeo.eCLIP_Excludableregions.hg19.rds,57,hg19,"Gene Yeo, UCSD",6,https://www.encodeproject.org/files/ENCFF039QTN/
+hg38.Bernstein.Mint_Excludable_GRCh38.rds,12052,hg38,"Bradley Bernstein, Broad",6,https://www.encodeproject.org/files/ENCFF023CZC/
+hg38.Kundaje.GRCh38.Excludable.rds,38,hg38,"Anshul Kundaje, Stanford",3,https://www.encodeproject.org/files/ENCFF356LFX/
+hg38.Kundaje.GRCh38_unified_Excludable.rds,910,hg38,"Anshul Kundaje, Stanford",3,https://www.encodeproject.org/files/ENCFF419RSJ/
+hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.rds,401,hg38,"Tim Reddy, Duke",6,https://www.encodeproject.org/files/ENCFF220FIN/
+hg38.Wold.hg38mitoExcludable.rds,299,hg38,"Barbara Wold, Caltech",3,https://www.encodeproject.org/files/ENCFF940NTE/
+hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds,56,hg38,"Gene Yeo, UCSD",6,https://www.encodeproject.org/files/ENCFF269URO/
+mm10.Hardison.Excludable.full.rds,7865,mm10,"Ross Hardison, PennState",3,https://www.encodeproject.org/files/ENCFF790DJT/
+mm10.Hardison.psuExcludable.mm10.rds,5552,mm10,"Ross Hardison, PennState",3,https://www.encodeproject.org/files/ENCFF226BDM/
+mm10.Kundaje.anshul.Excludable.mm10.rds,3010,mm10,"Anshul Kundaje, Stanford",3,https://www.encodeproject.org/files/ENCFF999QPV/
+mm10.Kundaje.mm10.Excludable.rds,164,mm10,"Anshul Kundaje, Stanford",3,https://www.encodeproject.org/files/ENCFF547MET/
+mm10.Wold.mm10mitoExcludable.rds,123,mm10,"Barbara Wold, Caltech",3,https://www.encodeproject.org/files/ENCFF759PJK/
+mm9.Wold.mm9mitoExcludable.rds,123,mm9,"Barbara Wold, Caltech",3,https://www.encodeproject.org/files/ENCFF299EZH/

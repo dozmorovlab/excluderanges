@@ -382,53 +382,15 @@ object provided in our `r BiocStyle::Biocpkg("excluderanges")` package.
 
 ## Source data for the excludable regions
 
-| Object                                                       | Number of regions | Assembly | Lab                      | Number of columns | Source                                                                                                   |
-|--------------------------------------------------------------|-------------------|----------|--------------------------|-------------------|----------------------------------------------------------------------------------------------------------|
-| ce10.Kundaje.ce10-Excludable.rds                             | 122               | ce10     | Anshul Kundaje, Stanford | 3                 | [ce10-C.elegans](http://mitra.stanford.edu/kundaje/akundaje/release/Excludables/ce10-C.elegans)          |
-| dm3.Kundaje.dm3-Excludable.rds                               | 492               | dm3      | Anshul Kundaje, Stanford | 3                 | [dm3-D.melanogaster](http://mitra.stanford.edu/kundaje/akundaje/release/Excludables/dm3-D.melanogaster/) |
-| hg19.Bernstein.Mint_Excludable_hg19.rds                      | 9035              | hg19     | Bradley Bernstein, Broad | 6                 | [ENCFF200UUD](https://www.encodeproject.org/files/ENCFF200UUD/)                                          |
-| hg19.Birney.wgEncodeDacMapabilityConsensusExcludable.rds     | 411               | hg19     | Ewan Birney, EBI         | 6                 | [ENCFF001TDO](https://www.encodeproject.org/files/ENCFF001TDO/)                                          |
-| hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable.rds    | 1649              | hg19     | Gregory Crawford, Duke   | 6                 | [ENCFF001THR](https://www.encodeproject.org/files/ENCFF001THR/)                                          |
-| hg19.Wold.hg19mitoExcludable.rds                             | 295               | hg19     | Barbara Wold, Caltech    | 3                 | [ENCFF055QTV](https://www.encodeproject.org/files/ENCFF055QTV/)                                          |
-| hg19.Yeo.eCLIP_Excludableregions.hg19.rds                    | 57                | hg19     | Gene Yeo, UCSD           | 6                 | [ENCFF039QTN](https://www.encodeproject.org/files/ENCFF039QTN/)                                          |
-| hg38.Bernstein.Mint_Excludable_GRCh38.rds                    | 12052             | hg38     | Bradley Bernstein, Broad | 6                 | [ENCFF023CZC](https://www.encodeproject.org/files/ENCFF023CZC/)                                          |
-| hg38.Kundaje.GRCh38.Excludable.rds                           | 38                | hg38     | Anshul Kundaje, Stanford | 3                 | [ENCFF356LFX](https://www.encodeproject.org/files/ENCFF356LFX/)                                          |
-| hg38.Kundaje.GRCh38_unified_Excludable.rds                   | 910               | hg38     | Anshul Kundaje, Stanford | 3                 | [ENCFF419RSJ](https://www.encodeproject.org/files/ENCFF419RSJ/)                                          |
-| hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.rds | 401               | hg38     | Tim Reddy, Duke          | 6                 | [ENCFF220FIN](https://www.encodeproject.org/files/ENCFF220FIN/)                                          |
-| hg38.Wold.hg38mitoExcludable.rds                             | 299               | hg38     | Barbara Wold, Caltech    | 3                 | [ENCFF940NTE](https://www.encodeproject.org/files/ENCFF940NTE/)                                          |
-| hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds  | 56                | hg38     | Gene Yeo, UCSD           | 6                 | [ENCFF269URO](https://www.encodeproject.org/files/ENCFF269URO/)                                          |
-| mm10.Hardison.Excludable.full.rds                            | 7865              | mm10     | Ross Hardison, PennState | 3                 | [ENCFF790DJT](https://www.encodeproject.org/files/ENCFF790DJT/)                                          |
-| mm10.Hardison.psuExcludable.mm10.rds                         | 5552              | mm10     | Ross Hardison, PennState | 3                 | [ENCFF226BDM](https://www.encodeproject.org/files/ENCFF226BDM/)                                          |
-| mm10.Kundaje.anshul.Excludable.mm10.rds                      | 3010              | mm10     | Anshul Kundaje, Stanford | 3                 | [ENCFF999QPV](https://www.encodeproject.org/files/ENCFF999QPV/)                                          |
-| mm10.Kundaje.mm10.Excludable.rds                             | 164               | mm10     | Anshul Kundaje, Stanford | 3                 | [ENCFF547MET](https://www.encodeproject.org/files/ENCFF547MET/)                                          |
-| mm10.Wold.mm10mitoExcludable.rds                             | 123               | mm10     | Barbara Wold, Caltech    | 3                 | [ENCFF759PJK](https://www.encodeproject.org/files/ENCFF759PJK/)                                          |
-| mm9.Wold.mm9mitoExcludable.rds                               | 123               | mm9      | Barbara Wold, Caltech    | 3                 | [ENCFF299EZH](https://www.encodeproject.org/files/ENCFF299EZH/)                                          |
+```{r}
+mtx <- read.csv("man/table_excluderanges.csv")
+knitr::kable(mtx)
+```
 
-
-| Object                        | Number of regions | Assembly | Lab  | Number of columns | Source                                                                                                                                               |
-|-------------------------------|-------------------|----------|------|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| hg19.UCSC.centromere.rds      | 24                | hg19     | UCSC | 9                 | [hg19 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| hg19.UCSC.clone.rds           | 207               | hg19     | UCSC | 9                 | [hg19 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| hg19.UCSC.contig.rds          | 163               | hg19     | UCSC | 9                 | [hg19 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| hg19.UCSC.heterochromatin.rds | 12                | hg19     | UCSC | 9                 | [hg19 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| hg19.UCSC.scaffold.rds        | 40                | hg19     | UCSC | 9                 | [hg19 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| hg19.UCSC.short_arm.rds       | 5                 | hg19     | UCSC | 9                 | [hg19 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| hg19.UCSC.telomere.rds        | 46                | hg19     | UCSC | 9                 | [hg19 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| hg38.UCSC.contig.rds          | 285               | hg38     | UCSC | 9                 | [hg38 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| hg38.UCSC.heterochromatin.rds | 11                | hg38     | UCSC | 9                 | [hg38 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| hg38.UCSC.scaffold.rds        | 478               | hg38     | UCSC | 9                 | [hg38 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| hg38.UCSC.short_arm.rds       | 5                 | hg38     | UCSC | 9                 | [hg38 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| hg38.UCSC.telomere.rds        | 48                | hg38     | UCSC | 9                 | [hg38 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| mm10.UCSC.centromere.rds      | 20                | mm10     | UCSC | 9                 | [mm10 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| mm10.UCSC.clone.rds           | 114               | mm10     | UCSC | 9                 | [mm10 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| mm10.UCSC.contig.rds          | 104               | mm10     | UCSC | 9                 | [mm10 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| mm10.UCSC.fragment.rds        | 1                 | mm10     | UCSC | 9                 | [mm10 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| mm10.UCSC.other.rds           | 384               | mm10     | UCSC | 9                 | [mm10 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| mm10.UCSC.short_arm.rds       | 21                | mm10     | UCSC | 9                 | [mm10 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| mm10.UCSC.telomere.rds        | 42                | mm10     | UCSC | 9                 | [mm10 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) |
-| mm9.UCSC.centromere.rds       | 21                | mm9      | UCSC | 9                 | [mm9 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema)   |
-| mm9.UCSC.contig.rds           | 281               | mm9      | UCSC | 9                 | [mm9 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema)   |
-| mm9.UCSC.fragment.rds         | 709               | mm9      | UCSC | 9                 | [mm9 gap   table](http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema)   |
+```{r}
+mtx <- read.csv("man/table_gap.csv")
+knitr::kable(mtx)
+```
 
 ## Citation
 
