@@ -35,7 +35,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">excluderanges</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
       </span>
     </div>
 
@@ -128,8 +128,11 @@
 <span id="cb3-15"><a href="#cb3-15"></a><span class="st">  </span>[<span class="dv">910</span>]     chrY <span class="dv">56694632-56889743</span>      <span class="op">*</span></span>
 <span id="cb3-16"><a href="#cb3-16"></a><span class="st">  </span><span class="op">-------</span></span>
 <span id="cb3-17"><a href="#cb3-17"></a><span class="st">  </span>seqinfo<span class="op">:</span><span class="st"> </span><span class="dv">24</span> sequences from hg38 genome</span></code></pre></div>
-<p>We can load other excludable regions for the hg38 genome assembly and compare them.</p>
+<p>Save the data in a BED file, if needed.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">rtracklayer</span><span class="fu">::</span><span class="fu">export</span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span>, <span class="st">"hg38.Kundaje.GRCh38_unified_Excludable.bed"</span>, format <span class="op">=</span> <span class="st">"bed"</span><span class="op">)</span></code></pre></div>
+<p>We can load other excludable regions for the hg38 genome assembly and compare them.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="st">"https://drive.google.com/uc?export=download&amp;id=13RQmvqwC9qaYE65i74U1N-Rb4R-Sy2ud"</span>, destfile <span class="op">=</span> <span class="st">"hg38.Bernstein.Mint_Excludable_GRCh38.rds"</span><span class="op">)</span>
 <span class="va">excludeGR.hg38.Bernstein</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"hg38.Bernstein.Mint_Excludable_GRCh38.rds"</span><span class="op">)</span>
 
@@ -145,7 +148,7 @@
 <span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="st">"https://drive.google.com/uc?export=download&amp;id=1pwbBEOHFfnVb6I9UljF3bJQLF3et4WV7"</span>, destfile <span class="op">=</span> <span class="st">"hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds"</span><span class="op">)</span>
 <span class="va">excludeGR.hg38.Yeo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds"</span><span class="op">)</span></code></pre></div>
 <p>Compare the number of excludable regions.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>Count <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span><span class="op">)</span>, 
                                     <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span><span class="op">)</span>, 
@@ -169,7 +172,7 @@
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"man/figures/excluderanges_hg38_count.png"</span>, width <span class="op">=</span> <span class="fl">5.5</span>, height <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/excluderanges_hg38_count.png" width="100%"></p>
 <p>Compare the width of excludable regions. log2 scale because of heavy right tail distributions.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ggridges</span><span class="op">)</span>
 <span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>Width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span><span class="op">)</span>, 
                                     <span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span><span class="op">)</span>, 
@@ -190,7 +193,7 @@
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"man/figures/excluderanges_hg38_width.png"</span>, width <span class="op">=</span> <span class="fl">5.5</span>, height <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/excluderanges_hg38_width.png" width="100%"></p>
 <p>We can investigate the total width of each set of excludable ranges.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>TotalWidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span><span class="op">)</span><span class="op">)</span>, 
                                          <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span><span class="op">)</span><span class="op">)</span>, 
                                          <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.2</span><span class="op">)</span><span class="op">)</span>, 
@@ -209,7 +212,7 @@
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"man/figures/excluderanges_hg38_sumwidth.png"</span>, width <span class="op">=</span> <span class="fl">6.5</span>, height <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/excluderanges_hg38_sumwidth.png" width="100%"></p>
 <p>We can compare Jaccard overlap between those sets of excludable regions.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://stringr.tidyverse.org">stringr</a></span><span class="op">)</span>
 <span class="co"># Jaccard calculations</span>
@@ -255,7 +258,7 @@
 <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/excluderanges_hg38_jaccard.png" width="100%"></p>
 <p>Note that some excludable ranges objects contain six columns, implying there may be some interesting metadata. Let’s explore one.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">mcols</span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span>
 <span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu">mcols</span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span><span class="op">[[</span><span class="st">"name"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Type"</span>, <span class="st">"Number"</span><span class="op">)</span>
@@ -267,7 +270,7 @@
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"man/figures/excluderanges_hg38_Reddy_metadata.png"</span>, width <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/excluderanges_hg38_Reddy_metadata.png" width="100%"></p>
 <p>One may decide to combine the excludable ranges from all labs, although from previous results we may decide to follow Anshul’s <a href="https://twitter.com/anshulkundaje/status/1263546023151992832?s=20">advice</a> advice about the <a href="https://www.encodeproject.org/files/ENCFF356LFX/">ENCFF356LFX exclusion list regions</a> and use the <code>excludeGR.hg38.Kundaje.1</code> object.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">excludeGR.hg38.all</span> <span class="op">&lt;-</span> <span class="fu">reduce</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span>, <span class="va">excludeGR.hg38.Kundaje.1</span>, <span class="va">excludeGR.hg38.Kundaje.2</span>, <span class="va">excludeGR.hg38.Reddy</span>, <span class="va">excludeGR.hg38.Wold</span>, <span class="va">excludeGR.hg38.Yeo</span><span class="op">)</span><span class="op">)</span>
 <span class="co"># Keep only standard chromosomes</span>
 <span class="va">excludeGR.hg38.all</span> <span class="op">&lt;-</span> <span class="fu">keepStandardChromosomes</span><span class="op">(</span><span class="va">excludeGR.hg38.all</span>, pruning.mode <span class="op">=</span> <span class="st">"coarse"</span><span class="op">)</span>
@@ -281,63 +284,63 @@
 <h2 class="hasAnchor">
 <a href="#centromeres-telomeres-etc" class="anchor"></a>Centromeres, telomeres, etc.</h2>
 <p>Besides the ENCODE-produced excludable regions, we may want to exclude centromeres, telomeres, and other gap locations. The “Gap Locations” track for Homo Sapiens is available for the GRcH37/hg19 genome assembly as a <a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema">UCSC ‘gap’ table</a>. It can be retrieved from <em><a href="https://bioconductor.org/packages/3.13/AnnotationHub">AnnotationHub</a></em>, but lacks the metadata columns needed to decide the type of gaps.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span><span class="op">)</span>
 <span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co"># Search for the gap track</span>
 <span class="co"># ahData &lt;- query(ah, c("gap", "Homo sapiens", "hg19"))</span>
 <span class="co"># ahData[ctcfData$title == "Gap"]</span>
 <span class="va">gaps</span> <span class="op">&lt;-</span> <span class="va">ahData</span><span class="op">[[</span><span class="st">"AH6444"</span><span class="op">]</span><span class="op">]</span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="op">&gt;</span><span class="st"> </span>gaps</span>
-<span id="cb12-2"><a href="#cb12-2"></a>UCSC track <span class="st">'gap'</span></span>
-<span id="cb12-3"><a href="#cb12-3"></a>UCSCData object with <span class="dv">457</span> ranges and <span class="dv">0</span> metadata columns<span class="op">:</span></span>
-<span id="cb12-4"><a href="#cb12-4"></a><span class="st">               </span>seqnames              ranges strand</span>
-<span id="cb12-5"><a href="#cb12-5"></a>                  <span class="op">&lt;</span>Rle<span class="op">&gt;</span><span class="st">           </span><span class="er">&lt;</span>IRanges<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>Rle<span class="op">&gt;</span></span>
-<span id="cb12-6"><a href="#cb12-6"></a><span class="st">    </span>[<span class="dv">1</span>]            chr1 <span class="dv">124535435-142535434</span>      <span class="op">*</span></span>
-<span id="cb12-7"><a href="#cb12-7"></a><span class="st">    </span>[<span class="dv">2</span>]            chr1 <span class="dv">121535435-124535434</span>      <span class="op">*</span></span>
-<span id="cb12-8"><a href="#cb12-8"></a><span class="st">    </span>[<span class="dv">3</span>]            chr1     <span class="dv">3845269-3995268</span>      <span class="op">*</span></span>
-<span id="cb12-9"><a href="#cb12-9"></a><span class="st">    </span>[<span class="dv">4</span>]            chr1   <span class="dv">13219913-13319912</span>      <span class="op">*</span></span>
-<span id="cb12-10"><a href="#cb12-10"></a><span class="st">    </span>[<span class="dv">5</span>]            chr1   <span class="dv">17125659-17175658</span>      <span class="op">*</span></span>
-<span id="cb12-11"><a href="#cb12-11"></a><span class="st">    </span>...             ...                 ...    ...</span>
-<span id="cb12-12"><a href="#cb12-12"></a>  [<span class="dv">453</span>]  chr6_ssto_hap7     <span class="dv">4639807-4661556</span>      <span class="op">*</span></span>
-<span id="cb12-13"><a href="#cb12-13"></a><span class="st">  </span>[<span class="dv">454</span>]  chr6_ssto_hap7     <span class="dv">4723510-4774367</span>      <span class="op">*</span></span>
-<span id="cb12-14"><a href="#cb12-14"></a><span class="st">  </span>[<span class="dv">455</span>]  chr6_ssto_hap7     <span class="dv">4783799-4836049</span>      <span class="op">*</span></span>
-<span id="cb12-15"><a href="#cb12-15"></a><span class="st">  </span>[<span class="dv">456</span>] chr17_ctg5_hap1     <span class="dv">1256795-1306794</span>      <span class="op">*</span></span>
-<span id="cb12-16"><a href="#cb12-16"></a><span class="st">  </span>[<span class="dv">457</span>] chr17_ctg5_hap1     <span class="dv">1588969-1638968</span>      <span class="op">*</span></span>
-<span id="cb12-17"><a href="#cb12-17"></a><span class="st">  </span><span class="op">-------</span></span>
-<span id="cb12-18"><a href="#cb12-18"></a><span class="st">  </span>seqinfo<span class="op">:</span><span class="st"> </span><span class="dv">93</span> <span class="kw">sequences</span> (<span class="dv">1</span> circular) from hg19 genome</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="op">&gt;</span><span class="st"> </span>gaps</span>
+<span id="cb13-2"><a href="#cb13-2"></a>UCSC track <span class="st">'gap'</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a>UCSCData object with <span class="dv">457</span> ranges and <span class="dv">0</span> metadata columns<span class="op">:</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="st">               </span>seqnames              ranges strand</span>
+<span id="cb13-5"><a href="#cb13-5"></a>                  <span class="op">&lt;</span>Rle<span class="op">&gt;</span><span class="st">           </span><span class="er">&lt;</span>IRanges<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>Rle<span class="op">&gt;</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="st">    </span>[<span class="dv">1</span>]            chr1 <span class="dv">124535435-142535434</span>      <span class="op">*</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a><span class="st">    </span>[<span class="dv">2</span>]            chr1 <span class="dv">121535435-124535434</span>      <span class="op">*</span></span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="st">    </span>[<span class="dv">3</span>]            chr1     <span class="dv">3845269-3995268</span>      <span class="op">*</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a><span class="st">    </span>[<span class="dv">4</span>]            chr1   <span class="dv">13219913-13319912</span>      <span class="op">*</span></span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="st">    </span>[<span class="dv">5</span>]            chr1   <span class="dv">17125659-17175658</span>      <span class="op">*</span></span>
+<span id="cb13-11"><a href="#cb13-11"></a><span class="st">    </span>...             ...                 ...    ...</span>
+<span id="cb13-12"><a href="#cb13-12"></a>  [<span class="dv">453</span>]  chr6_ssto_hap7     <span class="dv">4639807-4661556</span>      <span class="op">*</span></span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="st">  </span>[<span class="dv">454</span>]  chr6_ssto_hap7     <span class="dv">4723510-4774367</span>      <span class="op">*</span></span>
+<span id="cb13-14"><a href="#cb13-14"></a><span class="st">  </span>[<span class="dv">455</span>]  chr6_ssto_hap7     <span class="dv">4783799-4836049</span>      <span class="op">*</span></span>
+<span id="cb13-15"><a href="#cb13-15"></a><span class="st">  </span>[<span class="dv">456</span>] chr17_ctg5_hap1     <span class="dv">1256795-1306794</span>      <span class="op">*</span></span>
+<span id="cb13-16"><a href="#cb13-16"></a><span class="st">  </span>[<span class="dv">457</span>] chr17_ctg5_hap1     <span class="dv">1588969-1638968</span>      <span class="op">*</span></span>
+<span id="cb13-17"><a href="#cb13-17"></a><span class="st">  </span><span class="op">-------</span></span>
+<span id="cb13-18"><a href="#cb13-18"></a><span class="st">  </span>seqinfo<span class="op">:</span><span class="st"> </span><span class="dv">93</span> <span class="kw">sequences</span> (<span class="dv">1</span> circular) from hg19 genome</span></code></pre></div>
 <p>The <a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema">UCSC ‘gap’ table</a> provides better granularity about the types of gaps available. E.g., for human, hg19, we have the following types and the number of gaps.</p>
 <p><img src="reference/figures/excluderanges_hg19_gaps_number.png" width="100%"></p>
 <p>Those objects are provided as individual GRanges.</p>
 <p>Naming convention: <code>&lt;genome assembly&gt;.UCSC.&lt;gap type&gt;</code>, e.g., <code>hg19.UCSC.gap_centromere</code>.</p>
 <p>Download all data from the <a href="https://drive.google.com/drive/folders/1MFn6LPZD1zZRQz7biR0Fyl-mzkx4CIxS?usp=sharing">Google Drive folder</a></p>
 <p>We can similarly load any gap type object.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="st">"https://drive.google.com/uc?export=download&amp;id=1uno7XzgCdFJeMjYI6GMfU5bAwEBWaUlR"</span>, destfile <span class="op">=</span> <span class="st">"hg19.UCSC.centromere.rds"</span><span class="op">)</span>
 <span class="va">gapsGR_hg19_centromere</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"hg19.UCSC.centromere.rds"</span><span class="op">)</span>
 <span class="va">gapsGR_hg19_centromere</span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="op">&gt;</span><span class="st"> </span>gapsGR_hg19_centromere</span>
-<span id="cb14-2"><a href="#cb14-2"></a>GRanges object with <span class="dv">24</span> ranges and <span class="dv">6</span> metadata columns<span class="op">:</span></span>
-<span id="cb14-3"><a href="#cb14-3"></a><span class="st">      </span>seqnames              ranges strand <span class="op">|</span><span class="st">       </span>bin        ix           n      size        type      bridge</span>
-<span id="cb14-4"><a href="#cb14-4"></a>         <span class="op">&lt;</span>Rle<span class="op">&gt;</span><span class="st">           </span><span class="er">&lt;</span>IRanges<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>Rle<span class="op">&gt;</span><span class="st"> </span><span class="er">|</span><span class="st"> </span><span class="er">&lt;</span>numeric<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>numeric<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>character<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>numeric<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>character<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>character<span class="op">&gt;</span></span>
-<span id="cb14-5"><a href="#cb14-5"></a><span class="st">    </span><span class="dv">2</span>     chr1 <span class="dv">121535434-124535434</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">23</span>      <span class="dv">1270</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb14-6"><a href="#cb14-6"></a>  <span class="dv">184</span>    chr21   <span class="dv">11288129-14288129</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">10</span>        <span class="dv">22</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb14-7"><a href="#cb14-7"></a>  <span class="dv">199</span>    chr22   <span class="dv">13000000-16000000</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">10</span>         <span class="dv">3</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb14-8"><a href="#cb14-8"></a>  <span class="dv">206</span>    chr19   <span class="dv">24681782-27681782</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">         </span><span class="dv">1</span>       <span class="dv">410</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb14-9"><a href="#cb14-9"></a>  <span class="dv">224</span>     chrY   <span class="dv">10104553-13104553</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">10</span>       <span class="dv">105</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb14-10"><a href="#cb14-10"></a>  ...      ...                 ...    ... .       ...       ...         ...       ...         ...         ...</span>
-<span id="cb14-11"><a href="#cb14-11"></a>  <span class="dv">439</span>     chr6   <span class="dv">58830166-61830166</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">16</span>       <span class="dv">628</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb14-12"><a href="#cb14-12"></a>  <span class="dv">453</span>     chr5   <span class="dv">46405641-49405641</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">14</span>       <span class="dv">452</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb14-13"><a href="#cb14-13"></a>  <span class="dv">460</span>     chr4   <span class="dv">49660117-52660117</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">         </span><span class="dv">1</span>       <span class="dv">447</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb14-14"><a href="#cb14-14"></a>  <span class="dv">476</span>     chr3   <span class="dv">90504854-93504854</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">         </span><span class="dv">2</span>       <span class="dv">784</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb14-15"><a href="#cb14-15"></a>  <span class="dv">481</span>     chr2   <span class="dv">92326171-95326171</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">20</span>       <span class="dv">770</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb14-16"><a href="#cb14-16"></a>  <span class="op">-------</span></span>
-<span id="cb14-17"><a href="#cb14-17"></a><span class="st">  </span>seqinfo<span class="op">:</span><span class="st"> </span><span class="dv">24</span> sequences from hg19 genome</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="op">&gt;</span><span class="st"> </span>gapsGR_hg19_centromere</span>
+<span id="cb15-2"><a href="#cb15-2"></a>GRanges object with <span class="dv">24</span> ranges and <span class="dv">6</span> metadata columns<span class="op">:</span></span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="st">      </span>seqnames              ranges strand <span class="op">|</span><span class="st">       </span>bin        ix           n      size        type      bridge</span>
+<span id="cb15-4"><a href="#cb15-4"></a>         <span class="op">&lt;</span>Rle<span class="op">&gt;</span><span class="st">           </span><span class="er">&lt;</span>IRanges<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>Rle<span class="op">&gt;</span><span class="st"> </span><span class="er">|</span><span class="st"> </span><span class="er">&lt;</span>numeric<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>numeric<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>character<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>numeric<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>character<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>character<span class="op">&gt;</span></span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="st">    </span><span class="dv">2</span>     chr1 <span class="dv">121535434-124535434</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">23</span>      <span class="dv">1270</span>           N   <span class="dv">3000000</span>  centromere          no</span>
+<span id="cb15-6"><a href="#cb15-6"></a>  <span class="dv">184</span>    chr21   <span class="dv">11288129-14288129</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">10</span>        <span class="dv">22</span>           N   <span class="dv">3000000</span>  centromere          no</span>
+<span id="cb15-7"><a href="#cb15-7"></a>  <span class="dv">199</span>    chr22   <span class="dv">13000000-16000000</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">10</span>         <span class="dv">3</span>           N   <span class="dv">3000000</span>  centromere          no</span>
+<span id="cb15-8"><a href="#cb15-8"></a>  <span class="dv">206</span>    chr19   <span class="dv">24681782-27681782</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">         </span><span class="dv">1</span>       <span class="dv">410</span>           N   <span class="dv">3000000</span>  centromere          no</span>
+<span id="cb15-9"><a href="#cb15-9"></a>  <span class="dv">224</span>     chrY   <span class="dv">10104553-13104553</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">10</span>       <span class="dv">105</span>           N   <span class="dv">3000000</span>  centromere          no</span>
+<span id="cb15-10"><a href="#cb15-10"></a>  ...      ...                 ...    ... .       ...       ...         ...       ...         ...         ...</span>
+<span id="cb15-11"><a href="#cb15-11"></a>  <span class="dv">439</span>     chr6   <span class="dv">58830166-61830166</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">16</span>       <span class="dv">628</span>           N   <span class="dv">3000000</span>  centromere          no</span>
+<span id="cb15-12"><a href="#cb15-12"></a>  <span class="dv">453</span>     chr5   <span class="dv">46405641-49405641</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">14</span>       <span class="dv">452</span>           N   <span class="dv">3000000</span>  centromere          no</span>
+<span id="cb15-13"><a href="#cb15-13"></a>  <span class="dv">460</span>     chr4   <span class="dv">49660117-52660117</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">         </span><span class="dv">1</span>       <span class="dv">447</span>           N   <span class="dv">3000000</span>  centromere          no</span>
+<span id="cb15-14"><a href="#cb15-14"></a>  <span class="dv">476</span>     chr3   <span class="dv">90504854-93504854</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">         </span><span class="dv">2</span>       <span class="dv">784</span>           N   <span class="dv">3000000</span>  centromere          no</span>
+<span id="cb15-15"><a href="#cb15-15"></a>  <span class="dv">481</span>     chr2   <span class="dv">92326171-95326171</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">20</span>       <span class="dv">770</span>           N   <span class="dv">3000000</span>  centromere          no</span>
+<span id="cb15-16"><a href="#cb15-16"></a>  <span class="op">-------</span></span>
+<span id="cb15-17"><a href="#cb15-17"></a><span class="st">  </span>seqinfo<span class="op">:</span><span class="st"> </span><span class="dv">24</span> sequences from hg19 genome</span></code></pre></div>
 <div id="centromeres-for-the-hg38-genome-assembly" class="section level3">
 <h3 class="hasAnchor">
 <a href="#centromeres-for-the-hg38-genome-assembly" class="anchor"></a>Centromeres for the hg38 genome assembly</h3>
 <p>Note that the UCSC ‘gap’ table for the hg38 human genome assembly does not contain genomic coordinates for the “centromere” gap type. These can be obtained from the <em><a href="https://bioconductor.org/packages/3.13/rCGH">rCGH</a></em> package as follows:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/fredcommo/rCGH">rCGH</a></span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges">GenomicRanges</a></span><span class="op">)</span><span class="op">)</span>
 <span class="co"># hg38 # data.frame</span>
@@ -374,7 +377,7 @@
 <div id="source-data-for-the-excludable-regions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#source-data-for-the-excludable-regions" class="anchor"></a>Source data for the excludable regions</h2>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mtx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"man/table_excluderanges.csv"</span><span class="op">)</span>
 <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">mtx</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -549,7 +552,7 @@
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mtx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"man/table_gap.csv"</span><span class="op">)</span>
 <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">mtx</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -761,13 +764,13 @@
 <h2 class="hasAnchor">
 <a href="#citation" class="anchor"></a>Citation</h2>
 <p>Below is the citation output from using <code><a href="https://rdrr.io/r/utils/citation.html">citation('excluderanges')</a></code> in R. Please run this yourself to check for any updates on how to cite <strong>excluderanges</strong>.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html">citation</a></span><span class="op">(</span><span class="st">"excluderanges"</span><span class="op">)</span>, bibtex <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Dozmorov MG, Davis E, Mu W, Lee S, Triche T, Phanstiel D, Love M</span>
 <span class="co">#&gt; (2021). _excluderanges_.</span>
 <span class="co">#&gt; https://github.com/mdozmorov/excluderanges/excluderanges - R package</span>
-<span class="co">#&gt; version 0.99.0, &lt;URL: https://github.com/mdozmorov/excluderanges&gt;.</span>
+<span class="co">#&gt; version 0.99.1, &lt;URL: https://github.com/mdozmorov/excluderanges&gt;.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; A BibTeX entry for LaTeX users is</span>
 <span class="co">#&gt; </span>
@@ -776,7 +779,7 @@
 <span class="co">#&gt;     author = {Mikhail G. Dozmorov and Eric Davis and Wancen Mu and Stuart Lee and Tim Triche and Douglas Phanstiel and Michael Love},</span>
 <span class="co">#&gt;     year = {2021},</span>
 <span class="co">#&gt;     url = {https://github.com/mdozmorov/excluderanges},</span>
-<span class="co">#&gt;     note = {https://github.com/mdozmorov/excluderanges/excluderanges - R package version 0.99.0},</span>
+<span class="co">#&gt;     note = {https://github.com/mdozmorov/excluderanges/excluderanges - R package version 0.99.1},</span>
 <span class="co">#&gt;   }</span></code></pre></div>
 </div>
 <div id="code-of-conduct" class="section level2">
