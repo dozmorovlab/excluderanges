@@ -85,6 +85,13 @@ GRanges object with 910 ranges and 0 metadata columns:
   seqinfo: 24 sequences from hg38 genome
 ```
 
+Save the data in a BED file, if needed.
+
+```{r eval=FALSE}
+rtracklayer::export(excludeGR.hg38.Kundaje.1, "hg38.Kundaje.GRCh38_unified_Excludable.bed", format = "bed")
+```
+
+
 We can load other excludable regions for the hg38 genome assembly and compare them.
 
 ```{r eval=FALSE}

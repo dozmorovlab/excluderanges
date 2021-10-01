@@ -79,6 +79,12 @@ excludeGR.hg38.Kundaje.1
       -------
       seqinfo: 24 sequences from hg38 genome
 
+Save the data in a BED file, if needed.
+
+``` r
+rtracklayer::export(excludeGR.hg38.Kundaje.1, "hg38.Kundaje.GRCh38_unified_Excludable.bed", format = "bed")
+```
+
 We can load other excludable regions for the hg38 genome assembly and
 compare them.
 
@@ -460,7 +466,7 @@ print(citation("excluderanges"), bibtex = TRUE)
 #> Dozmorov MG, Davis E, Mu W, Lee S, Triche T, Phanstiel D, Love M
 #> (2021). _excluderanges_.
 #> https://github.com/mdozmorov/excluderanges/excluderanges - R package
-#> version 0.99.0, <URL: https://github.com/mdozmorov/excluderanges>.
+#> version 0.99.1, <URL: https://github.com/mdozmorov/excluderanges>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -469,7 +475,7 @@ print(citation("excluderanges"), bibtex = TRUE)
 #>     author = {Mikhail G. Dozmorov and Eric Davis and Wancen Mu and Stuart Lee and Tim Triche and Douglas Phanstiel and Michael Love},
 #>     year = {2021},
 #>     url = {https://github.com/mdozmorov/excluderanges},
-#>     note = {https://github.com/mdozmorov/excluderanges/excluderanges - R package version 0.99.0},
+#>     note = {https://github.com/mdozmorov/excluderanges/excluderanges - R package version 0.99.1},
 #>   }
 ```
 
