@@ -397,7 +397,7 @@ package.
 ## Source data for the excludable regions
 
 ``` r
-mtx <- read.csv("man/table_excluderanges.csv")
+mtx <- read.csv("inst/extdata/table_excluderanges.csv")
 knitr::kable(mtx)
 ```
 
@@ -424,7 +424,7 @@ knitr::kable(mtx)
 | mm9.Wold.mm9mitoExcludable.rds                               |               123 | mm9      | Barbara Wold, Caltech    |                 3 | <https://www.encodeproject.org/files/ENCFF299EZH/>                                   |
 
 ``` r
-mtx <- read.csv("man/table_gap.csv")
+mtx <- read.csv("inst/extdata/table_gap.csv")
 knitr::kable(mtx)
 ```
 
@@ -466,7 +466,7 @@ print(citation("excluderanges"), bibtex = TRUE)
 #> Dozmorov MG, Davis E, Mu W, Lee S, Triche T, Phanstiel D, Love M
 #> (2021). _excluderanges_.
 #> https://github.com/mdozmorov/excluderanges/excluderanges - R package
-#> version 0.99.1, <URL: https://github.com/mdozmorov/excluderanges>.
+#> version 0.99.3, <URL: https://github.com/mdozmorov/excluderanges>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -475,7 +475,7 @@ print(citation("excluderanges"), bibtex = TRUE)
 #>     author = {Mikhail G. Dozmorov and Eric Davis and Wancen Mu and Stuart Lee and Tim Triche and Douglas Phanstiel and Michael Love},
 #>     year = {2021},
 #>     url = {https://github.com/mdozmorov/excluderanges},
-#>     note = {https://github.com/mdozmorov/excluderanges/excluderanges - R package version 0.99.1},
+#>     note = {https://github.com/mdozmorov/excluderanges/excluderanges - R package version 0.99.3},
 #>   }
 ```
 

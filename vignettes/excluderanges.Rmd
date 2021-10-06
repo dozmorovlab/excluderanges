@@ -403,12 +403,12 @@ object provided in our `r BiocStyle::Biocpkg("excluderanges")` package.
 ## Source data for the excludable regions
 
 ```{r}
-mtx <- read.csv("../man/table_excluderanges.csv")
+mtx <- read.csv("../inst/extdata/table_excluderanges.csv")
 knitr::kable(mtx)
 ```
 
 ```{r}
-mtx <- read.csv("../man/table_gap.csv")
+mtx <- read.csv("../inst/extdata/table_gap.csv")
 knitr::kable(mtx)
 ```
 
