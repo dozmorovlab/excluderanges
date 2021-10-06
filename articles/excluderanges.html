@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">excluderanges</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -79,7 +79,7 @@
       Virginia Commonwealth University<br><a class="author_email" href="mailto:#"></a><a href="mailto:mikhail.dozmorov@gmail.com" class="email">mikhail.dozmorov@gmail.com</a>
       </address>
                   
-            <h4 class="date">1 October 2021</h4>
+            <h4 class="date">6 October 2021</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/mdozmorov/excluderanges/blob/master/vignettes/excluderanges.Rmd"><code>vignettes/excluderanges.Rmd</code></a></small>
       <div class="hidden name"><code>excluderanges.Rmd</code></div>
@@ -390,7 +390,7 @@ GRanges object with 24 ranges and 6 metadata columns:
 <h2 class="hasAnchor">
 <a href="#source-data-for-the-excludable-regions" class="anchor"></a>Source data for the excludable regions</h2>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mtx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"../man/table_excluderanges.csv"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">mtx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"../inst/extdata/table_excluderanges.csv"</span><span class="op">)</span>
 <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">mtx</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -565,7 +565,7 @@ GRanges object with 24 ranges and 6 metadata columns:
 </tbody>
 </table>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mtx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"../man/table_gap.csv"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">mtx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"../inst/extdata/table_gap.csv"</span><span class="op">)</span>
 <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">mtx</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -785,7 +785,7 @@ GRanges object with 24 ranges and 6 metadata columns:
 #&gt;  collate  C.UTF-8                     
 #&gt;  ctype    C.UTF-8                     
 #&gt;  tz       UTC                         
-#&gt;  date     2021-10-01                  
+#&gt;  date     2021-10-06                  
 #&gt; 
 #&gt; ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 #&gt;  package                           * version  date       lib source             
@@ -886,12 +886,12 @@ GRanges object with 24 ranges and 6 metadata columns:
 #&gt;  Rsamtools                           2.8.0    2021-05-19 [1] standard (@2.8.0)  
 #&gt;  RSQLite                             2.2.8    2021-08-21 [1] standard (@2.2.8)  
 #&gt;  rtracklayer                         1.52.1   2021-08-15 [1] standard (@1.52.1) 
-#&gt;  S4Vectors                         * 0.30.1   2021-09-26 [1] standard (@0.30.1) 
+#&gt;  S4Vectors                         * 0.30.2   2021-10-03 [1] standard (@0.30.2) 
 #&gt;  sass                                0.4.0    2021-05-12 [1] standard (@0.4.0)  
 #&gt;  scales                              1.1.1    2020-05-11 [1] standard (@1.1.1)  
 #&gt;  sessioninfo                       * 1.1.1    2018-11-05 [1] standard (@1.1.1)  
-#&gt;  shiny                               1.7.0    2021-09-22 [1] standard (@1.7.0)  
-#&gt;  stringi                             1.7.4    2021-08-25 [1] standard (@1.7.4)  
+#&gt;  shiny                               1.7.1    2021-10-02 [1] standard (@1.7.1)  
+#&gt;  stringi                             1.7.5    2021-10-04 [1] standard (@1.7.5)  
 #&gt;  stringr                             1.4.0    2019-02-10 [1] standard (@1.4.0)  
 #&gt;  SummarizedExperiment                1.22.0   2021-05-19 [1] standard (@1.22.0) 
 #&gt;  survival                            3.2-13   2021-08-24 [1] standard (@3.2-13) 
