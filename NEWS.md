@@ -1,3 +1,6 @@
+# excluderanges 0.99.5 (2021-10-09)
+- Use AHub data in vignette and README
+
 # excluderanges 0.99.4 (2021-10-07)
 - Move CSV files to inst/extdata
 - Update RDataPath in metadata

@@ -7,11 +7,9 @@ Genomic ranges of problematic genomic regions that should be avoided
 when working with genomic data. For human, mouse, and selected model
 organisms.
 
-<!-- badges: start -->
-
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-<!-- badges: end -->
+<!-- badges: start
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+badges: end -->
 
 TL;DR - For human hg38 genome assembly,
 [Anshul](https://twitter.com/anshulkundaje)
@@ -30,15 +28,10 @@ retrieval of exclusion regions.
 Naming convention: `<genome assembly>.<lab>.<original file name>`, e.g.,
 `hg19.Birney.wgEncodeDacMapabilityConsensusExcludable`.
 
-Download all data from the [Google Drive
-folder](https://drive.google.com/drive/folders/1MFn6LPZD1zZRQz7biR0Fyl-mzkx4CIxS?usp=sharing)
-
 See [make-data.R](inst/scripts/make-data.R) how to create the
 excluderanges GRanges objects.
 
 ## Install `excluderanges`
-
-<!--`R` is an open-source statistical environment which can be easily modified to enhance its functionality via packages. *[excluderanges](https://bioconductor.org/packages/3.13/excluderanges)* is a `R` package available via the [Bioconductor](http://bioconductor.org) repository for packages. `R` can be installed on any operating system from [CRAN](https://cran.r-project.org/) after which you can install *[excluderanges](https://bioconductor.org/packages/3.13/excluderanges)* by using the following commands in your `R` session:-->
 
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
@@ -48,36 +41,81 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 # BiocManager::install(version = "devel")
 # Check that you have a valid Bioconductor installation
 # BiocManager::valid()
+# Install the package
+BiocManager::install("excluderanges", version = "devel")
 
-BiocManager::install("mdozmorov/excluderanges")
+# BiocManager::install("mdozmorov/excluderanges")
 ```
 
 ## Use excluderanges
 
+Get an overview of what’s available
+
 ``` r
-# hg38 excluderanges coordinates
-download.file(url = "https://drive.google.com/uc?export=download&id=1Jy_7cvFj5ZHUUwHgGUKZeFk8lFCalpKk", destfile = "hg38.Kundaje.GRCh38_unified_Excludable.rds")
-excludeGR.hg38.Kundaje.1 <- readRDS(file = "hg38.Kundaje.GRCh38_unified_Excludable.rds")
-excludeGR.hg38.Kundaje.1
+suppressMessages(library(AnnotationHub))
+ah <- AnnotationHub()
+#> snapshotDate(): 2021-10-08
+query_data <- query(ah, "excluderanges")
+query_data
+#> AnnotationHub with 42 records
+#> # snapshotDate(): 2021-10-08
+#> # $dataprovider: UCSC, ENCODE, mitra.stanford.edu/kundaje/akundaje/release/b...
+#> # $species: Homo sapiens, Mus musculus, Drosophila melanogaster, Caenorhabdi...
+#> # $rdataclass: GRanges
+#> # additional mcols(): taxonomyid, genome, description,
+#> #   coordinate_1_based, maintainer, rdatadateadded, preparerclass, tags,
+#> #   rdatapath, sourceurl, sourcetype 
+#> # retrieve records with, e.g., 'object[["AH95908"]]' 
+#> 
+#>             title                                                    
+#>   AH95908 | ce10.Kundaje.ce10-Excludable.rds                         
+#>   AH95909 | dm3.Kundaje.dm3-Excludable.rds                           
+#>   AH95910 | hg19.Bernstein.Mint_Excludable_hg19.rds                  
+#>   AH95911 | hg19.Birney.wgEncodeDacMapabilityConsensusExcludable.rds 
+#>   AH95912 | hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable.rds
+#>   ...       ...                                                      
+#>   AH95945 | mm10.UCSC.telomere.rds                                   
+#>   AH95946 | mm9.UCSC.centromere.rds                                  
+#>   AH95947 | mm9.UCSC.contig.rds                                      
+#>   AH95948 | mm9.UCSC.fragment.rds                                    
+#>   AH95949 | mm10.UCSC.scaffold.rds
 ```
 
-    > excludeGR.hg38.Kundaje.1
-    GRanges object with 910 ranges and 0 metadata columns:
-            seqnames            ranges strand
-               <Rle>         <IRanges>  <Rle>
-        [1]     chr1     628903-635104      *
-        [2]     chr1   5850087-5850571      *
-        [3]     chr1   8909610-8910014      *
-        [4]     chr1   9574580-9574997      *
-        [5]     chr1 32043823-32044203      *
-        ...      ...               ...    ...
-      [906]     chrY 11290797-11334278      *
-      [907]     chrY 11493053-11592850      *
-      [908]     chrY 11671014-11671046      *
-      [909]     chrY 11721528-11749472      *
-      [910]     chrY 56694632-56889743      *
-      -------
-      seqinfo: 24 sequences from hg38 genome
+hg38 excluderanges coordinates recommended by Anshul
+
+``` r
+# Check titles
+# as.data.frame(mcols(query_data[1:10])["title"]) 
+excludeGR.hg38.Kundaje.1 <- query_data[["AH95917"]]
+#> loading from cache
+excludeGR.hg38.Kundaje.1
+#> Loading required package: GenomicRanges
+#> Loading required package: stats4
+#> Loading required package: S4Vectors
+#> 
+#> Attaching package: 'S4Vectors'
+#> The following objects are masked from 'package:base':
+#> 
+#>     expand.grid, I, unname
+#> Loading required package: IRanges
+#> Loading required package: GenomeInfoDb
+#> GRanges object with 910 ranges and 0 metadata columns:
+#>         seqnames            ranges strand
+#>            <Rle>         <IRanges>  <Rle>
+#>     [1]     chr1     628903-635104      *
+#>     [2]     chr1   5850087-5850571      *
+#>     [3]     chr1   8909610-8910014      *
+#>     [4]     chr1   9574580-9574997      *
+#>     [5]     chr1 32043823-32044203      *
+#>     ...      ...               ...    ...
+#>   [906]     chrY 11290797-11334278      *
+#>   [907]     chrY 11493053-11592850      *
+#>   [908]     chrY 11671014-11671046      *
+#>   [909]     chrY 11721528-11749472      *
+#>   [910]     chrY 56694632-56889743      *
+#>   -------
+#>   seqinfo: 24 sequences from hg38 genome
+```
 
 Save the data in a BED file, if needed.
 
@@ -89,20 +127,35 @@ We can load other excludable regions for the hg38 genome assembly and
 compare them.
 
 ``` r
-download.file(url = "https://drive.google.com/uc?export=download&id=13RQmvqwC9qaYE65i74U1N-Rb4R-Sy2ud", destfile = "hg38.Bernstein.Mint_Excludable_GRCh38.rds")
-excludeGR.hg38.Bernstein <- readRDS(file = "hg38.Bernstein.Mint_Excludable_GRCh38.rds")
-
-download.file(url = "https://drive.google.com/uc?export=download&id=1ULI6uvs0vTlPcZ5yyLdsSgX1mIqnnlpp", destfile = "hg38.Kundaje.GRCh38.Excludable.rds")
-excludeGR.hg38.Kundaje.2 <- readRDS(file = "hg38.Kundaje.GRCh38.Excludable.rds")
-
-download.file(url = "https://drive.google.com/uc?export=download&id=1TA5Y8nmutoAyhL8XEl2qQTnmW6gl8CAg", destfile = "hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.rds")
-excludeGR.hg38.Reddy <- readRDS(file = "hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.rds")
-
-download.file(url = "https://drive.google.com/uc?export=download&id=1psVWkiaLy4nxAWssqv5dEZyNUrDIm005", destfile = "hg38.Wold.hg38mitoExcludable.rds")
-excludeGR.hg38.Wold <- readRDS(file = "hg38.Wold.hg38mitoExcludable.rds")
-
-download.file(url = "https://drive.google.com/uc?export=download&id=1pwbBEOHFfnVb6I9UljF3bJQLF3et4WV7", destfile = "hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds")
-excludeGR.hg38.Yeo <- readRDS(file = "hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds")
+query_data <- query(ah, c("excluderanges", "hg38", "Exclusion regions"))
+query_data
+#> AnnotationHub with 6 records
+#> # snapshotDate(): 2021-10-08
+#> # $dataprovider: ENCODE
+#> # $species: Homo sapiens
+#> # $rdataclass: GRanges
+#> # additional mcols(): taxonomyid, genome, description,
+#> #   coordinate_1_based, maintainer, rdatadateadded, preparerclass, tags,
+#> #   rdatapath, sourceurl, sourcetype 
+#> # retrieve records with, e.g., 'object[["AH95915"]]' 
+#> 
+#>             title                                                       
+#>   AH95915 | hg38.Bernstein.Mint_Excludable_GRCh38.rds                   
+#>   AH95916 | hg38.Kundaje.GRCh38.Excludable.rds                          
+#>   AH95917 | hg38.Kundaje.GRCh38_unified_Excludable.rds                  
+#>   AH95918 | hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.rds
+#>   AH95919 | hg38.Wold.hg38mitoExcludable.rds                            
+#>   AH95920 | hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds
+excludeGR.hg38.Bernstein <- query_data[["AH95915"]]
+#> loading from cache
+excludeGR.hg38.Kundaje.2 <- query_data[["AH95916"]]
+#> loading from cache
+excludeGR.hg38.Reddy     <- query_data[["AH95918"]]
+#> loading from cache
+excludeGR.hg38.Wold      <- query_data[["AH95919"]]
+#> loading from cache
+excludeGR.hg38.Yeo       <- query_data[["AH95920"]]
+#> loading from cache
 ```
 
 Compare the number of excludable regions.
@@ -128,10 +181,13 @@ ggplot(mtx_to_plot, aes(x = Source, y = Count, fill = Source)) +
   geom_bar(stat = "identity") +
   coord_flip() +
   theme_bw() + theme(legend.position = "none")
-ggsave("man/figures/excluderanges_hg38_count.png", width = 5.5, height = 2)
 ```
 
-<img src="man/figures/excluderanges_hg38_count.png" width="100%" />
+<img src="man/figures/README-excluderanges_hg38_count-1.png" width="100%" />
+
+``` r
+# ggsave("man/figures/excluderanges_hg38_count.png", width = 5.5, height = 2)
+```
 
 Compare the width of excludable regions. log2 scale because of heavy
 right tail distributions.
@@ -154,10 +210,14 @@ mtx_to_plot <- data.frame(Width = c(width(excludeGR.hg38.Bernstein),
 ggplot(mtx_to_plot, aes(x = log2(Width), y = Source, fill = Source)) +
   geom_density_ridges() +
   theme_bw() + theme(legend.position = "none")
-ggsave("man/figures/excluderanges_hg38_width.png", width = 5.5, height = 2)
+#> Picking joint bandwidth of 0.372
 ```
 
-<img src="man/figures/excluderanges_hg38_width.png" width="100%" />
+<img src="man/figures/README-excluderanges_hg38_width-1.png" width="100%" />
+
+``` r
+# ggsave("man/figures/excluderanges_hg38_width.png", width = 5.5, height = 2)
+```
 
 We can investigate the total width of each set of excludable ranges.
 
@@ -177,10 +237,13 @@ mtx_to_plot <- data.frame(TotalWidth = c(sum(width(excludeGR.hg38.Bernstein)),
 ggplot(mtx_to_plot, aes(x = TotalWidth, y = Source, fill = Source)) + 
   geom_bar(stat="identity") + scale_x_log10() + scale_y_discrete(label=abbreviate) +
   xlab("log10 total width")
-ggsave("man/figures/excluderanges_hg38_sumwidth.png", width = 6.5, height = 2)
 ```
 
-<img src="man/figures/excluderanges_hg38_sumwidth.png" width="100%" />
+<img src="man/figures/README-excluderanges_hg38_sumwidth-1.png" width="100%" />
+
+``` r
+# ggsave("man/figures/excluderanges_hg38_sumwidth.png", width = 6.5, height = 2)
+```
 
 We can compare Jaccard overlap between those sets of excludable regions.
 
@@ -225,18 +288,35 @@ for (i in 1:length(all_excludeGR_list)) {
 # Trim row/colnames
 rownames(mtx_to_plot) <- colnames(mtx_to_plot) <- str_trunc(all_excludeGR_name, width = 25) 
 # Save the plot
-png("man/figures/excluderanges_hg38_jaccard.png", width = 1000, height = 900, res = 200)
+# png("man/figures/excluderanges_hg38_jaccard.png", width = 1000, height = 900, res = 200)
 pheatmap(data.matrix(mtx_to_plot))
-dev.off()
 ```
 
-<img src="man/figures/excluderanges_hg38_jaccard.png" width="100%" />
+<img src="man/figures/README-excluderanges_hg38_jaccard-1.png" width="100%" />
+
+``` r
+# dev.off()
+```
 
 Note that some excludable ranges objects contain six columns, implying
 there may be some interesting metadata. Let’s explore one.
 
 ``` r
 mcols(excludeGR.hg38.Reddy)
+#> DataFrame with 401 rows and 2 columns
+#>                       name     score
+#>                <character> <numeric>
+#> 1   High_Mappability_isl..      1000
+#> 2         Satellite_repeat      1000
+#> 3                 BSR/Beta      1000
+#> 4   Low_mappability_island      1000
+#> 5                 (CATTC)n      1000
+#> ...                    ...       ...
+#> 397                   TAR1      1000
+#> 398       Satellite_repeat      1000
+#> 399               (CATTC)n      1000
+#> 400               (CATTC)n      1000
+#> 401                   TAR1      1000
 mtx_to_plot <- as.data.frame(table(mcols(excludeGR.hg38.Reddy)[["name"]]))
 colnames(mtx_to_plot) <- c("Type", "Number")
 mtx_to_plot <- mtx_to_plot[order(mtx_to_plot$Number), ]
@@ -244,10 +324,13 @@ mtx_to_plot$Type <- factor(mtx_to_plot$Type, levels = mtx_to_plot$Type)
 ggplot(mtx_to_plot, aes(x = Number, y = Type, fill = Type)) +
   geom_bar(stat="identity") +
   theme_bw() + theme(legend.position = "none")
-ggsave("man/figures/excluderanges_hg38_Reddy_metadata.png", width = 5, height = 2.5)
 ```
 
-<img src="man/figures/excluderanges_hg38_Reddy_metadata.png" width="100%" />
+<img src="man/figures/README-excluderanges_hg38_Reddy_metadata-1.png" width="100%" />
+
+``` r
+# ggsave("man/figures/excluderanges_hg38_Reddy_metadata.png", width = 5, height = 2.5)
+```
 
 One may decide to combine the excludable ranges from all labs, although
 from previous results we may decide to follow Anshul’s
@@ -258,13 +341,20 @@ regions](https://www.encodeproject.org/files/ENCFF356LFX/) and use the
 
 ``` r
 excludeGR.hg38.all <- reduce(c(excludeGR.hg38.Bernstein, excludeGR.hg38.Kundaje.1, excludeGR.hg38.Kundaje.2, excludeGR.hg38.Reddy, excludeGR.hg38.Wold, excludeGR.hg38.Yeo))
+#> Warning in valid.GenomicRanges.seqinfo(x, suggest.trim = TRUE): GRanges object contains 1 out-of-bound range located on sequence
+#>   chr4_GL000008v2_random. Note that ranges located on a sequence whose
+#>   length is unknown (NA) or on a circular sequence are not considered
+#>   out-of-bound (use seqlengths() and isCircular() to get the lengths and
+#>   circularity flags of the underlying sequences). You can use trim() to
+#>   trim these ranges. See ?`trim,GenomicRanges-method` for more
+#>   information.
 # Keep only standard chromosomes
 excludeGR.hg38.all <- keepStandardChromosomes(excludeGR.hg38.all, pruning.mode = "coarse")
 print(length(excludeGR.hg38.all))
-# [1] 13239
+#> [1] 13239
 summary(width(excludeGR.hg38.all))
-#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#       5    1778    2306    8153    2859 5407757 
+#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#>       5    1778    2306    8153    2859 5407757
 ```
 
 ## Centromeres, telomeres, etc.
@@ -275,84 +365,92 @@ track for Homo Sapiens is available for the GRcH37/hg19 genome assembly
 as a [UCSC ‘gap’
 table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema).
 It can be retrieved from
-*[AnnotationHub](https://bioconductor.org/packages/3.13/AnnotationHub)*,
+*[AnnotationHub](https://bioconductor.org/packages/3.14/AnnotationHub)*,
 but lacks the metadata columns needed to decide the type of gaps.
 
 ``` r
-suppressPackageStartupMessages(library(AnnotationHub))
-ah <- AnnotationHub()
 # Search for the gap track
 # ahData <- query(ah, c("gap", "Homo sapiens", "hg19"))
-# ahData[ctcfData$title == "Gap"]
+# ahData[ahData$title == "Gap"]
 gaps <- ahData[["AH6444"]]
 ```
-
-    > gaps
-    UCSC track 'gap'
-    UCSCData object with 457 ranges and 0 metadata columns:
-                   seqnames              ranges strand
-                      <Rle>           <IRanges>  <Rle>
-        [1]            chr1 124535435-142535434      *
-        [2]            chr1 121535435-124535434      *
-        [3]            chr1     3845269-3995268      *
-        [4]            chr1   13219913-13319912      *
-        [5]            chr1   17125659-17175658      *
-        ...             ...                 ...    ...
-      [453]  chr6_ssto_hap7     4639807-4661556      *
-      [454]  chr6_ssto_hap7     4723510-4774367      *
-      [455]  chr6_ssto_hap7     4783799-4836049      *
-      [456] chr17_ctg5_hap1     1256795-1306794      *
-      [457] chr17_ctg5_hap1     1588969-1638968      *
-      -------
-      seqinfo: 93 sequences (1 circular) from hg19 genome
 
 The [UCSC ‘gap’
 table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema)
 provides better granularity about the types of gaps available. E.g., for
 human, hg19, we have the following types and the number of gaps.
 
-<img src="man/figures/excluderanges_hg19_gaps_number.png" width="100%" />
+<img src="man/figures/excluderanges_hg19_gaps_number.png" width="70%" height="70%" />
 
 Those objects are provided as individual GRanges.
 
 Naming convention: `<genome assembly>.UCSC.<gap type>`, e.g.,
 `hg19.UCSC.gap_centromere`.
 
-Download all data from the [Google Drive
-folder](https://drive.google.com/drive/folders/1MFn6LPZD1zZRQz7biR0Fyl-mzkx4CIxS?usp=sharing)
-
 We can similarly load any gap type object.
 
 ``` r
-download.file(url = "https://drive.google.com/uc?export=download&id=1uno7XzgCdFJeMjYI6GMfU5bAwEBWaUlR", destfile = "hg19.UCSC.centromere.rds")
-gapsGR_hg19_centromere <- readRDS(file = "hg19.UCSC.centromere.rds")
-gapsGR_hg19_centromere
-```
+query_data <- query(ah, c("excluderanges", "UCSC", "Homo Sapiens", "hg19"))
+query_data
+#> AnnotationHub with 7 records
+#> # snapshotDate(): 2021-10-08
+#> # $dataprovider: UCSC
+#> # $species: Homo sapiens
+#> # $rdataclass: GRanges
+#> # additional mcols(): taxonomyid, genome, description,
+#> #   coordinate_1_based, maintainer, rdatadateadded, preparerclass, tags,
+#> #   rdatapath, sourceurl, sourcetype 
+#> # retrieve records with, e.g., 'object[["AH95927"]]' 
+#> 
+#>             title                        
+#>   AH95927 | hg19.UCSC.centromere.rds     
+#>   AH95928 | hg19.UCSC.clone.rds          
+#>   AH95929 | hg19.UCSC.contig.rds         
+#>   AH95930 | hg19.UCSC.heterochromatin.rds
+#>   AH95931 | hg19.UCSC.scaffold.rds       
+#>   AH95932 | hg19.UCSC.short_arm.rds      
+#>   AH95933 | hg19.UCSC.telomere.rds
 
-    > gapsGR_hg19_centromere
-    GRanges object with 24 ranges and 6 metadata columns:
-          seqnames              ranges strand |       bin        ix           n      size        type      bridge
-             <Rle>           <IRanges>  <Rle> | <numeric> <numeric> <character> <numeric> <character> <character>
-        2     chr1 121535434-124535434      * |        23      1270           N   3000000  centromere          no
-      184    chr21   11288129-14288129      * |        10        22           N   3000000  centromere          no
-      199    chr22   13000000-16000000      * |        10         3           N   3000000  centromere          no
-      206    chr19   24681782-27681782      * |         1       410           N   3000000  centromere          no
-      224     chrY   10104553-13104553      * |        10       105           N   3000000  centromere          no
-      ...      ...                 ...    ... .       ...       ...         ...       ...         ...         ...
-      439     chr6   58830166-61830166      * |        16       628           N   3000000  centromere          no
-      453     chr5   46405641-49405641      * |        14       452           N   3000000  centromere          no
-      460     chr4   49660117-52660117      * |         1       447           N   3000000  centromere          no
-      476     chr3   90504854-93504854      * |         2       784           N   3000000  centromere          no
-      481     chr2   92326171-95326171      * |        20       770           N   3000000  centromere          no
-      -------
-      seqinfo: 24 sequences from hg19 genome
+gapsGR_hg19_centromere <- query_data[["AH95927"]]
+#> loading from cache
+gapsGR_hg19_centromere
+#> GRanges object with 24 ranges and 6 metadata columns:
+#>       seqnames              ranges strand |       bin        ix           n
+#>          <Rle>           <IRanges>  <Rle> | <numeric> <numeric> <character>
+#>     2     chr1 121535434-124535434      * |        23      1270           N
+#>   184    chr21   11288129-14288129      * |        10        22           N
+#>   199    chr22   13000000-16000000      * |        10         3           N
+#>   206    chr19   24681782-27681782      * |         1       410           N
+#>   224     chrY   10104553-13104553      * |        10       105           N
+#>   ...      ...                 ...    ... .       ...       ...         ...
+#>   439     chr6   58830166-61830166      * |        16       628           N
+#>   453     chr5   46405641-49405641      * |        14       452           N
+#>   460     chr4   49660117-52660117      * |         1       447           N
+#>   476     chr3   90504854-93504854      * |         2       784           N
+#>   481     chr2   92326171-95326171      * |        20       770           N
+#>            size        type      bridge
+#>       <numeric> <character> <character>
+#>     2     3e+06  centromere          no
+#>   184     3e+06  centromere          no
+#>   199     3e+06  centromere          no
+#>   206     3e+06  centromere          no
+#>   224     3e+06  centromere          no
+#>   ...       ...         ...         ...
+#>   439     3e+06  centromere          no
+#>   453     3e+06  centromere          no
+#>   460     3e+06  centromere          no
+#>   476     3e+06  centromere          no
+#>   481     3e+06  centromere          no
+#>   -------
+#>   seqinfo: 24 sequences from hg19 genome
+```
 
 ### Centromeres for the hg38 genome assembly
 
 Note that the UCSC ‘gap’ table for the hg38 human genome assembly does
 not contain genomic coordinates for the “centromere” gap type. These can
 be obtained from the
-*[rCGH](https://bioconductor.org/packages/3.13/rCGH)* package as
+*[rCGH](https://bioconductor.org/packages/3.14/rCGH)* package as
 follows:
 
 ``` r
@@ -388,45 +486,35 @@ hg38.UCSC.centromere
 #>   seqinfo: 24 sequences from hg38 genome
 ```
 
-The *[rCGH](https://bioconductor.org/packages/3.13/rCGH)* package also
+The *[rCGH](https://bioconductor.org/packages/3.14/rCGH)* package also
 contains data for the `hg19` and `hg18` genomes. The `hg19` centromere
 data is equivalent to the `hg19.UCSC.centromere` object provided in our
-*[excluderanges](https://bioconductor.org/packages/3.13/excluderanges)*
+*[excluderanges](https://bioconductor.org/packages/3.14/excluderanges)*
 package.
 
 ## Source data for the excludable regions
-
-``` r
-mtx <- read.csv("inst/extdata/table_excluderanges.csv")
-knitr::kable(mtx)
-```
 
 | Object                                                       | Number.of.regions | Assembly | Lab                      | Number.of.columns | Source                                                                               |
 |:-------------------------------------------------------------|------------------:|:---------|:-------------------------|------------------:|:-------------------------------------------------------------------------------------|
 | ce10.Kundaje.ce10-Excludable.rds                             |               122 | ce10     | Anshul Kundaje, Stanford |                 3 | <http://mitra.stanford.edu/kundaje/akundaje/release/Excludables/ce10-C.elegans>      |
 | dm3.Kundaje.dm3-Excludable.rds                               |               492 | dm3      | Anshul Kundaje, Stanford |                 3 | <http://mitra.stanford.edu/kundaje/akundaje/release/Excludables/dm3-D.melanogaster/> |
-| hg19.Bernstein.Mint\_Excludable\_hg19.rds                    |              9035 | hg19     | Bradley Bernstein, Broad |                 6 | <https://www.encodeproject.org/files/ENCFF200UUD/>                                   |
+| hg19.Bernstein.Mint_Excludable_hg19.rds                      |              9035 | hg19     | Bradley Bernstein, Broad |                 6 | <https://www.encodeproject.org/files/ENCFF200UUD/>                                   |
 | hg19.Birney.wgEncodeDacMapabilityConsensusExcludable.rds     |               411 | hg19     | Ewan Birney, EBI         |                 6 | <https://www.encodeproject.org/files/ENCFF001TDO/>                                   |
 | hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable.rds    |              1649 | hg19     | Gregory Crawford, Duke   |                 6 | <https://www.encodeproject.org/files/ENCFF001THR/>                                   |
 | hg19.Wold.hg19mitoExcludable.rds                             |               295 | hg19     | Barbara Wold, Caltech    |                 3 | <https://www.encodeproject.org/files/ENCFF055QTV/>                                   |
-| hg19.Yeo.eCLIP\_Excludableregions.hg19.rds                   |                57 | hg19     | Gene Yeo, UCSD           |                 6 | <https://www.encodeproject.org/files/ENCFF039QTN/>                                   |
-| hg38.Bernstein.Mint\_Excludable\_GRCh38.rds                  |             12052 | hg38     | Bradley Bernstein, Broad |                 6 | <https://www.encodeproject.org/files/ENCFF023CZC/>                                   |
+| hg19.Yeo.eCLIP_Excludableregions.hg19.rds                    |                57 | hg19     | Gene Yeo, UCSD           |                 6 | <https://www.encodeproject.org/files/ENCFF039QTN/>                                   |
+| hg38.Bernstein.Mint_Excludable_GRCh38.rds                    |             12052 | hg38     | Bradley Bernstein, Broad |                 6 | <https://www.encodeproject.org/files/ENCFF023CZC/>                                   |
 | hg38.Kundaje.GRCh38.Excludable.rds                           |                38 | hg38     | Anshul Kundaje, Stanford |                 3 | <https://www.encodeproject.org/files/ENCFF356LFX/>                                   |
-| hg38.Kundaje.GRCh38\_unified\_Excludable.rds                 |               910 | hg38     | Anshul Kundaje, Stanford |                 3 | <https://www.encodeproject.org/files/ENCFF419RSJ/>                                   |
+| hg38.Kundaje.GRCh38_unified_Excludable.rds                   |               910 | hg38     | Anshul Kundaje, Stanford |                 3 | <https://www.encodeproject.org/files/ENCFF419RSJ/>                                   |
 | hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.rds |               401 | hg38     | Tim Reddy, Duke          |                 6 | <https://www.encodeproject.org/files/ENCFF220FIN/>                                   |
 | hg38.Wold.hg38mitoExcludable.rds                             |               299 | hg38     | Barbara Wold, Caltech    |                 3 | <https://www.encodeproject.org/files/ENCFF940NTE/>                                   |
-| hg38.Yeo.eCLIP\_Excludableregions.hg38liftover.bed.fixed.rds |                56 | hg38     | Gene Yeo, UCSD           |                 6 | <https://www.encodeproject.org/files/ENCFF269URO/>                                   |
+| hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds  |                56 | hg38     | Gene Yeo, UCSD           |                 6 | <https://www.encodeproject.org/files/ENCFF269URO/>                                   |
 | mm10.Hardison.Excludable.full.rds                            |              7865 | mm10     | Ross Hardison, PennState |                 3 | <https://www.encodeproject.org/files/ENCFF790DJT/>                                   |
 | mm10.Hardison.psuExcludable.mm10.rds                         |              5552 | mm10     | Ross Hardison, PennState |                 3 | <https://www.encodeproject.org/files/ENCFF226BDM/>                                   |
 | mm10.Kundaje.anshul.Excludable.mm10.rds                      |              3010 | mm10     | Anshul Kundaje, Stanford |                 3 | <https://www.encodeproject.org/files/ENCFF999QPV/>                                   |
 | mm10.Kundaje.mm10.Excludable.rds                             |               164 | mm10     | Anshul Kundaje, Stanford |                 3 | <https://www.encodeproject.org/files/ENCFF547MET/>                                   |
 | mm10.Wold.mm10mitoExcludable.rds                             |               123 | mm10     | Barbara Wold, Caltech    |                 3 | <https://www.encodeproject.org/files/ENCFF759PJK/>                                   |
 | mm9.Wold.mm9mitoExcludable.rds                               |               123 | mm9      | Barbara Wold, Caltech    |                 3 | <https://www.encodeproject.org/files/ENCFF299EZH/>                                   |
-
-``` r
-mtx <- read.csv("inst/extdata/table_gap.csv")
-knitr::kable(mtx)
-```
 
 | Object                        | Number.of.regions | Assembly | Lab  | Number.of.columns | Source                                                                                                                             |
 |:------------------------------|------------------:|:---------|:-----|------------------:|:-----------------------------------------------------------------------------------------------------------------------------------|
@@ -435,24 +523,27 @@ knitr::kable(mtx)
 | hg19.UCSC.contig.rds          |               163 | hg19     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | hg19.UCSC.heterochromatin.rds |                12 | hg19     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | hg19.UCSC.scaffold.rds        |                40 | hg19     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
-| hg19.UCSC.short\_arm.rds      |                 5 | hg19     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
+| hg19.UCSC.short_arm.rds       |                 5 | hg19     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | hg19.UCSC.telomere.rds        |                46 | hg19     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | hg38.UCSC.contig.rds          |               285 | hg38     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | hg38.UCSC.heterochromatin.rds |                11 | hg38     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | hg38.UCSC.scaffold.rds        |               478 | hg38     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
-| hg38.UCSC.short\_arm.rds      |                 5 | hg38     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
+| hg38.UCSC.short_arm.rds       |                 5 | hg38     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | hg38.UCSC.telomere.rds        |                48 | hg38     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | mm10.UCSC.centromere.rds      |                20 | mm10     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | mm10.UCSC.clone.rds           |               114 | mm10     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | mm10.UCSC.contig.rds          |               104 | mm10     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | mm10.UCSC.fragment.rds        |                 1 | mm10     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | mm10.UCSC.other.rds           |               384 | mm10     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
-| mm10.UCSC.short\_arm.rds      |                21 | mm10     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
+| mm10.UCSC.short_arm.rds       |                21 | mm10     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | mm10.UCSC.telomere.rds        |                42 | mm10     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
 | mm9.UCSC.centromere.rds       |                21 | mm9      | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema>  |
 | mm9.UCSC.contig.rds           |               281 | mm9      | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema>  |
 | mm9.UCSC.fragment.rds         |               709 | mm9      | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema>  |
 | mm10.UCSC.scaffold.rds        |                48 | mm10     | UCSC |                 9 | <http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema> |
+
+Download all data from the [Google Drive
+folder](https://drive.google.com/drive/folders/1MFn6LPZD1zZRQz7biR0Fyl-mzkx4CIxS?usp=sharing)
 
 ## Citation
 
@@ -466,7 +557,7 @@ print(citation("excluderanges"), bibtex = TRUE)
 #> Dozmorov MG, Davis E, Mu W, Lee S, Triche T, Phanstiel D, Love M
 #> (2021). _excluderanges_.
 #> https://github.com/mdozmorov/excluderanges/excluderanges - R package
-#> version 0.99.3, <URL: https://github.com/mdozmorov/excluderanges>.
+#> version 0.99.5, <URL: https://github.com/mdozmorov/excluderanges>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -475,7 +566,7 @@ print(citation("excluderanges"), bibtex = TRUE)
 #>     author = {Mikhail G. Dozmorov and Eric Davis and Wancen Mu and Stuart Lee and Tim Triche and Douglas Phanstiel and Michael Love},
 #>     year = {2021},
 #>     url = {https://github.com/mdozmorov/excluderanges},
-#>     note = {https://github.com/mdozmorov/excluderanges/excluderanges - R package version 0.99.3},
+#>     note = {https://github.com/mdozmorov/excluderanges/excluderanges - R package version 0.99.5},
 #>   }
 ```
 
@@ -487,7 +578,7 @@ Conduct](http://bioconductor.org/about/code-of-conduct/). By
 contributing to this project, you agree to abide by its terms.
 
 This package was developed using
-*[biocthis](https://bioconductor.org/packages/3.13/biocthis)*.
+*[biocthis](https://bioconductor.org/packages/3.14/biocthis)*.
 
 ## References
 

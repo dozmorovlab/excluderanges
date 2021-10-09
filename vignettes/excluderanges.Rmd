@@ -12,21 +12,22 @@ output:
     toc_float: true
     toc_depth: 2
     code_folding: show
-date: "`r doc_date()`"
-package: "`r pkg_ver('excluderanges')`"
+date: "`r Sys.Date()`"
 vignette: >
-  %\VignetteIndexEntry{Introduction to excluderanges}
+  %\VignetteIndexEntry{excluderanges}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}  
+  %\VignetteEncoding{UTF-8}
 bibliography: references.bib
+editor_options: 
+  chunk_output_type: console
 ---
 
-```{r setup, include = FALSE}
+```{r, include = FALSE}
 knitr::opts_chunk$set(
-    collapse = TRUE,
-    comment = "#>",
-    crop = NULL ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
+  collapse = TRUE,
+  comment = "#>"
 )
+library(BiocStyle)
 ```
 
 # Exclude ranges
@@ -34,9 +35,9 @@ knitr::opts_chunk$set(
 Genomic ranges of problematic genomic regions that should be avoided when 
 working with genomic data. For human, mouse, and selected model organisms.
 
-<!-- badges: start -->
+<!-- badges: start
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-<!-- badges: end -->
+badges: end -->
  
 TL;DR - For human hg38 genome assembly, [Anshul](https://twitter.com/anshulkundaje) [recommends](https://twitter.com/anshulkundaje/status/1263546023151992832?s=20) 
 [ENCFF356LFX exclusion list regions](https://www.encodeproject.org/files/ENCFF356LFX/).  
@@ -50,14 +51,10 @@ place for informed retrieval of exclusion regions.
 Naming convention: `<genome assembly>.<lab>.<original file name>`, e.g.,
 `hg19.Birney.wgEncodeDacMapabilityConsensusExcludable`.
 
-Download all data from the [Google Drive folder](https://drive.google.com/drive/folders/1MFn6LPZD1zZRQz7biR0Fyl-mzkx4CIxS?usp=sharing)
-
-See [make-data.R](inst/scripts/make-data.R) how to create the excluderanges 
+See [make-data.R](../inst/scripts/make-data.R) how to create the excluderanges 
 GRanges objects.
 
 ## Install `excluderanges`
-
-<!--`R` is an open-source statistical environment which can be easily modified to enhance its functionality via packages. `r Biocpkg("excluderanges")` is a `R` package available via the [Bioconductor](http://bioconductor.org) repository for packages. `R` can be installed on any operating system from [CRAN](https://cran.r-project.org/) after which you can install `r Biocpkg("excluderanges")` by using the following commands in your `R` session:-->
 
 ```{r "install", eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
@@ -67,36 +64,31 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 # BiocManager::install(version = "devel")
 # Check that you have a valid Bioconductor installation
 # BiocManager::valid()
+# Install the package
+BiocManager::install("excluderanges", version = "devel")
 
-BiocManager::install("mdozmorov/excluderanges")
+# BiocManager::install("mdozmorov/excluderanges")
 ```
 
 ## Use excluderanges
 
-```{r eval = FALSE}
-# hg38 excluderanges coordinates
-download.file(url = "https://drive.google.com/uc?export=download&id=1Jy_7cvFj5ZHUUwHgGUKZeFk8lFCalpKk", destfile = "hg38.Kundaje.GRCh38_unified_Excludable.rds")
-excludeGR.hg38.Kundaje.1 <- readRDS(file = "hg38.Kundaje.GRCh38_unified_Excludable.rds")
+Get an overview of what's available
+
+```{r AnnotationHub}
+suppressMessages(library(AnnotationHub))
+ah <- AnnotationHub()
+query_data <- query(ah, "excluderanges")
+query_data
+```
+
+
+hg38 excluderanges coordinates recommended by Anshul
+
+```{r hg38excluderanges}
+# Check titles
+# as.data.frame(mcols(query_data[1:10])["title"]) 
+excludeGR.hg38.Kundaje.1 <- query_data[["AH95917"]]
 excludeGR.hg38.Kundaje.1
-```
-```
-> excludeGR.hg38.Kundaje.1
-GRanges object with 910 ranges and 0 metadata columns:
-        seqnames            ranges strand
-           <Rle>         <IRanges>  <Rle>
-    [1]     chr1     628903-635104      *
-    [2]     chr1   5850087-5850571      *
-    [3]     chr1   8909610-8910014      *
-    [4]     chr1   9574580-9574997      *
-    [5]     chr1 32043823-32044203      *
-    ...      ...               ...    ...
-  [906]     chrY 11290797-11334278      *
-  [907]     chrY 11493053-11592850      *
-  [908]     chrY 11671014-11671046      *
-  [909]     chrY 11721528-11749472      *
-  [910]     chrY 56694632-56889743      *
-  -------
-  seqinfo: 24 sequences from hg38 genome
 ```
 
 Save the data in a BED file, if needed.
@@ -105,28 +97,22 @@ Save the data in a BED file, if needed.
 rtracklayer::export(excludeGR.hg38.Kundaje.1, "hg38.Kundaje.GRCh38_unified_Excludable.bed", format = "bed")
 ```
 
+
 We can load other excludable regions for the hg38 genome assembly and compare them.
 
-```{r eval=FALSE}
-download.file(url = "https://drive.google.com/uc?export=download&id=13RQmvqwC9qaYE65i74U1N-Rb4R-Sy2ud", destfile = "hg38.Bernstein.Mint_Excludable_GRCh38.rds")
-excludeGR.hg38.Bernstein <- readRDS(file = "hg38.Bernstein.Mint_Excludable_GRCh38.rds")
-
-download.file(url = "https://drive.google.com/uc?export=download&id=1ULI6uvs0vTlPcZ5yyLdsSgX1mIqnnlpp", destfile = "hg38.Kundaje.GRCh38.Excludable.rds")
-excludeGR.hg38.Kundaje.2 <- readRDS(file = "hg38.Kundaje.GRCh38.Excludable.rds")
-
-download.file(url = "https://drive.google.com/uc?export=download&id=1TA5Y8nmutoAyhL8XEl2qQTnmW6gl8CAg", destfile = "hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.rds")
-excludeGR.hg38.Reddy <- readRDS(file = "hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.rds")
-
-download.file(url = "https://drive.google.com/uc?export=download&id=1psVWkiaLy4nxAWssqv5dEZyNUrDIm005", destfile = "hg38.Wold.hg38mitoExcludable.rds")
-excludeGR.hg38.Wold <- readRDS(file = "hg38.Wold.hg38mitoExcludable.rds")
-
-download.file(url = "https://drive.google.com/uc?export=download&id=1pwbBEOHFfnVb6I9UljF3bJQLF3et4WV7", destfile = "hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds")
-excludeGR.hg38.Yeo <- readRDS(file = "hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds")
+```{r allhg38excluderanges}
+query_data <- query(ah, c("excluderanges", "hg38", "Exclusion regions"))
+query_data
+excludeGR.hg38.Bernstein <- query_data[["AH95915"]]
+excludeGR.hg38.Kundaje.2 <- query_data[["AH95916"]]
+excludeGR.hg38.Reddy     <- query_data[["AH95918"]]
+excludeGR.hg38.Wold      <- query_data[["AH95919"]]
+excludeGR.hg38.Yeo       <- query_data[["AH95920"]]
 ```
 
 Compare the number of excludable regions.
 
-```{r eval=FALSE}
+```{r excluderanges_hg38_count, fig.width=6.5, fig.height=2}
 library(ggplot2)
 mtx_to_plot <- data.frame(Count = c(length(excludeGR.hg38.Bernstein), 
                                     length(excludeGR.hg38.Kundaje.1), 
@@ -147,16 +133,16 @@ ggplot(mtx_to_plot, aes(x = Source, y = Count, fill = Source)) +
   geom_bar(stat = "identity") +
   coord_flip() +
   theme_bw() + theme(legend.position = "none")
-ggsave("../man/figures/excluderanges_hg38_count.png", width = 5.5, height = 2)
+# ggsave("man/figures/excluderanges_hg38_count.png", width = 5.5, height = 2)
 ```
 
-```{r echo=FALSE}
-knitr::include_graphics('../man/figures/excluderanges_hg38_count.png')
+```{r echo=FALSE, eval=FALSE}
+knitr::include_graphics('man/figures/excluderanges_hg38_count.png')
 ```
 
 Compare the width of excludable regions. log2 scale because of heavy right tail distributions.
 
-```{r eval=FALSE}
+```{r excluderanges_hg38_width, fig.width=6.5, fig.height=2}
 library(ggridges)
 mtx_to_plot <- data.frame(Width = c(width(excludeGR.hg38.Bernstein), 
                                     width(excludeGR.hg38.Kundaje.1), 
@@ -174,16 +160,16 @@ mtx_to_plot <- data.frame(Width = c(width(excludeGR.hg38.Bernstein),
 ggplot(mtx_to_plot, aes(x = log2(Width), y = Source, fill = Source)) +
   geom_density_ridges() +
   theme_bw() + theme(legend.position = "none")
-ggsave("../man/figures/excluderanges_hg38_width.png", width = 5.5, height = 2)
+# ggsave("man/figures/excluderanges_hg38_width.png", width = 5.5, height = 2)
 ```
 
-```{r echo=FALSE}
-knitr::include_graphics('../man/figures/excluderanges_hg38_width.png')
+```{r echo=FALSE, eval=FALSE}
+knitr::include_graphics('man/figures/excluderanges_hg38_width.png')
 ```
 
 We can investigate the total width of each set of excludable ranges.
 
-```{r eval=FALSE}
+```{r excluderanges_hg38_sumwidth, fig.width=6.5, fig.height=2}
 mtx_to_plot <- data.frame(TotalWidth = c(sum(width(excludeGR.hg38.Bernstein)), 
                                          sum(width(excludeGR.hg38.Kundaje.1)), 
                                          sum(width(excludeGR.hg38.Kundaje.2)), 
@@ -199,16 +185,16 @@ mtx_to_plot <- data.frame(TotalWidth = c(sum(width(excludeGR.hg38.Bernstein)),
 ggplot(mtx_to_plot, aes(x = TotalWidth, y = Source, fill = Source)) + 
   geom_bar(stat="identity") + scale_x_log10() + scale_y_discrete(label=abbreviate) +
   xlab("log10 total width")
-ggsave("../man/figures/excluderanges_hg38_sumwidth.png", width = 6.5, height = 2)
+# ggsave("man/figures/excluderanges_hg38_sumwidth.png", width = 6.5, height = 2)
 ```
 
-```{r echo=FALSE}
-knitr::include_graphics('../man/figures/excluderanges_hg38_sumwidth.png')
+```{r echo=FALSE, eval=FALSE}
+knitr::include_graphics('man/figures/excluderanges_hg38_sumwidth.png')
 ```
 
 We can compare Jaccard overlap between those sets of excludable regions.
 
-```{r eval=FALSE}
+```{r excluderanges_hg38_jaccard, warning=FALSE, fig.width=6.5, fig.height=6}
 library(pheatmap)
 library(stringr)
 # Jaccard calculations
@@ -249,19 +235,19 @@ for (i in 1:length(all_excludeGR_list)) {
 # Trim row/colnames
 rownames(mtx_to_plot) <- colnames(mtx_to_plot) <- str_trunc(all_excludeGR_name, width = 25) 
 # Save the plot
-png("../man/figures/excluderanges_hg38_jaccard.png", width = 1000, height = 900, res = 200)
+# png("man/figures/excluderanges_hg38_jaccard.png", width = 1000, height = 900, res = 200)
 pheatmap(data.matrix(mtx_to_plot))
-dev.off()
+# dev.off()
 ```
 
-```{r echo=FALSE}
-knitr::include_graphics('../man/figures/excluderanges_hg38_jaccard.png')
+```{r echo=FALSE, eval=FALSE}
+knitr::include_graphics('man/figures/excluderanges_hg38_jaccard.png')
 ```
 
 Note that some excludable ranges objects contain six columns, implying there may be 
 some interesting metadata. Let's explore one.
 
-```{r eval=FALSE}
+```{r excluderanges_hg38_Reddy_metadata, fig.width=6.5, fig.height=3}
 mcols(excludeGR.hg38.Reddy)
 mtx_to_plot <- as.data.frame(table(mcols(excludeGR.hg38.Reddy)[["name"]]))
 colnames(mtx_to_plot) <- c("Type", "Number")
@@ -270,26 +256,23 @@ mtx_to_plot$Type <- factor(mtx_to_plot$Type, levels = mtx_to_plot$Type)
 ggplot(mtx_to_plot, aes(x = Number, y = Type, fill = Type)) +
   geom_bar(stat="identity") +
   theme_bw() + theme(legend.position = "none")
-ggsave("../man/figures/excluderanges_hg38_Reddy_metadata.png", width = 5, height = 2.5)
+# ggsave("man/figures/excluderanges_hg38_Reddy_metadata.png", width = 5, height = 2.5)
 ```
 
-```{r echo=FALSE}
-knitr::include_graphics('../man/figures/excluderanges_hg38_Reddy_metadata.png')
+```{r echo=FALSE, eval=FALSE}
+knitr::include_graphics('man/figures/excluderanges_hg38_Reddy_metadata.png')
 ```
 
 One may decide to combine the excludable ranges from all labs, although from previous 
 results we may decide to follow Anshul's [advice](https://twitter.com/anshulkundaje/status/1263546023151992832?s=20) advice about the [ENCFF356LFX exclusion list regions](https://www.encodeproject.org/files/ENCFF356LFX/) 
 and use the `excludeGR.hg38.Kundaje.1` object.
 
-```{r eval=FALSE}
+```{r combinedexcluderanges}
 excludeGR.hg38.all <- reduce(c(excludeGR.hg38.Bernstein, excludeGR.hg38.Kundaje.1, excludeGR.hg38.Kundaje.2, excludeGR.hg38.Reddy, excludeGR.hg38.Wold, excludeGR.hg38.Yeo))
 # Keep only standard chromosomes
 excludeGR.hg38.all <- keepStandardChromosomes(excludeGR.hg38.all, pruning.mode = "coarse")
 print(length(excludeGR.hg38.all))
-# [1] 13239
 summary(width(excludeGR.hg38.all))
-#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#       5    1778    2306    8153    2859 5407757 
 ```
 
 ## Centromeres, telomeres, etc.
@@ -301,40 +284,18 @@ It can be retrieved from `r BiocStyle::Biocpkg("AnnotationHub")`, but lacks
 the metadata columns needed to decide the type of gaps.
 
 ```{r eval=FALSE}
-suppressPackageStartupMessages(library(AnnotationHub))
-ah <- AnnotationHub()
 # Search for the gap track
 # ahData <- query(ah, c("gap", "Homo sapiens", "hg19"))
-# ahData[ctcfData$title == "Gap"]
+# ahData[ahData$title == "Gap"]
 gaps <- ahData[["AH6444"]]
 ```
 
-```
-> gaps
-UCSC track 'gap'
-UCSCData object with 457 ranges and 0 metadata columns:
-               seqnames              ranges strand
-                  <Rle>           <IRanges>  <Rle>
-    [1]            chr1 124535435-142535434      *
-    [2]            chr1 121535435-124535434      *
-    [3]            chr1     3845269-3995268      *
-    [4]            chr1   13219913-13319912      *
-    [5]            chr1   17125659-17175658      *
-    ...             ...                 ...    ...
-  [453]  chr6_ssto_hap7     4639807-4661556      *
-  [454]  chr6_ssto_hap7     4723510-4774367      *
-  [455]  chr6_ssto_hap7     4783799-4836049      *
-  [456] chr17_ctg5_hap1     1256795-1306794      *
-  [457] chr17_ctg5_hap1     1588969-1638968      *
-  -------
-  seqinfo: 93 sequences (1 circular) from hg19 genome
-```
 
 The [UCSC 'gap' table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema) provides better granularity
 about the types of gaps available. E.g., for human, hg19, we have the following
 types and the number of gaps.
 
-```{r echo=FALSE}
+```{r echo=FALSE, out.height="70%", out.width="70%"}
 knitr::include_graphics('../man/figures/excluderanges_hg19_gaps_number.png')
 ```
 
@@ -343,34 +304,14 @@ Those objects are provided as individual GRanges.
 Naming convention: `<genome assembly>.UCSC.<gap type>`, e.g.,
 `hg19.UCSC.gap_centromere`.
 
-Download all data from the [Google Drive folder](https://drive.google.com/drive/folders/1MFn6LPZD1zZRQz7biR0Fyl-mzkx4CIxS?usp=sharing)
-
 We can similarly load any gap type object.
 
-```{r eval=FALSE}
-download.file(url = "https://drive.google.com/uc?export=download&id=1uno7XzgCdFJeMjYI6GMfU5bAwEBWaUlR", destfile = "hg19.UCSC.centromere.rds")
-gapsGR_hg19_centromere <- readRDS(file = "hg19.UCSC.centromere.rds")
-gapsGR_hg19_centromere
-```
+```{r gapshg19}
+query_data <- query(ah, c("excluderanges", "UCSC", "Homo Sapiens", "hg19"))
+query_data
 
-```
-> gapsGR_hg19_centromere
-GRanges object with 24 ranges and 6 metadata columns:
-      seqnames              ranges strand |       bin        ix           n      size        type      bridge
-         <Rle>           <IRanges>  <Rle> | <numeric> <numeric> <character> <numeric> <character> <character>
-    2     chr1 121535434-124535434      * |        23      1270           N   3000000  centromere          no
-  184    chr21   11288129-14288129      * |        10        22           N   3000000  centromere          no
-  199    chr22   13000000-16000000      * |        10         3           N   3000000  centromere          no
-  206    chr19   24681782-27681782      * |         1       410           N   3000000  centromere          no
-  224     chrY   10104553-13104553      * |        10       105           N   3000000  centromere          no
-  ...      ...                 ...    ... .       ...       ...         ...       ...         ...         ...
-  439     chr6   58830166-61830166      * |        16       628           N   3000000  centromere          no
-  453     chr5   46405641-49405641      * |        14       452           N   3000000  centromere          no
-  460     chr4   49660117-52660117      * |         1       447           N   3000000  centromere          no
-  476     chr3   90504854-93504854      * |         2       784           N   3000000  centromere          no
-  481     chr2   92326171-95326171      * |        20       770           N   3000000  centromere          no
-  -------
-  seqinfo: 24 sequences from hg19 genome
+gapsGR_hg19_centromere <- query_data[["AH95927"]]
+gapsGR_hg19_centromere
 ```
 
 ### Centromeres for the hg38 genome assembly
@@ -379,7 +320,7 @@ Note that the UCSC 'gap' table for the hg38 human genome assembly does not conta
 genomic coordinates for the "centromere" gap type. These can be obtained from 
 the `r BiocStyle::Biocpkg("rCGH")` package as follows:
 
-```{r}
+```{r gapshg38}
 suppressPackageStartupMessages(library(rCGH))
 suppressPackageStartupMessages(library(GenomicRanges))
 # hg38 # data.frame
@@ -402,21 +343,23 @@ object provided in our `r BiocStyle::Biocpkg("excluderanges")` package.
 
 ## Source data for the excludable regions
 
-```{r}
+```{r echo=FALSE}
 mtx <- read.csv("../inst/extdata/table_excluderanges.csv")
 knitr::kable(mtx)
 ```
 
-```{r}
+```{r echo=FALSE}
 mtx <- read.csv("../inst/extdata/table_gap.csv")
 knitr::kable(mtx)
 ```
+
+Download all data from the [Google Drive folder](https://drive.google.com/drive/folders/1MFn6LPZD1zZRQz7biR0Fyl-mzkx4CIxS?usp=sharing)
 
 ## `R` session information.
 
 ```{r reproduce3, echo=FALSE}
 ## Session info
-library("sessioninfo")
-options(width = 120)
-session_info()
+sessionInfo()
 ```
+
+# References
