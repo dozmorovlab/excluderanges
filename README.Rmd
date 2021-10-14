@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 library(BiocStyle)
 ```
 
-# Exclude ranges
+# excluderanges <img id="excluderanges_logo_by_Mike_Love" src="man/figures/logo.png" align="right" width="125"/>
 
 Genomic ranges of problematic genomic regions that should be avoided when 
 working with genomic data. For human, mouse, and selected model organisms.
