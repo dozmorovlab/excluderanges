@@ -38,6 +38,7 @@
 # # https://www.encodeproject.org/files/ENCFF039QTN/, Gene Yeo, UCSD
 # wget https://www.encodeproject.org/files/ENCFF039QTN/@@download/ENCFF039QTN.bed.gz
 # gzip --decompress --stdout ENCFF039QTN.bed.gz | bedtools sort -i - > hg19.Yeo.eCLIP_blacklistregions.hg19.bed
+# sed 's/\ /_/g' hg19.Yeo.eCLIP_blacklistregions.hg19.bed > temp && mv temp hg19.Yeo.eCLIP_blacklistregions.hg19.bed
 # 
 # ## hg38
 # 
@@ -56,11 +57,20 @@
 # wget https://www.encodeproject.org/files/ENCFF419RSJ/@@download/ENCFF419RSJ.bed.gz
 # gzip --decompress --stdout ENCFF419RSJ.bed.gz | bedtools sort -i - > hg38.Kundaje.GRCh38.blacklist.bed
 # 
+# # hg38.Kundaje.with_Boyle.v2.bed.gz
+# https://github.com/Boyle-Lab/Blacklist/raw/master/lists/hg38-blacklist.v2.bed.gz
+#
+# # hg38.Lareau.MT_excludable_set.bed.gz
+# https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/encodeBlacklist/hg38.encode.blacklist.bed
+# 
 # # wgEncodeDacMapabilityConsensusExcludable.hg38.bed.gz
 # # https://www.encodeproject.org/files/ENCFF220FIN/, Tim Reddy, Duke
 # wget https://www.encodeproject.org/files/ENCFF220FIN/@@download/ENCFF220FIN.bed.gz
 # gzip --decompress --stdout ENCFF220FIN.bed.gz | bedtools sort -i - > hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.bed
 # 
+# # hg38.Wimberley.peakpass_excludable_set.bed.gz
+# https://raw.githubusercontent.com/ewimberley/peakPass/main/excludedlists/hg38/peakPass60Perc_sorted.bed
+#
 # # hg38mitoblack.bed.gz
 # # https://www.encodeproject.org/files/ENCFF940NTE/, Barbara Wold, Caltech
 # wget https://www.encodeproject.org/files/ENCFF940NTE/@@download/ENCFF940NTE.bed.gz
@@ -124,46 +134,152 @@ library(GenomeInfoDb)
 library(rtracklayer)
 library(readr)
 # Folder with results
-dir_in <- "/Users/mdozmorov/Documents/Data/GoogleDrive/excludedata"
+# dir_in <- "/Users/mdozmorov/Documents/Data/GoogleDrive/excludedata"
+dir_in <- "/Users/jogata/Documents/decluderanges_data/package_data/denydata"
+
+exclude_information <- matrix(NA, nrow = 1, ncol = 5)
+colnames(exclude_information) <- c('Object', 
+                                   'Assembly', 
+                                   'Number of regions', 
+                                   'Min : median : max of set', 
+                                   'Chromosomes with no excludable regions'
+                                   )
 
 # All BED files
-files <- list.files(path = dir_in, pattern = "bed$")
+files <- list.files(path = dir_in, pattern = "bed$", ignore.case=T)
+files
 # In each subfolder
 for (file in files) {
+  
   # Read "fimo.bed" created by "fimo.qsub"
-  excludeBED <- read_tsv(file.path(dir_in, file), col_names = FALSE)
+  excludeBED <- read.table(file.path(dir_in, file))
+  
   # Assign column names depending on the number of columns
   if (ncol(excludeBED) == 3) { # Only 3 columns
     colnames(excludeBED) <- c("chr", "start", "stop")
   } else { # If more than 3 columns, consider the first 6
     colnames(excludeBED) <- c("chr", "start", "stop", "name", "score", "strand")
   }
+
   # Convert to GRanges object
   denyGR <- GenomicRanges::makeGRangesFromDataFrame(excludeBED, keep.extra.columns = TRUE)
-  # Add seqinfo
+
   # Parse out genome ID from the file name, to get hg19, hg38, mm9, mm10, etc.
   genome_id <- strsplit(file, ".", fixed = TRUE)[[1]][1]
+
   # Get chromosome info and match it to the chromosome order in excludeBED
   chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome = genome_id)
+  main_chroms <- chrom_data[!grepl("_", chrom_data$chrom),]
   chrom_data <- chrom_data[chrom_data$chrom %in% seqlevels(denyGR), ]
   chrom_data <- chrom_data[match(seqlevels(denyGR), chrom_data$chrom), ]
+
   # Check if chromosome order is the same
   if (!all.equal(seqlevels(denyGR), chrom_data$chrom)) {
     print(paste("Chromosome order does not match for", genome_id, "genome."))
     break
   }
+
   # Assign seqinfo data
   seqlengths(denyGR) <- chrom_data$size
   isCircular(denyGR) <- chrom_data$circular
   genome(denyGR)     <- genome_id
+
   # Reformat output file name
   fileNameOut <- sub("blacklist", "Excludable", file, ignore.case = TRUE)
   fileNameOut <- sub("black", "Excludable", fileNameOut, ignore.case = TRUE)
-  
+
   # Save as Rds object. file extension is changed to rds
   saveRDS(object = denyGR, file = file.path(dir_in, sub("bed$", "rds", fileNameOut)))
   # excludeGR <- readRDS(file = file.path(dir_in, sub("bed$", "rds", fileNameOut)))
+
+  # This small section is for creating a table on excludable set files
+  # Get number of regions
+  length <- length(denyGR)
+  # Get minimum, median, and maximum region in each set
+  mmm <-
+    paste(
+      format( min(width(denyGR)), big.mark = "," ),
+      format( median(width(denyGR)), big.mark = "," ),
+      format( max(width(denyGR)), big.mark = "," ),
+      sep = " : "
+    )
+  # find missing chromosomes in excludable set
+  missing <- gsub("chr", "",
+                  paste(
+                    as.character( main_chroms$chrom[ !(main_chroms$chrom %in% names( split( denyGR, seqnames(denyGR))))]),
+                    collapse = ", "
+                  )
+  )
+  if (missing != "") {missing = missing}
+  else{missing="None"}
+  
+  # Append relevant information to dataframe
+  d <- data.frame(fileNameOut,
+                   genome_id,
+                   length,
+                   mmm,
+                   missing)
+
+  colnames(d) <- c('Object',
+                    'Assembly',
+                    'Number of regions',
+                    'Min : median : max of set',
+                    'Chromosomes with no excludable regions'
+                   )
+  # Add information to existing dataframe
+  exclude_information <- rbind(exclude_information, d)
 }
+
+Source <- c(
+'http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/ce10-C.elegans',
+'http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/dm3-D.melanogaster/',
+'https://www.encodeproject.org/files/ENCFF200UUD/',
+'https://www.encodeproject.org/files/ENCFF001TDO/',
+'https://www.encodeproject.org/files/ENCFF001THR/',
+'https://www.encodeproject.org/files/ENCFF055QTV/',
+'https://www.encodeproject.org/files/ENCFF039QTN/',
+'https://www.encodeproject.org/files/ENCFF023CZC/',
+'https://www.encodeproject.org/files/ENCFF356LFX/',
+'https://www.encodeproject.org/files/ENCFF419RSJ/',
+'https://github.com/Boyle-Lab/Blacklist/raw/master/lists/hg38-blacklist.v2.bed.gz',
+'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/encodeBlacklist/hg38.encode.blacklist.bed',
+'https://www.encodeproject.org/files/ENCFF220FIN/',
+'https://raw.githubusercontent.com/ewimberley/peakPass/main/excludedlists/hg38/peakPass60Perc_sorted.bed',
+'https://www.encodeproject.org/files/ENCFF940NTE/',
+'https://www.encodeproject.org/files/ENCFF269URO/',
+'https://www.encodeproject.org/files/ENCFF790DJT/',
+'https://www.encodeproject.org/files/ENCFF226BDM/',
+'https://www.encodeproject.org/files/ENCFF999QPV/',
+'https://www.encodeproject.org/files/ENCFF547MET/',
+'https://www.encodeproject.org/files/ENCFF759PJK/',
+'https://www.encodeproject.org/files/ENCFF299EZH/'
+)
+
+
+exclude_information <- exclude_information[-1,]
+exclude_information <- cbind(exclude_information, Source)
+# exclude_information <- cbind(exclude_information, Source)
+# write gap information to csv
+write.csv(
+  exclude_information,
+  file="inst/extdata/table_excluderanges.csv",
+  row.names = F)
+
+
+
+
+
+
+
+
+# create empty dataframe, used for creating .csv file
+gap_information <- matrix(NA, nrow = 1, ncol = 6)
+colnames(gap_information) <- c('Object',
+                               'Number of regions',
+                               'Average width of regions',
+                               'Assembly',
+                               'Lab',
+                               'Number of columns')
 
 # The following example demonstrates how the UCSC gaps data were processed
 # All genomes
@@ -198,11 +314,69 @@ for (genome_id in genomes) {
     fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
     # Save as Rds object
     saveRDS(object = gapsGR, file = file.path(dir_in, fileNameOut))
-    print(paste("Length", gap_type, length(gapsGR)))
+    
+    # This small section is for creating a table on gap files
+    # Get number of regions
+    length <- length(gapsGR)
+    # Get average width of regions
+    average <- round( mean(width(gapsGR)), 0)
+    # Append relevant information to dataframe
+    df <- data.frame(fileNameOut, length, average, genome_id, 'UCSC', 9)
+    colnames(df) <- c('Object',
+                      'Number of regions',
+                      'Average width of regions',
+                      'Assembly',
+                      'Lab',
+                      'Number of columns')
+    # Add information to existing dataframe
+    gap_information <- rbind(gap_information, df)
   }
 }
 
+# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
+# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
+# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
+# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
+# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
+# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
+# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
+# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
+# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
+# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
+# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
 
+Source <- c( 'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema'
+)
+
+gap_information <- gap_information[-1,]
+gap_information <- cbind(gap_information, Source)
+# write gap information to csv
+write.csv(
+  gap_information,
+  file="inst/extdata/table_gap.csv",
+  row.names = F)
 
 # # Number of samples per cell/tissue type?
 # library(ggplot2)
