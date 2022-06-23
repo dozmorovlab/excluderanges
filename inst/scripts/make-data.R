@@ -145,12 +145,12 @@ colnames(exclude_information) <- c('Object',
                                    'Chromosomes with no excludable regions'
                                    )
 
+
 # All BED files
 files <- list.files(path = dir_in, pattern = "bed$", ignore.case=T)
-files
 # In each subfolder
 for (file in files) {
-  
+  print(file)
   # Read "fimo.bed" created by "fimo.qsub"
   excludeBED <- read.table(file.path(dir_in, file))
   
@@ -168,22 +168,41 @@ for (file in files) {
   genome_id <- strsplit(file, ".", fixed = TRUE)[[1]][1]
 
   # Get chromosome info and match it to the chromosome order in excludeBED
-  chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome = genome_id)
-  main_chroms <- chrom_data[!grepl("_", chrom_data$chrom),]
-  chrom_data <- chrom_data[chrom_data$chrom %in% seqlevels(denyGR), ]
-  chrom_data <- chrom_data[match(seqlevels(denyGR), chrom_data$chrom), ]
-
-  # Check if chromosome order is the same
-  if (!all.equal(seqlevels(denyGR), chrom_data$chrom)) {
-    print(paste("Chromosome order does not match for", genome_id, "genome."))
-    break
+  if (genome_id=="TAIR10"){
+    
+    chrom_data <- GenomeInfoDb::getChromInfoFromNCBI("TAIR10") # TAIR10 not on UCSC
+    main_chroms <- chrom_data[!grepl("_", chrom_data$SequenceName),]
+    chrom_data <- chrom_data[chrom_data$SequenceName %in% seqlevels(denyGR), ]
+    chrom_data <- chrom_data[match(seqlevels(denyGR), chrom_data$SequenceName), ]
+    
+    # Check if chromosome order is the same
+    if (!all.equal(seqlevels(denyGR), chrom_data$SequenceName)) {
+      print(paste("Chromosome order does not match for", genome_id, "genome."))
+      break
+    }
+    seqlengths(denyGR) <- chrom_data$SequenceLength
+    isCircular(denyGR) <- chrom_data$circular
+    genome(denyGR)     <- genome_id
+    
+  } else{
+    
+    chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome = genome_id)
+    main_chroms <- chrom_data[!grepl("_", chrom_data$chrom),]
+    chrom_data <- chrom_data[chrom_data$chrom %in% seqlevels(denyGR), ]
+    chrom_data <- chrom_data[match(seqlevels(denyGR), chrom_data$chrom), ]
+  
+    # Check if chromosome order is the same
+    if (!all.equal(seqlevels(denyGR), chrom_data$chrom)) {
+      print(paste("Chromosome order does not match for", genome_id, "genome."))
+      break
+    }
+    
+    # Assign seqinfo data
+    seqlengths(denyGR) <- chrom_data$size
+    isCircular(denyGR) <- chrom_data$circular
+    genome(denyGR)     <- genome_id
   }
-
-  # Assign seqinfo data
-  seqlengths(denyGR) <- chrom_data$size
-  isCircular(denyGR) <- chrom_data$circular
-  genome(denyGR)     <- genome_id
-
+  # 
   # Reformat output file name
   fileNameOut <- sub("blacklist", "Excludable", file, ignore.case = TRUE)
   fileNameOut <- sub("black", "Excludable", fileNameOut, ignore.case = TRUE)
@@ -212,7 +231,7 @@ for (file in files) {
   )
   if (missing != "") {missing = missing}
   else{missing="None"}
-  
+
   # Append relevant information to dataframe
   d <- data.frame(fileNameOut,
                    genome_id,
@@ -231,38 +250,95 @@ for (file in files) {
 }
 
 Source <- c(
-'http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/ce10-C.elegans',
-'http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/dm3-D.melanogaster/',
-'https://www.encodeproject.org/files/ENCFF200UUD/',
-'https://www.encodeproject.org/files/ENCFF001TDO/',
-'https://www.encodeproject.org/files/ENCFF001THR/',
-'https://www.encodeproject.org/files/ENCFF055QTV/',
-'https://www.encodeproject.org/files/ENCFF039QTN/',
-'https://www.encodeproject.org/files/ENCFF023CZC/',
-'https://www.encodeproject.org/files/ENCFF356LFX/',
-'https://www.encodeproject.org/files/ENCFF419RSJ/',
-'https://github.com/Boyle-Lab/Blacklist/raw/master/lists/hg38-blacklist.v2.bed.gz',
-'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/encodeBlacklist/hg38.encode.blacklist.bed',
-'https://www.encodeproject.org/files/ENCFF220FIN/',
-'https://raw.githubusercontent.com/ewimberley/peakPass/main/excludedlists/hg38/peakPass60Perc_sorted.bed',
-'https://www.encodeproject.org/files/ENCFF940NTE/',
-'https://www.encodeproject.org/files/ENCFF269URO/',
-'https://www.encodeproject.org/files/ENCFF790DJT/',
-'https://www.encodeproject.org/files/ENCFF226BDM/',
-'https://www.encodeproject.org/files/ENCFF999QPV/',
-'https://www.encodeproject.org/files/ENCFF547MET/',
-'https://www.encodeproject.org/files/ENCFF759PJK/',
-'https://www.encodeproject.org/files/ENCFF299EZH/'
+  'https://github.com/Boyle-Lab/Blacklist/blob/master/lists/ce10-blacklist.v2.bed.gz?raw=true', # ce10.Boyle_from_Excludable.v2.Excludable.bed
+  'http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/ce10-C.elegans', # ce10.Kundaje.ce10-Excludable.bed
+  'https://github.com/Boyle-Lab/Blacklist/blob/master/lists/ce11-blacklist.v2.bed.gz?raw=true', # ce11.Boyle_from_Excludable.v2.Excludable.bed
+  'https://raw.githubusercontent.com/adomingues/redl_domingues_et_al_dev_2020/main/blacklisted.bed', # danRer10.Domingues.Excludable.bed
+  'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8183574/bin/NIHMS1695157-supplement-Supplementary_Table_1-19.zip', # danRer10.Yang.Excludable.bed
+  'https://github.com/Boyle-Lab/Blacklist/blob/master/lists/dm3-blacklist.v2.bed.gz', # dm3.Boyle_from_Excludable.v2.Excludable.bed
+  'http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/dm3-D.melanogaster/', # dm3.Kundaje.dm3-Excludable.bed
+  'https://github.com/Boyle-Lab/Blacklist/blob/master/lists/dm6-blacklist.v2.bed.gz', # dm6.Boyle_from_Excludable.v2.Excludable.bed
+  'https://www.encodeproject.org/files/ENCFF200UUD/', # hg19.Bernstein.Mint_Excludable_hg19.bed
+  'https://www.encodeproject.org/files/ENCFF001TDO/', # hg19.Birney.wgEncodeDacMapabilityConsensusExcludable.bed
+  'https://github.com/Boyle-Lab/Blacklist/blob/master/lists/hg19-blacklist.v2.bed.gz?raw=true', #hg19.Boyle_from_Excludable.v2.Excludable.bed
+  'https://www.encodeproject.org/files/ENCFF001THR/', # hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable.bed
+  'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/combinedBlacklist/mm10.full.blacklist.bed', # hg19.Lareau_full.Excludable.bed
+  'https://www.encodeproject.org/files/ENCFF055QTV/', # hg19.Wold.hg19mitoExcludable.bed
+  'https://www.encodeproject.org/files/ENCFF039QTN/', # hg19.Yeo.eCLIP_Excludableregions.hg19.bed
+  'https://www.encodeproject.org/files/ENCFF023CZC/', # hg38.Bernstein.Mint_Excludable_GRCh38.bed
+  'https://www.encodeproject.org/files/ENCFF356LFX/', # hg38.Kundaje.GRCh38_unified_Excludable.bed
+  'https://www.encodeproject.org/files/ENCFF419RSJ/' , # hg38.Kundaje.GRCh38.Excludable.bed
+  'https://github.com/Boyle-Lab/Blacklist/blob/master/lists/hg38-blacklist.v2.bed.gz?raw=true' , # hg38.Kundaje.with_Boyle.v2.bed
+  'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/combinedBlacklist/hg38.full.blacklist.bed' , # hg38.Lareau_full.Excludable.bed
+  'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/encodeBlacklist/hg38.encode.blacklist.bed' , # hg38.Lareau.MT_excludable_set.bed
+  'https://www.encodeproject.org/files/ENCFF220FIN/' , # hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.bed
+  'https://raw.githubusercontent.com/ewimberley/peakPass/main/excludedlists/hg38/peakPass60Perc_sorted.bed' , # hg38.Wimberley.peakpass_excludable_set.bed
+  'https://www.encodeproject.org/files/ENCFF940NTE/' , # hg38.Wold.hg38mitoExcludable.bed
+  'https://www.encodeproject.org/files/ENCFF269URO/' , # hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.bed
+  'https://github.com/Boyle-Lab/Blacklist/blob/master/lists/mm10-blacklist.v2.bed.gz?raw=true' , # mm10.Boyle_from_Excludable.v2.Excludable.bed
+  'https://www.encodeproject.org/files/ENCFF790DJT/' , # mm10.Hardison.Excludable.full.bed
+  'https://www.encodeproject.org/files/ENCFF226BDM/' , # mm10.Hardison.psuExcludable.mm10.bed
+  'https://www.encodeproject.org/files/ENCFF999QPV/' , # mm10.Kundaje.anshul.Excludable.mm10.bed
+  'https://www.encodeproject.org/files/ENCFF547MET/' , # mm10.Kundaje.mm10.Excludable.bed
+  'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/combinedBlacklist/mm10.full.blacklist.bed' , # mm10.Lareau_full.Excludable.bed
+  'https://www.encodeproject.org/files/ENCFF759PJK/' , # mm10.Wold.mm10mitoExcludable.bed
+  'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/combinedBlacklist/mm9.full.blacklist.bed' , # mm9.Lareau_full.Excludable.bed
+  'https://www.encodeproject.org/files/ENCFF299EZH/',  # mm9.Wold.mm9mitoExcludable.bed
+  'https://raw.githubusercontent.com/sklasfeld/GreenscreenProject/main/data/arabidopsis_blacklist_20inputs.bed', #TAIR10.Klasfeld_from_Excludable.Excludable.bed
+  'https://github.com/sklasfeld/GreenscreenProject/blob/main/data/arabidopsis_greenscreen_20inputs.bed', #TAIR10.Klasfeld_from_Greenscreen.Excludable.bed
+  'https://raw.githubusercontent.com/ewimberley/peakPass/main/excludedlists/tair10/predicted_excluded_list_sorted_0.6.bed' #TAIR10.Wimberley_peakpass.Excludable.bed
 )
+
+Year_created <- c(
+  2018, # ce10.Boyle_from_Excludable.v2.Excludable.bed
+  2012, # ce10.Kundaje.ce10-Excludable.bed
+  2018, # ce11.Boyle_from_Excludable.v2.Excludable.bed
+  2020, # danRer10.Domingues.Excludable.bed
+  2021, # danRer10.Yang.Excludable.bed
+  2018, # dm3.Boyle_from_Excludable.v2.Excludable.bed
+  2012, # dm3.Kundaje.dm3-Excludable.bed
+  2018, # dm6.Boyle_from_Excludable.v2.Excludable.bed
+  2019, # hg19.Bernstein.Mint_Excludable_hg19.bed
+  2011, # hg19.Birney.wgEncodeDacMapabilityConsensusExcludable.bed
+  2018, # hg19.Boyle_from_Excludable.v2.Excludable.bed
+  2011, # hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable.bed
+  2017, # hg19.Lareau_full.Excludable.bed
+  2016, # hg19.Wold.hg19mitoExcludable.bed
+  2019, # hg19.Yeo.eCLIP_Excludableregions.hg19.bed
+  2019, # hg38.Bernstein.Mint_Excludable_GRCh38.bed
+  2020, # hg38.Kundaje.GRCh38_unified_Excludable.bed
+  2016, # hg38.Kundaje.GRCh38.Excludable.bed
+  2018, # hg38.Kundaje.with_Boyle.v2.bed
+  2017, # hg38.Lareau_full.Excludable.bed
+  2016, # hg38.Lareau.MT_excludable_set.bed
+  2016, # hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.bed
+  2021, # hg38.Wimberley.peakpass_excludable_set.bed
+  2016, # hg38.Wold.hg38mitoExcludable.bed
+  2019, # hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.bed
+  2018, # mm10.Boyle_from_Excludable.v2.Excludable.bed
+  2016, # mm10.Hardison.Excludable.full.bed
+  2016, # mm10.Hardison.psuExcludable.mm10.bed
+  2016, # mm10.Kundaje.anshul.Excludable.mm10.bed
+  2016, # mm10.Kundaje.mm10.Excludable.bed
+  2017, # mm10.Lareau_full.Excludable.bed
+  2016, # mm10.Wold.mm10mitoExcludable.bed
+  2017, # mm9.Lareau_full.Excludable.bed
+  2016, # mm9.Wold.mm9mitoExcludable.bed
+  2021, #TAIR10.Klasfeld_from_Excludable.Excludable.bed
+  2021, #TAIR10.Klasfeld_from_Greenscreen.Excludable.bed
+  2021 #TAIR10.Wimberley_peakpass.Excludable.bed
+)
+
+
 
 
 exclude_information <- exclude_information[-1,]
 exclude_information <- cbind(exclude_information, Source)
-# exclude_information <- cbind(exclude_information, Source)
+exclude_information <- cbind(exclude_information, Year_created)
 # write gap information to csv
 write.csv(
   exclude_information,
-  file="inst/extdata/table_excluderanges.csv",
+  file="/Users/jogata/Documents/GitHub/excluderanges/inst/extdata/table_excluderanges.csv",
   row.names = F)
 
 
@@ -314,7 +390,7 @@ for (genome_id in genomes) {
     fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
     # Save as Rds object
     saveRDS(object = gapsGR, file = file.path(dir_in, fileNameOut))
-    
+
     # This small section is for creating a table on gap files
     # Get number of regions
     length <- length(gapsGR)
