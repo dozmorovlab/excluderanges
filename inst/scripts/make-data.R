@@ -184,6 +184,20 @@ for (file in files) {
     isCircular(denyGR) <- chrom_data$circular
     genome(denyGR)     <- genome_id
     
+  } else if(genome_id=="T2T"){
+    chrom_data <- GenomeInfoDb::getChromInfoFromNCBI("T2T-CHM13v2.0") # T2T not on UCSC
+    main_chroms <- chrom_data[!grepl("_", chrom_data$SequenceName),]
+    chrom_data <- chrom_data[chrom_data$SequenceName %in% seqlevels(denyGR), ]
+    chrom_data <- chrom_data[match(seqlevels(denyGR), chrom_data$SequenceName), ]
+    
+    # Check if chromosome order is the same
+    if (!all.equal(seqlevels(denyGR), chrom_data$SequenceName)) {
+      print(paste("Chromosome order does not match for", genome_id, "genome."))
+      break
+    }
+    seqlengths(denyGR) <- chrom_data$SequenceLength
+    isCircular(denyGR) <- chrom_data$circular
+    genome(denyGR)     <- genome_id
   } else{
     
     chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome = genome_id)
@@ -263,6 +277,7 @@ Source <- c(
   'https://github.com/Boyle-Lab/Blacklist/blob/master/lists/hg19-blacklist.v2.bed.gz?raw=true', #hg19.Boyle_from_Excludable.v2.Excludable.bed
   'https://www.encodeproject.org/files/ENCFF001THR/', # hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable.bed
   'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/combinedBlacklist/mm10.full.blacklist.bed', # hg19.Lareau_full.Excludable.bed
+  'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/peaks/hg19_peaks.narrowPeak', # hg19.Lareau_MT.excludable.bed
   'https://www.encodeproject.org/files/ENCFF055QTV/', # hg19.Wold.hg19mitoExcludable.bed
   'https://www.encodeproject.org/files/ENCFF039QTN/', # hg19.Yeo.eCLIP_Excludableregions.hg19.bed
   'https://www.encodeproject.org/files/ENCFF023CZC/', # hg38.Bernstein.Mint_Excludable_GRCh38.bed
@@ -281,9 +296,13 @@ Source <- c(
   'https://www.encodeproject.org/files/ENCFF999QPV/' , # mm10.Kundaje.anshul.Excludable.mm10.bed
   'https://www.encodeproject.org/files/ENCFF547MET/' , # mm10.Kundaje.mm10.Excludable.bed
   'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/combinedBlacklist/mm10.full.blacklist.bed' , # mm10.Lareau_full.Excludable.bed
+  'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/peaks/mm10_peaks.narrowPeak', # mm10.Lareau_MT.excludable.bed
   'https://www.encodeproject.org/files/ENCFF759PJK/' , # mm10.Wold.mm10mitoExcludable.bed
   'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/combinedBlacklist/mm9.full.blacklist.bed' , # mm9.Lareau_full.Excludable.bed
+  'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/peaks/mm9_peaks.narrowPeak', # mm9.Lareau_MT.excludable.bed
   'https://www.encodeproject.org/files/ENCFF299EZH/',  # mm9.Wold.mm9mitoExcludable.bed
+  'New, ExcludeRanges', # T2T.Dozmorov-Ogata.excludable.bed
+  'https://raw.githubusercontent.com/caleblareau/mitoblacklist/master/peaks/chm13v2.0_peaks.narrowPeak', # T2T.Lareau_MT.excludable.bed
   'https://raw.githubusercontent.com/sklasfeld/GreenscreenProject/main/data/arabidopsis_blacklist_20inputs.bed', #TAIR10.Klasfeld_from_Excludable.Excludable.bed
   'https://github.com/sklasfeld/GreenscreenProject/blob/main/data/arabidopsis_greenscreen_20inputs.bed', #TAIR10.Klasfeld_from_Greenscreen.Excludable.bed
   'https://raw.githubusercontent.com/ewimberley/peakPass/main/excludedlists/tair10/predicted_excluded_list_sorted_0.6.bed' #TAIR10.Wimberley_peakpass.Excludable.bed
@@ -303,6 +322,7 @@ Year_created <- c(
   2018, # hg19.Boyle_from_Excludable.v2.Excludable.bed
   2011, # hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable.bed
   2017, # hg19.Lareau_full.Excludable.bed
+  2017, # hg19.Lareau_MT.excludable.bed
   2016, # hg19.Wold.hg19mitoExcludable.bed
   2019, # hg19.Yeo.eCLIP_Excludableregions.hg19.bed
   2019, # hg38.Bernstein.Mint_Excludable_GRCh38.bed
@@ -321,9 +341,13 @@ Year_created <- c(
   2016, # mm10.Kundaje.anshul.Excludable.mm10.bed
   2016, # mm10.Kundaje.mm10.Excludable.bed
   2017, # mm10.Lareau_full.Excludable.bed
+  2017, # mm10.Lareau_MT.excludable.bed
   2016, # mm10.Wold.mm10mitoExcludable.bed
   2017, # mm9.Lareau_full.Excludable.bed
+  2017, # mm9.Lareau_MT.excludable.bed
   2016, # mm9.Wold.mm9mitoExcludable.bed
+  2022, # T2T.Dozmorov-Ogata.excludable.bed
+  2022, # T2T.Lareau_MT.excludable.bed
   2021, #TAIR10.Klasfeld_from_Excludable.Excludable.bed
   2021, #TAIR10.Klasfeld_from_Greenscreen.Excludable.bed
   2021 #TAIR10.Wimberley_peakpass.Excludable.bed
@@ -333,14 +357,18 @@ Year_created <- c(
 
 
 exclude_information <- exclude_information[-1,]
-exclude_information <- cbind(exclude_information, Source)
 exclude_information <- cbind(exclude_information, Year_created)
-# write gap information to csv
-write.csv(
+exclude_information <- cbind(exclude_information, Source)
+# write gap information to xlsx, NEED TO UPDATE TO FIG.PATH
+writexl::write_xlsx(
   exclude_information,
-  file="/Users/jogata/Documents/GitHub/excluderanges/inst/extdata/table_excluderanges.csv",
-  row.names = F)
+  "/Users/jogata/Documents/GitHub/excluderanges/inst/extdata/table_excluderanges.xlsx"
+  )
 
+writexl::write_xlsx(
+  exclude_information,
+  "~/Documents/GitHub/decluderanges.dev/manuscript/supplementary/Table_S1/Table_excluderanges.xlsx"
+)
 
 
 
