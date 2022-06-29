@@ -4,16 +4,18 @@
 ### -------------------------------------------------------------------------
 ###
 
-# excluderanges package currently contains 19 Rds objects. The original and 
+# [ --- ] = pending edits
+
+# [ --- ] excluderanges package currently contains 19 Rds objects. The original and 
 # processed data are available at 
-# https://drive.google.com/drive/folders/124DZtsU0YVWqkb7dgu8Nk6b3N8-ShVSC?usp=sharing
+# [ --- ] https://drive.google.com/drive/folders/124DZtsU0YVWqkb7dgu8Nk6b3N8-ShVSC?usp=sharing
 
 # The object names are structured as "<genome assembly>.<lab>.<original file name>", 
 # e.g., "hg19.Birney.wgEncodeDacMapabilityConsensusExcludable".
 
 # # ENCODE
 # ## hg19
-# 
+#   
 # # Mint_Blacklist_hg19.bed.gz
 # # https://www.encodeproject.org/files/ENCFF200UUD/, Bradley Bernstein, Broad
 # wget https://www.encodeproject.org/files/ENCFF200UUD/@@download/ENCFF200UUD.bed.gz
@@ -150,7 +152,7 @@ colnames(exclude_information) <- c('Object',
 files <- list.files(path = dir_in, pattern = "bed$", ignore.case=T)
 # In each subfolder
 for (file in files) {
-  print(file)
+  
   # Read "fimo.bed" created by "fimo.qsub"
   excludeBED <- read.table(file.path(dir_in, file))
   
@@ -171,7 +173,7 @@ for (file in files) {
   if (genome_id=="TAIR10"){
     
     chrom_data <- GenomeInfoDb::getChromInfoFromNCBI("TAIR10") # TAIR10 not on UCSC
-    main_chroms <- chrom_data[!grepl("_", chrom_data$SequenceName),]
+    main_chroms <- chrom_data[!grepl("_", chrom_data$SequenceName),] 
     chrom_data <- chrom_data[chrom_data$SequenceName %in% seqlevels(denyGR), ]
     chrom_data <- chrom_data[match(seqlevels(denyGR), chrom_data$SequenceName), ]
     
@@ -184,7 +186,7 @@ for (file in files) {
     isCircular(denyGR) <- chrom_data$circular
     genome(denyGR)     <- genome_id
     
-  } else if(genome_id=="T2T"){
+  } else if(genome_id=="T2T"){ 
     chrom_data <- GenomeInfoDb::getChromInfoFromNCBI("T2T-CHM13v2.0") # T2T not on UCSC
     main_chroms <- chrom_data[!grepl("_", chrom_data$SequenceName),]
     chrom_data <- chrom_data[chrom_data$SequenceName %in% seqlevels(denyGR), ]
@@ -437,17 +439,22 @@ for (genome_id in genomes) {
   }
 }
 
-# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
-# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
-# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
-# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
-# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
-# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
-# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
-# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
-# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
-# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
-# NEED TO ADD HG38 CENTROMERE GAP, MANUALLY DOWNLOAD http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED
+
+hg38.centromere <- genomation::readBed('~/Documents/decluderanges_data/package_data/gap_data/hg38.UCSC.centromere.bed')
+fileNameOut <- 'hg38.UCSC.centromere.rds'
+length <- length(hg38.centromere)
+average <- round( mean( width( hg38.centromere)))
+genome_id <- 'hg38'
+saveRDS(object = hg38.centromere, file = file.path(dir_in, fileNameOut))
+df <- data.frame(fileNameOut, length, average, genome_id, 'UCSC', 3)
+colnames(df) <- c('Object',
+                  'Number of regions',
+                  'Average width of regions',
+                  'Assembly',
+                  'Lab',
+                  'Number of columns')
+# Add information to existing dataframe
+gap_information <- rbind(gap_information, df)
 
 Source <- c( 'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
 'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
@@ -471,16 +478,26 @@ Source <- c( 'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgt
 'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
 'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
 'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
-'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema'
+'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
+'http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED'
 )
+
 
 gap_information <- gap_information[-1,]
 gap_information <- cbind(gap_information, Source)
-# write gap information to csv
-write.csv(
+gap_information <- gap_information[order(gap_information$Object), ]
+
+# write gap information to xlsx
+writexl::write_xlsx(
   gap_information,
-  file="inst/extdata/table_gap.csv",
-  row.names = F)
+  "inst/extdata/table_gap.xlsx"
+  )
+
+# # saving to declude ranges
+# writexl::write_xlsx(
+#   gap_information,
+#   "~/Documents/GitHub/decluderanges.dev/manuscript/supplementary/Table_S2/Table_summary_of_assembly_features.xlsx"
+# )
 
 # # Number of samples per cell/tissue type?
 # library(ggplot2)
