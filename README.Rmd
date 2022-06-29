@@ -369,9 +369,9 @@ jaccard <- pheatmap(
 
 jaccard
 
-svg(file.path('man', 'figures', 'excluderanges_hg38_jaccard.svg'))
-jaccard
-dev.off()
+# svg(file.path('man', 'figures', 'excluderanges_hg38_jaccard.svg'))
+# jaccard
+# dev.off()
 ```
 
 ```{r echo=FALSE, eval=F}
