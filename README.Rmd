@@ -144,7 +144,7 @@ length
 # dev.off()
 ```
 
-```{r echo=FALSE, eval=T}
+```{r echo=FALSE, eval=F}
 knitr::include_graphics('man/figures/excluderanges_hg38_count.svg')
 ```
 
@@ -192,7 +192,7 @@ width_dist
 # dev.off()
 ```
 
-```{r echo=FALSE, eval=T}
+```{r echo=FALSE, eval=F}
 knitr::include_graphics('man/figures/excluderanges_hg38_width.svg')
 ```
 
@@ -223,7 +223,7 @@ coverage
 
 ```
 
-```{r echo=FALSE, eval=T}
+```{r echo=FALSE, eval=F}
 knitr::include_graphics('man/figures/excluderanges_hg38_sumwidth.svg')
 ```
 
@@ -326,7 +326,7 @@ cols.O <- c(
 rownames(mtx_to_plot) <- colnames(mtx_to_plot) <- str_trunc(name_short, width = 25)
 
 # change cell size of heatmap
-cell.size = 30
+cell.size = 25
 text.size = cell.size/2
 
 # create clusters
@@ -355,7 +355,7 @@ jaccard <- pheatmap(
 
   # tree options
   treeheight_row = 0,
-  treeheight_col = 20,
+  treeheight_col = 15,
 
   # i.e. how fine is the resolution
   breaks = quants,
@@ -369,12 +369,12 @@ jaccard <- pheatmap(
 
 jaccard
 
-# svg(file.path('man', 'figures', 'excluderanges_hg38_jaccard.svg'), width = 5.5, height = 2)
-# jaccard
-# dev.off()
+svg(file.path('man', 'figures', 'excluderanges_hg38_jaccard.svg'))
+jaccard
+dev.off()
 ```
 
-```{r echo=FALSE, eval=T}
+```{r echo=FALSE, eval=F}
 knitr::include_graphics('man/figures/excluderanges_hg38_jaccard.svg')
 ```
 
