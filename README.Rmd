@@ -138,13 +138,13 @@ length <- ggplot(length_data, aes(x = Count, y = reorder(Set, Count), fill = Set
   theme(legend.position = "none")
 
 length
-# ggsave("man/figures/excluderanges_hg38_count.png", width = 5.5, height = 2)
-svg(file.path('man', 'figures', 'excluderanges_hg38_count.svg'), width = 5.5, height = 2)
-length
-dev.off()
+
+# svg(file.path('man', 'figures', 'excluderanges_hg38_count.svg'), width = 5.5, height = 2)
+# length
+# dev.off()
 ```
 
-```{r echo=FALSE, eval=FALSE}
+```{r echo=FALSE, eval=T}
 knitr::include_graphics('man/figures/excluderanges_hg38_count.svg')
 ```
 
@@ -177,18 +177,23 @@ Median <- as.integer(
 width_dist_data <- data.frame(Width, Source, Median)
 
 # plot distribution of region widths
-ggplot(width_dist_data, aes( x = log10(Width), y = reorder( Source, Median ), fill = Source )) +
+width_dist <- ggplot(width_dist_data, aes( x = log10(Width), y = reorder( Source, Median ), fill = Source )) +
   ggridges::geom_density_ridges() +
   labs( y = NULL,
         x = NULL,
         title = 'Width distribution (bp), log10(width)' ) +
   theme_bw() +
   theme(legend.position = 'none')
-# ggsave("man/figures/excluderanges_hg38_width.png", width = 5.5, height = 2)
+
+width_dist
+
+# svg(file.path('man', 'figures', 'excluderanges_hg38_width.svg'), width = 5.5, height = 2)
+# width_dist
+# dev.off()
 ```
 
-```{r echo=FALSE, eval=FALSE}
-knitr::include_graphics('man/figures/excluderanges_hg38_width.png')
+```{r echo=FALSE, eval=T}
+knitr::include_graphics('man/figures/excluderanges_hg38_width.svg')
 ```
 
 We can investigate the total width of each set of excludable ranges, log 10 scale.
@@ -201,7 +206,7 @@ width_data<- data.frame(
 )
 
 # find the total width of each excludable region
-ggplot(width_data, aes(x = Count, y = reorder(Set, Count), fill = Set)) + 
+coverage <- ggplot(width_data, aes(x = Count, y = reorder(Set, Count), fill = Set)) + 
   labs(y = NULL,
        x = NULL,
        title = "Total Coverage, log10 scale") +
@@ -209,14 +214,20 @@ ggplot(width_data, aes(x = Count, y = reorder(Set, Count), fill = Set)) +
   scale_x_log10()  +
   theme_bw() +
   theme(legend.position = "none")
-# ggsave("man/figures/excluderanges_hg38_sumwidth.png", width = 6.5, height = 2)
+
+coverage
+
+# svg(file.path('man', 'figures', 'excluderanges_hg38_sumwidth.svg'), width = 5.5, height = 2)
+# coverage
+# dev.off()
+
 ```
 
-```{r echo=FALSE, eval=FALSE}
-knitr::include_graphics('man/figures/excluderanges_hg38_sumwidth.png')
+```{r echo=FALSE, eval=T}
+knitr::include_graphics('man/figures/excluderanges_hg38_sumwidth.svg')
 ```
 
-We can compare Jaccard overlap between hg38 excludable sets. Given two sets $ A, \: B $, the Jaccard overlap between $A, \: B$ is defined as $\frac{A \cap B}{A \cup B}$. Jaccard overlap = 1  $ \Leftrightarrow A = B $; Jaccard overlap = 0 $ \Leftrightarrow A \cap B = \oslash$. 
+We can compare Jaccard overlap between hg38 excludable sets. 
 
 ```{r excluderanges_hg38_jaccard, warning=FALSE, fig.width=6.5, fig.height=6}
 library(pheatmap)
@@ -322,7 +333,7 @@ text.size = cell.size/2
 cluster.method <- "euclidean"
 
 # plot matrix
-pheatmap(
+jaccard <- pheatmap(
 
   # data
   data.matrix(mtx_to_plot),
@@ -355,10 +366,16 @@ pheatmap(
   angle_col = 45
 
 )
+
+jaccard
+
+# svg(file.path('man', 'figures', 'excluderanges_hg38_jaccard.svg'), width = 5.5, height = 2)
+# jaccard
+# dev.off()
 ```
 
-```{r echo=FALSE, eval=FALSE}
-knitr::include_graphics('man/figures/excluderanges_hg38_jaccard.png')
+```{r echo=FALSE, eval=T}
+knitr::include_graphics('man/figures/excluderanges_hg38_jaccard.svg')
 ```
 
 Note that some excludable ranges objects contain six columns, implying there may be 
