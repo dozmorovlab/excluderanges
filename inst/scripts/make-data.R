@@ -4,8 +4,6 @@
 ### -------------------------------------------------------------------------
 ###
 
-# [ --- ] = pending edits
-
 # [ --- ] excluderanges package currently contains 19 Rds objects. The original and 
 # processed data are available at 
 # [ --- ] https://drive.google.com/drive/folders/124DZtsU0YVWqkb7dgu8Nk6b3N8-ShVSC?usp=sharing
@@ -139,12 +137,15 @@ library(readr)
 # dir_in <- "/Users/mdozmorov/Documents/Data/GoogleDrive/excludedata"
 dir_in <- "/Users/jogata/Documents/decluderanges_data/package_data/denydata"
 
+# directory where output tables are saved
+# save_dir <- file.path('~', 'Documents', 'Github', 'decluderanges.dev', 'manuscript')
+
 exclude_information <- matrix(NA, nrow = 1, ncol = 5)
 colnames(exclude_information) <- c('Object', 
                                    'Assembly', 
                                    'Number of regions', 
                                    'Min : median : max of set', 
-                                   'Chromosomes with no excludable regions'
+                                   'Chromosomes with no regions'
                                    )
 
 
@@ -220,11 +221,11 @@ for (file in files) {
   }
   # 
   # Reformat output file name
-  fileNameOut <- sub("blacklist", "Excludable", file, ignore.case = TRUE)
-  fileNameOut <- sub("black", "Excludable", fileNameOut, ignore.case = TRUE)
+  #fileNameOut <- sub("blacklist", "Excludable", file, ignore.case = TRUE)
+  #fileNameOut <- sub("black", "Excludable", fileNameOut, ignore.case = TRUE)
 
   # Save as Rds object. file extension is changed to rds
-  saveRDS(object = denyGR, file = file.path(dir_in, sub("bed$", "rds", fileNameOut)))
+  saveRDS(object = denyGR, file = file.path(dir_in, sub("bed$", "rds", file)))
   # excludeGR <- readRDS(file = file.path(dir_in, sub("bed$", "rds", fileNameOut)))
 
   # This small section is for creating a table on excludable set files
@@ -249,7 +250,7 @@ for (file in files) {
   else{missing="None"}
 
   # Append relevant information to dataframe
-  d <- data.frame(fileNameOut,
+  d <- data.frame(file,
                    genome_id,
                    length,
                    mmm,
@@ -259,7 +260,7 @@ for (file in files) {
                     'Assembly',
                     'Number of regions',
                     'Min : median : max of set',
-                    'Chromosomes with no excludable regions'
+                    'Chromosomes with no regions'
                    )
   # Add information to existing dataframe
   exclude_information <- rbind(exclude_information, d)
@@ -310,7 +311,7 @@ Source <- c(
   'https://raw.githubusercontent.com/ewimberley/peakPass/main/excludedlists/tair10/predicted_excluded_list_sorted_0.6.bed' #TAIR10.Wimberley_peakpass.Excludable.bed
 )
 
-Year_created <- c(
+Year <- c(
   2018, # ce10.Boyle_from_Excludable.v2.Excludable.bed
   2012, # ce10.Kundaje.ce10-Excludable.bed
   2018, # ce11.Boyle_from_Excludable.v2.Excludable.bed
@@ -355,44 +356,25 @@ Year_created <- c(
   2021 #TAIR10.Wimberley_peakpass.Excludable.bed
 )
 
-
-
-
 exclude_information <- exclude_information[-1,]
-exclude_information <- cbind(exclude_information, Year_created)
+exclude_information <- cbind(exclude_information, 'Year created or updated'=Year)
 exclude_information <- cbind(exclude_information, Source)
-# write gap information to xlsx, NEED TO UPDATE TO FIG.PATH
-writexl::write_xlsx(
-  exclude_information,
-  "/Users/jogata/Documents/GitHub/excluderanges/inst/extdata/table_excluderanges.xlsx"
-  )
-
-writexl::write_xlsx(
-  exclude_information,
-  "~/Documents/GitHub/decluderanges.dev/manuscript/supplementary/Table_S1/Table_excluderanges.xlsx"
-)
-
-
-
-
-
 
 
 # create empty dataframe, used for creating .csv file
-gap_information <- matrix(NA, nrow = 1, ncol = 6)
+gap_information <- matrix(NA, nrow = 1, ncol = 5)
 colnames(gap_information) <- c('Object',
-                               'Number of regions',
-                               'Average width of regions',
                                'Assembly',
-                               'Lab',
-                               'Number of columns')
+                               'Number of regions',
+                               'Min : median : max of set',
+                               'Chromosomes with no regions'
+                               )
 
 # The following example demonstrates how the UCSC gaps data were processed
 # All genomes
 genomes <- c("hg19", "hg38", "mm9", "mm10")
 # Process each genome
 for (genome_id in genomes) {
-  print(paste("Genome", genome_id))
   # Get chromosome info
   chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome = genome_id)
   # Get genome-specific gaps table
@@ -407,6 +389,8 @@ for (genome_id in genomes) {
     gaps_selected <- gaps[gaps$type == gap_type, ]
     gapsGR <- makeGRangesFromDataFrame(gaps_selected, keep.extra.columns = TRUE)
     # Select seqinfo data for the gaps object
+    chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome=genome_id)
+    main_chroms <- chrom_data[!grepl("_", chrom_data$chrom),]
     chrom_data_subset <- chrom_data[chrom_data$chrom %in% seqlevels(gapsGR), ]
     chrom_data_subset <- chrom_data_subset[match(seqlevels(gapsGR), chrom_data_subset$chrom), ]
     if (!all(seqlevels(gapsGR) == chrom_data_subset$chrom)) {
@@ -421,38 +405,66 @@ for (genome_id in genomes) {
     # Save as Rds object
     saveRDS(object = gapsGR, file = file.path(dir_in, fileNameOut))
 
-    # This small section is for creating a table on gap files
     # Get number of regions
     length <- length(gapsGR)
-    # Get average width of regions
-    average <- round( mean(width(gapsGR)), 0)
-    # Append relevant information to dataframe
-    df <- data.frame(fileNameOut, length, average, genome_id, 'UCSC', 9)
+    # Get minimum, median, and maximum region in each set
+    mmm <-
+      paste(
+        format( min(width(gapsGR)), big.mark = "," ),
+        format( median(width(gapsGR)), big.mark = "," ),
+        format( max(width(gapsGR)), big.mark = "," ),
+        sep = " : "
+      )
+    # find missing chromosomes in excludable set
+    missing <- gsub("chr", "",
+                    paste(
+                      as.character( main_chroms$chrom[ !(main_chroms$chrom %in% names( split( gapsGR, seqnames(gapsGR))))]),
+                      collapse = ", "
+                    )
+    )
+    if (missing != "") {missing = missing}
+    else{missing="None"}
+
+    df <- data.frame(fileNameOut, genome_id, length, mmm, missing)
     colnames(df) <- c('Object',
-                      'Number of regions',
-                      'Average width of regions',
                       'Assembly',
-                      'Lab',
-                      'Number of columns')
+                      'Number of regions',
+                      'Min : median : max of set',
+                      'Chromosomes with no regions'
+                      )
     # Add information to existing dataframe
     gap_information <- rbind(gap_information, df)
   }
 }
 
-
-hg38.centromere <- genomation::readBed('~/Documents/decluderanges_data/package_data/gap_data/hg38.UCSC.centromere.bed')
+gapsGR <- genomation::readBed('~/Documents/decluderanges_data/package_data/gap_data/hg38.UCSC.centromere.bed')
 fileNameOut <- 'hg38.UCSC.centromere.rds'
-length <- length(hg38.centromere)
-average <- round( mean( width( hg38.centromere)))
-genome_id <- 'hg38'
-saveRDS(object = hg38.centromere, file = file.path(dir_in, fileNameOut))
-df <- data.frame(fileNameOut, length, average, genome_id, 'UCSC', 3)
+# Get number of regions
+length <- length(gapsGR)
+# Get minimum, median, and maximum region in each set
+mmm <-
+  paste(
+    format( min(width(gapsGR)), big.mark = "," ),
+    format( median(width(gapsGR)), big.mark = "," ),
+    format( max(width(gapsGR)), big.mark = "," ),
+    sep = " : "
+  )
+# find missing chromosomes in excludable set
+missing <- gsub("chr", "",
+                paste(
+                  as.character( main_chroms$chrom[ !(main_chroms$chrom %in% names( split( gapsGR, seqnames(gapsGR))))]),
+                  collapse = ", "
+                )
+)
+if (missing != "") {missing = missing}else{
+  missing="None"}
+saveRDS(object = gapsGR, file = file.path(dir_in, fileNameOut))
+df <- data.frame(fileNameOut, genome_id, length, mmm, missing)
 colnames(df) <- c('Object',
-                  'Number of regions',
-                  'Average width of regions',
                   'Assembly',
-                  'Lab',
-                  'Number of columns')
+                  'Number of regions',
+                  'Min : median : max of set',
+                  'Chromosomes with no regions')
 # Add information to existing dataframe
 gap_information <- rbind(gap_information, df)
 
@@ -482,21 +494,30 @@ Source <- c( 'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgt
 'http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED'
 )
 
+Year <- c(
+          rep(2020, 7),
+          rep(2018, 5),
+          rep(2021, 7),
+          rep(2007, 3),
+          2021,
+          2022
+)
 
 gap_information <- gap_information[-1,]
+gap_information <- cbind(gap_information, 'Year created or updated'=Year)
 gap_information <- cbind(gap_information, Source)
 gap_information <- gap_information[order(gap_information$Object), ]
 
-# write gap information to xlsx
-writexl::write_xlsx(
-  gap_information,
-  "inst/extdata/table_gap.xlsx"
-  )
+information <- rbind(exclude_information, gap_information)
 
-# # saving to declude ranges
+writexl::write_xlsx(
+  information,
+  file.path('inst', 'extdata', 'table_excluderanges_and_gaps.xlsx')
+)
+
 # writexl::write_xlsx(
-#   gap_information,
-#   "~/Documents/GitHub/decluderanges.dev/manuscript/supplementary/Table_S2/Table_summary_of_assembly_features.xlsx"
+#   information,
+#   file.path(save_dir, 'Table_S1.xlsx')
 # )
 
 # # Number of samples per cell/tissue type?
