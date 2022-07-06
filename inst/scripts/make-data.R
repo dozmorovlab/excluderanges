@@ -135,7 +135,7 @@ library(rtracklayer)
 library(readr)
 # Folder with results
 # dir_in <- "/Users/mdozmorov/Documents/Data/GoogleDrive/excludedata"
-dir_in <- "/Users/jogata/Documents/decluderanges_data/package_data/denydata"
+dir_in <- "/Users/jogata/Documents/decluderanges_data/package_data"
 
 # directory where output tables are saved
 save_dir <- file.path('~', 'Documents', 'Github', 'decluderanges.dev')
@@ -150,12 +150,12 @@ colnames(exclude_information) <- c('Full ID',
 
 
 # All BED files
-files <- list.files(path = dir_in, pattern = "bed$", ignore.case=T)
+files <- list.files(path = file.path(dir_in, 'denydata'), pattern = "bed$", ignore.case=T)
 # In each subfolder
 for (file in files) {
   
   # Read "fimo.bed" created by "fimo.qsub"
-  excludeBED <- read.table(file.path(dir_in, file))
+  excludeBED <- read.table(file.path(dir_in, 'denydata', file))
   
   # Assign column names depending on the number of columns
   if (ncol(excludeBED) == 3) { # Only 3 columns
@@ -225,7 +225,7 @@ for (file in files) {
   #fileNameOut <- sub("black", "Excludable", fileNameOut, ignore.case = TRUE)
 
   # Save as Rds object. file extension is changed to rds
-  saveRDS(object = denyGR, file = file.path(dir_in, sub("bed$", "rds", file)))
+  saveRDS(object = denyGR, file = file.path(dir_in, 'denydata', sub("bed$", "rds", file)))
   # excludeGR <- readRDS(file = file.path(dir_in, sub("bed$", "rds", fileNameOut)))
 
   # This small section is for creating a table on excludable set files
@@ -402,7 +402,7 @@ for (genome_id in genomes) {
     # Construct file name, e.g., hg19.UCSC.gap_centromere.rds
     fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
     # Save as Rds object
-    saveRDS(object = gapsGR, file = file.path(dir_in, fileNameOut))
+    saveRDS(object = gapsGR, file = file.path(dir_in, 'denydata', fileNameOut))
     
     length <- length(gapsGR)
     # Get minimum, median, and maximum region in each set
@@ -440,42 +440,72 @@ for (genome_id in genomes) {
   }
 }
 
-# add centromere for hg38 to table
-gapsGR <- genomation::readBed('~/Documents/decluderanges_data/package_data/gap_data/hg38.UCSC.centromere.bed')
-fileNameOut <- 'hg38.UCSC.centromere.rds'
-length <- length(gapsGR)
-# Get minimum, median, and maximum region in each set
-mmm <-
-  paste(
-    format( min(width(gapsGR)), big.mark = "," ),
-    format( median(width(gapsGR)), big.mark = "," ),
-    format( max(width(gapsGR)), big.mark = "," ),
-    sep = " : "
+
+
+
+
+# add locally stored gap data (not part of UCSC gap table)
+files <- list.files(path = file.path(dir_in, 'gap_data'), pattern = "bed$", ignore.case=T)
+for (file in files){
+  gaps <- read.table(file.path(dir_in, 'gap_data', file))
+  
+  # Assign column names depending on the number of columns
+  if (ncol(gaps) == 3) { # Only 3 columns
+    colnames(gaps) <- c("chr", "start", "stop")
+  } else { # If more than 3 columns, consider the first 6
+    colnames(gaps) <- c("chr", "start", "stop", "name", "score", "strand")
+  }
+  
+  gapsGR <- GenomicRanges::makeGRangesFromDataFrame(gaps, keep.extra.columns = TRUE)
+  
+  if(file=='hg38.UCSC.centromere.bed'){
+    fileNameOut <- 'hg38.UCSC.centromere.bed'
+    genome_id <- 'hg38'
+  } else if (file=='hgUnique.hg38.bed'){
+    fileNameOut <- 'T2T.UCSC.hgUnique.hg38.bed'
+    genome_id <- 'T2T'
+  }
+  
+  length <- length(gapsGR)
+  # Get minimum, median, and maximum region in each set
+  mmm <-
+    paste(
+      format( min(width(gapsGR)), big.mark = "," ),
+      format( median(width(gapsGR)), big.mark = "," ),
+      format( max(width(gapsGR)), big.mark = "," ),
+      sep = " : "
+    )
+  # find missing chromosomes in set
+  missing <- gsub("chr", "",
+                  paste(
+                    as.character( main_chroms$chrom[ !(main_chroms$chrom %in% names( split( gapsGR, seqnames(gapsGR))))]),
+                    collapse = ", "
+                  )
   )
-# find missing chromosomes in excludable set
-missing <- gsub("chr", "",
-                paste(
-                  as.character( main_chroms$chrom[ !(main_chroms$chrom %in% names( split( gapsGR, seqnames(gapsGR))))]),
-                  collapse = ", "
-                )
-)
-if (missing != "") {missing = missing}else{missing="None"}
+  if (missing != "") {missing = missing}else{missing="None"}
+  saveRDS(object = gapsGR, file = file.path(dir_in, 'denydata', sub("bed$", "rds", file)))
+  
+  # Append relevant information to dataframe
+  d <- data.frame(fileNameOut,
+                  genome_id,
+                  length,
+                  mmm,
+                  missing)
+  
+  colnames(d) <- c('Full ID', 
+                   'Assembly', 
+                   'Number of regions', 
+                   'Min : median : max of set', 
+                   'Chromosomes with no regions'
+  )
+  # Add information to existing dataframe
+  gap_information <- rbind(gap_information, d)
+}
 
-# Append relevant information to dataframe
-d <- data.frame(fileNameOut,
-                genome_id,
-                length,
-                mmm,
-                missing)
 
-colnames(d) <- c('Full ID', 
-                 'Assembly', 
-                 'Number of regions', 
-                 'Min : median : max of set', 
-                 'Chromosomes with no regions'
-)
-# Add information to existing dataframe
-gap_information <- rbind(gap_information, d)
+
+
+
 
 # sources for each gaps set
 Source <- c( 'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
@@ -501,7 +531,8 @@ Source <- c( 'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgt
 'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
 'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
 'http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
-'http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED'
+'http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED',
+'https://hgdownload.soe.ucsc.edu/hubs/GCA/009/914/755/GCA_009914755.4/bbi/GCA_009914755.4_T2T-CHM13v2.0.hgUnique/hgUnique.hg38.bb'
 )
 
 # year for each gaps set
@@ -511,6 +542,7 @@ Year <- c(
           rep(2021, 7),
           rep(2007, 3),
           2021,
+          2022,
           2022
 )
 
