@@ -138,10 +138,10 @@ library(readr)
 dir_in <- "/Users/jogata/Documents/decluderanges_data/package_data/denydata"
 
 # directory where output tables are saved
-# save_dir <- file.path('~', 'Documents', 'Github', 'decluderanges.dev', 'manuscript')
+save_dir <- file.path('~', 'Documents', 'Github', 'decluderanges.dev')
 
 exclude_information <- matrix(NA, nrow = 1, ncol = 5)
-colnames(exclude_information) <- c('Object', 
+colnames(exclude_information) <- c('Full ID', 
                                    'Assembly', 
                                    'Number of regions', 
                                    'Min : median : max of set', 
@@ -246,21 +246,20 @@ for (file in files) {
                     collapse = ", "
                   )
   )
-  if (missing != "") {missing = missing}
-  else{missing="None"}
-
-  # Append relevant information to dataframe
-  d <- data.frame(file,
+  if(missing != ""){missing = missing}else{missing="None"}
+  
+  fileNameOut <- gsub('bed$', 'rds', file)
+  d <- data.frame(fileNameOut,
                    genome_id,
                    length,
                    mmm,
                    missing)
 
-  colnames(d) <- c('Object',
-                    'Assembly',
-                    'Number of regions',
-                    'Min : median : max of set',
-                    'Chromosomes with no regions'
+  colnames(d) <- c('Full ID', 
+                   'Assembly', 
+                   'Number of regions', 
+                   'Min : median : max of set', 
+                   'Chromosomes with no regions'
                    )
   # Add information to existing dataframe
   exclude_information <- rbind(exclude_information, d)
@@ -363,10 +362,10 @@ exclude_information <- cbind(exclude_information, Source)
 
 # create empty dataframe, used for creating .csv file
 gap_information <- matrix(NA, nrow = 1, ncol = 5)
-colnames(gap_information) <- c('Object',
-                               'Assembly',
-                               'Number of regions',
-                               'Min : median : max of set',
+colnames(gap_information) <- c('Full ID', 
+                               'Assembly', 
+                               'Number of regions', 
+                               'Min : median : max of set', 
                                'Chromosomes with no regions'
                                )
 
@@ -389,10 +388,10 @@ for (genome_id in genomes) {
     gaps_selected <- gaps[gaps$type == gap_type, ]
     gapsGR <- makeGRangesFromDataFrame(gaps_selected, keep.extra.columns = TRUE)
     # Select seqinfo data for the gaps object
-    chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome=genome_id)
-    main_chroms <- chrom_data[!grepl("_", chrom_data$chrom),]
     chrom_data_subset <- chrom_data[chrom_data$chrom %in% seqlevels(gapsGR), ]
     chrom_data_subset <- chrom_data_subset[match(seqlevels(gapsGR), chrom_data_subset$chrom), ]
+    chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome = genome_id)
+    main_chroms <- chrom_data[!grepl("_", chrom_data$chrom),]
     if (!all(seqlevels(gapsGR) == chrom_data_subset$chrom)) {
       stop("Chromosome names do not match.")
     }
@@ -404,8 +403,7 @@ for (genome_id in genomes) {
     fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
     # Save as Rds object
     saveRDS(object = gapsGR, file = file.path(dir_in, fileNameOut))
-
-    # Get number of regions
+    
     length <- length(gapsGR)
     # Get minimum, median, and maximum region in each set
     mmm <-
@@ -422,24 +420,29 @@ for (genome_id in genomes) {
                       collapse = ", "
                     )
     )
-    if (missing != "") {missing = missing}
-    else{missing="None"}
-
-    df <- data.frame(fileNameOut, genome_id, length, mmm, missing)
-    colnames(df) <- c('Object',
-                      'Assembly',
-                      'Number of regions',
-                      'Min : median : max of set',
-                      'Chromosomes with no regions'
-                      )
+    if (missing != "") {missing = missing}else{missing="None"}
+    
+    # Append relevant information to dataframe
+    d <- data.frame(fileNameOut,
+                    genome_id,
+                    length,
+                    mmm,
+                    missing)
+    
+    colnames(d) <- c('Full ID', 
+                     'Assembly', 
+                     'Number of regions', 
+                     'Min : median : max of set', 
+                     'Chromosomes with no regions'
+    )
     # Add information to existing dataframe
-    gap_information <- rbind(gap_information, df)
+    gap_information <- rbind(gap_information, d)
   }
 }
 
+# add centromere for hg38 to table
 gapsGR <- genomation::readBed('~/Documents/decluderanges_data/package_data/gap_data/hg38.UCSC.centromere.bed')
 fileNameOut <- 'hg38.UCSC.centromere.rds'
-# Get number of regions
 length <- length(gapsGR)
 # Get minimum, median, and maximum region in each set
 mmm <-
@@ -456,18 +459,25 @@ missing <- gsub("chr", "",
                   collapse = ", "
                 )
 )
-if (missing != "") {missing = missing}else{
-  missing="None"}
-saveRDS(object = gapsGR, file = file.path(dir_in, fileNameOut))
-df <- data.frame(fileNameOut, genome_id, length, mmm, missing)
-colnames(df) <- c('Object',
-                  'Assembly',
-                  'Number of regions',
-                  'Min : median : max of set',
-                  'Chromosomes with no regions')
-# Add information to existing dataframe
-gap_information <- rbind(gap_information, df)
+if (missing != "") {missing = missing}else{missing="None"}
 
+# Append relevant information to dataframe
+d <- data.frame(fileNameOut,
+                genome_id,
+                length,
+                mmm,
+                missing)
+
+colnames(d) <- c('Full ID', 
+                 'Assembly', 
+                 'Number of regions', 
+                 'Min : median : max of set', 
+                 'Chromosomes with no regions'
+)
+# Add information to existing dataframe
+gap_information <- rbind(gap_information, d)
+
+# sources for each gaps set
 Source <- c( 'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
 'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
 'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema',
@@ -494,6 +504,7 @@ Source <- c( 'http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgt
 'http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=1383614117_kpDvASW8YWQmcbxXyfWl9hv4fHnj&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_centromeres&hgta_ctDesc=table+browser+query+on+centromeres&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED'
 )
 
+# year for each gaps set
 Year <- c(
           rep(2020, 7),
           rep(2018, 5),
@@ -506,7 +517,8 @@ Year <- c(
 gap_information <- gap_information[-1,]
 gap_information <- cbind(gap_information, 'Year created or updated'=Year)
 gap_information <- cbind(gap_information, Source)
-gap_information <- gap_information[order(gap_information$Object), ]
+gap_information <- gap_information[order(gap_information$`Full ID`), ]
+
 
 information <- rbind(exclude_information, gap_information)
 
@@ -516,9 +528,9 @@ writexl::write_xlsx(
 )
 
 # writexl::write_xlsx(
-#   information,
-#   file.path(save_dir, 'Table_S1.xlsx')
-# )
+#                     information,
+#                     file.path(save_dir, 'full_table.xlsx')
+#                     )
 
 # # Number of samples per cell/tissue type?
 # library(ggplot2)
