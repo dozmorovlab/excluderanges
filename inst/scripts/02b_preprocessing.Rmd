@@ -1,0 +1,878 @@
+---
+title: "Download gap sets"
+author: "Jonathan Ogata, Mikhail Dozmorov"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    theme: cerulean
+    toc: yes
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+# Set up the environment
+library(knitr)
+opts_chunk$set(cache.path='cache/', fig.path='img/', cache=F, tidy=T, fig.keep='high', echo=F, dpi=100, warnings=F, message=F, comment=NA, warning=F, results='as.is', fig.width = 10, fig.height = 6) #out.width=700, 
+library(pander)
+panderOptions('table.split.table', Inf)
+set.seed(1)
+```
+
+# Libraries
+
+```{r libraries}
+library(GenomicRanges)
+library(rtracklayer)
+library(dplyr)
+library(readr)
+```
+
+# Settings
+
+```{r settings}
+# Project folder path
+dir_data <- "/Users/mdozmorov/Documents/Work/GitHub/excluderanges.dev/Mikhail"
+# Results folder, create if not exist
+dir_results <- file.path(dir_data, "gapSets_bed")
+if (!dir.exists(dir_results)) dir.create(dir_results)
+# dir_results <- '~/Desktop'
+# Create subdirs for specific results
+if (!dir.exists(file.path(dir_results, "bed"))) dir.create(file.path(dir_results, "bed"))
+if (!dir.exists(file.path(dir_results, "rds"))) dir.create(file.path(dir_results, "rds"))
+# Summary table
+fileNameOutSummary <- file.path(dir_results, "summary.csv")
+```
+
+# Download bigBedtoBed utility
+
+Tested on Mac, needs to be changed depending on OS.
+
+```{r}
+if (!file.exists(file.path(dir_results, 'bigBedtoBed'))) {
+  # download bigBedtoBed converter for mac -- this needs to be adjusted to work with other OS'.
+  # location of macOS bigBedtoBed
+  bigBedtoBed.URL <- 'http://hgdownload.cse.ucsc.edu/admin/exe/macOSX.x86_64/bigBedToBed'
+  # out file name
+  bigBedtoBed.out <- file.path(dir_results, 'bigBedtoBed')
+  # download bigBedtoBed
+  download.file(bigBedtoBed.URL, bigBedtoBed.out)
+  # adjust permissions
+  system(paste0('chmod 755 ',bigBedtoBed.out))
+} else {
+  bigBedtoBed.out <- file.path(dir_results, 'bigBedtoBed')
+}
+```
+
+# Create a table
+
+```{r}
+# Manually created matrix with information for download
+mtx <- rbind(
+             ### HUMAN NUMTs
+             c("hg19.UCSC.numtS", "hg19", "Human NumtS mitochondrial sequence", "2011", "UCSC", "numtS"),
+             ### MOUSE NUMTs
+             c("mm9.UCSC.numtS", "mm9", "Mouse NumtS mitochondrial sequence", "2011", "UCSC", "numtS"),
+  
+             ### HUMAN gap sets
+             ## T2T
+             c("T2T.CHM13.chm13.draft_v2.0.cen_mask", "T2T", "Centromeric satellite masking bed file (v2.0)", "2022", "CHM13", "https://s3-us-west-2.amazonaws.com/human-pangenomics/T2T/CHM13/assemblies/annotation/chm13.draft_v2.0.cen_mask.bed"),
+             c("T2T.CHM13.chm13.draft_v1.1.telomere", "T2T", "Telomere identified by the VGP pipeline (v1.1)", "2022", "CHM13", "https://s3-us-west-2.amazonaws.com/human-pangenomics/T2T/CHM13/assemblies/annotation/chm13.draft_v1.1.telomere.bed.gz"),
+             c("T2T.UCSC.censat", "T2T", "T2T peri/centromeric satellite annotation (v2.0, 20220329, CHM13 v2.0)", "2022", "UCSChub", "https://hgdownload.soe.ucsc.edu/hubs/GCA/009/914/755/GCA_009914755.4/bbi/GCA_009914755.4_T2T-CHM13v2.0.censat/censat.bb"),
+             c("T2T.UCSC.gap", "T2T", "Locations of assembly gaps, as determine by strings of 'N' characters (v1.0)", "2021", "UCSChub", "http://t2t.gi.ucsc.edu/chm13/hub/t2t-chm13-v1.0/gap.bigBed"),
+             c("T2T.UCSC.hgUnique.hg38", "T2T", "Regions unique to the T2T-CHM13 v2.0 assembly compared to the GRCh38/hg38 and GRCh37/hg19 reference assemblies", "2022", "UCSChub", "https://hgdownload.soe.ucsc.edu/hubs/GCA/009/914/755/GCA_009914755.4/bbi/GCA_009914755.4_T2T-CHM13v2.0.hgUnique/hgUnique.hg38.bb"), # checked --T2T unique regions, updated 2022-04-09. 
+             ## hg38
+             c("hg38.UCSC.centromere", "hg38", "Gaps from centromeres", "2014", "UCSC", "centromeres"), # checked, hg38 centromeres, updated 2014-01-09
+             c("hg38.UCSC.telomere", "hg38", "Gaps from telomeres", "2018", "UCSC", "gap"), # checked -- hg38 gaps table, updated 2018-08-06. Unsure of best link for source.
+             c("hg38.UCSC.short_arm", "hg38", "Gaps on the short arm of the chromosome", "2018", "UCSC", "gap"), # checked -- hg38 gaps table, updated 2018-08-06. Unsure of best link for source.
+             c("hg38.UCSC.heterochromatin", "hg38", "Gaps from large blocks of heterochromatin", "2018", "UCSC", "gap"), # checked -- hg38 gaps table, updated 2018-08-06. Unsure of best link for source.
+             c("hg38.UCSC.contig", "hg38", "Gaps between contigs in scaffolds", "2018", "UCSC", "gap"), # checked -- hg38 gaps table, updated 2018-08-06. Unsure of best link for source.
+             c("hg38.UCSC.scaffold", "hg38", "Gaps between scaffolds in chromosome assemblies", "2018", "UCSC", "gap"), # checked -- hg38 gaps table, updated 2018-08-06. Unsure of best link for source.
+             ## hg19
+             c("hg19.UCSC.centromere", "hg19", "Gaps from centromeres", "2020", "UCSC", "gap"), # checked -- hg19 gaps table, updated 2020-02-20. Unsure of best link for source. 
+             c("hg19.UCSC.telomere", "hg19", "Gaps from telomeres", "2020", "UCSC", "gap"), # checked -- hg19 gaps table, updated 2020-02-20. Unsure of best link for source.
+             c("hg19.UCSC.short_arm", "hg19", "Gaps on the short arm of the chromosome", "2020", "UCSC", "gap"), # checked -- hg19 gaps table, updated 2020-02-20. Unsure of best link for source. 
+             c("hg19.UCSC.heterochromatin", "hg19", "Gaps from large blocks of heterochromatin", "2020", "UCSC", "gap"), # checked -- hg19 gaps table, updated 2020-02-20. Unsure of best link for source. 
+             c("hg19.UCSC.clone", "hg19", "Gaps between clones in the same map contig", "2020", "UCSC", "gap"), # checked -- hg19 gaps table, updated 2020-02-20. Unsure of best link for source. 
+             c("hg19.UCSC.contig", "hg19", "Gaps between contigs in scaffolds", "2020", "UCSC", "gap"), # checked -- hg19 gaps table, updated 2020-02-20. Unsure of best link for source. 
+             c("hg19.UCSC.scaffold", "hg19", "Gaps between scaffolds in chromosome assemblies", "2020", "UCSC", "gap"), # checked -- hg19 scaffold NOT described on table schema, but IS in manual and automated gap table download.
+ 
+            ### MOUSE gap sets
+            ## mm39
+             c("mm39.UCSC.centromere", "mm39", "Gaps from centromeres", "2020", "UCSC", "gap"), # checked -- mm39 gaps tables, updated 2020-07-27. Unsure of best link for source.
+             c("mm39.UCSC.telomere", "mm39", "Gaps from telomeres", "2020", "UCSC", "gap"), # checked -- mm39 gaps tables, updated 2020-07-27. Unsure of best link for source.
+             c("mm39.UCSC.short_arm", "mm39", "Gaps on the short arm of the chromosome" ,"2020", "UCSC", "gap"), # checked -- mm39 gaps tables, updated 2020-07-27. Unsure of best link for source.
+             c("mm39.UCSC.contig", "mm39", "Gaps between contigs in scaffolds", "2020", "UCSC", "gap"), # checked -- mm39 gaps tables, updated 2020-07-27. Unsure of best link for source.
+             c("mm39.UCSC.scaffold", "mm39", "Gaps between scaffolds in chromosome assemblies", "2020", "UCSC", "gap"), # checked -- mm39 gaps tables, updated 2020-07-27. Unsure of best link for source.
+            ## mm10
+             c("mm10.UCSC.centromere", "mm10", "Gaps from centromeres", "2021", "UCSC", "gap"), # checked -- mm10 gaps table, updated 2021-04-08. Unsure of best link for source.
+             c("mm10.UCSC.telomere",   "mm10", "Gaps from telomeres", "2021", "UCSC", "gap"), # checked -- mm10 gaps table, updated 2021-04-08. Unsure of best link for source.
+             c("mm10.UCSC.short_arm", "mm10", "Gaps on the short arm of the chromosome", "2021", "UCSC", "gap"), # checked -- mm10 gaps table, updated 2021-04-08. Unsure of best link for source.
+             c("mm10.UCSC.clone", "mm10", "Gaps between clones in the same map contig", "2021", "UCSC", "gap"), # checked -- mm10 gaps table, updated 2021-04-08. Unsure of best link for source.
+             c("mm10.UCSC.contig", "mm10", "Gaps between contigs in scaffolds", "2021", "UCSC", "gap"), # checked -- mm10 gaps table, updated 2021-04-08. Unsure of best link for source.
+             c("mm10.UCSC.scaffold", "mm10", "Gaps between scaffolds in chromosome assemblies", "2021", "UCSC", "gap"), # checked -- mm10 scaffold NOT described on table schema, but IS in manual and automated gap table download.
+             c("mm10.UCSC.other", "mm10", "Sequence of Ns in the assembly that were not marked as gaps in the AGP (A Golden Path) assembly definition file", "2021", "UCSC", "gap"), # checked -- mm10 gaps table, updated 2021-04-08. Unsure of best link for source.
+             c("mm10.UCSC.fragment", "mm10", "A single gap of 31 bases in chrX_GL456233_random", "2021", "UCSC", "gap"), # checked -- mm10 gaps table, updated 2021-04-08. Unsure of best link for source.
+            ## mm9
+             c("mm9.UCSC.centromere", "mm9", "Gaps from centromeres", "2007", "UCSC", "gap"), # checked -- mm9 gaps table, updated 2007-07-23. Unsure of best link for source.
+             c("mm9.UCSC.fragment", "mm9", "Gaps between the contigs of a draft clone. (In this context, a contig is a set of overlapping sequence reads.)", "2007", "UCSC", "gap"), # checked -- mm9 gaps table, updated 2007-07-23. Unsure of best link for source.
+             c("mm9.UCSC.contig", "mm9", "Gaps between contigs in scaffolds", "2007", "UCSC", "gap"), # checked -- mm9 gaps table, updated 2007-07-23. Unsure of best link for source.
+ 
+            ### ZEBRAFISH gap sets
+             c("danRer10.UCSC.contig", "danRer10", "Gaps between contigs in scaffolds", "2015", "UCSC", "gap"), # checked -- danRer10 gap table, updated 2015-01-22
+             c("danRer10.UCSC.scaffold", "danRer10", "Gaps between scaffolds in chromosome assemblies", "2015", "UCSC", "gap"), # checked -- danRer10 gap table, updated 2015-01-22
+            
+            ### FLY gap sets
+             c("dm6.UCSC.other", "dm6", "Sequence of Ns in the assembly that were not marked as gaps in the AGP (A Golden Path) assembly definition file", "2014", "UCSC", "gap"), # checked -- dm6 gap table, updated 2014-08-28
+             c("dm3.UCSC.contig", "dm3", "Gaps between contigs in scaffolds", "2006", "UCSC", "gap"), # checked -- dm3 gap table, updated 2006-07-10
+             c("dm3.UCSC.scaffold", "dm3", "Gaps between scaffolds in chromosome assemblies", "2006", "UCSC", "gap"), # checked -- dm3 gap table, updated 2006-07-10
+            
+            ### Arabidopsis
+            c("TAIR10.UCSC.araTha1.gap", "TAIR10", "Gaps in the May 2011 Arabidopsis thaliana genome assembly", "2013", "UCSChub", "https://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/araTha1/bbi/araTha1.gap.bb")
+             )
+# Make data frame
+mtx <- as.data.frame(mtx)
+# Assign column names
+colnames(mtx) <- c("Name", "Assembly", "Description", "Year last updated", "Source", "ID/URL")
+```
+
+# Gaps
+
+http://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=1437565635_U2sAaxz33rn7nXsmt4Tu3HAzZOEq&db=hg19&g=gap
+http://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=1437565635_U2sAaxz33rn7nXsmt4Tu3HAzZOEq&db=hg38&g=gap
+http://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=1437565635_U2sAaxz33rn7nXsmt4Tu3HAzZOEq&db=mm10&g=gap
+http://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=1437565635_U2sAaxz33rn7nXsmt4Tu3HAzZOEq&db=mm9&g=gap
+http://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=1437565635_U2sAaxz33rn7nXsmt4Tu3HAzZOEq&db=mm39&g=gap
+http://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=1437602393_lP0IsvT56pBJARpsZtjXZz0sUgFN&db=danRer10&g=gap
+http://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=1437602393_lP0IsvT56pBJARpsZtjXZz0sUgFN&db=dm3&g=gap
+http://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=1437602393_lP0IsvT56pBJARpsZtjXZz0sUgFN&db=dm6&g=gap
+
+```{r}
+# Vectors to store summary information
+# Number of original regions
+counts_original <- numeric(length = nrow(mtx))
+# Number of keepStandardChromosomes regions
+counts_standard <- numeric(length = nrow(mtx))
+# Chromosomes that are missing from the list
+chromosomes_missing <- character(length = nrow(mtx))
+url_formatted <- character(length = nrow(mtx))
+# Width statistics
+width_min <- numeric(length = nrow(mtx))
+width_median <- numeric(length = nrow(mtx))
+width_max <- numeric(length = nrow(mtx))
+# Percent of genome covered
+fraction_genome <- numeric(length = nrow(mtx))
+
+# Process each genome
+for (genome_id in unique(mtx$Assembly) ) {
+  # T2T and TAIR10 processed later
+  if (genome_id %in% (c("T2T", "TAIR10"))) next
+  # Get chromosome info
+  chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome = genome_id, assembled.molecules.only = TRUE)
+    # Keep standard chromosomes
+    chromosomes_standard <- chrom_data$chrom
+# Get genome-specific gaps table
+  mySession <- browserSession()
+  genome(mySession) <- genome_id
+  # gaps <- getTable(ucscTableQuery(mySession, track = "gap"))
+  query <- ucscTableQuery(mySession, table = "gap")
+  gaps <- getTable(query)
+  # Look inside Original data
+  print(head(gaps))
+  # Summary of gap types
+  gap_types <- table(gaps$type)
+  print(gap_types)
+  # Process each gap type
+  for (gap_type in names(gap_types)) {
+    gaps_selected <- gaps[gaps$type == gap_type, ]
+    # Number of the original gaps
+    counts_original[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- nrow(gaps_selected)
+    # UCSC coordinates are 0 based: 
+    # "chromStart - The starting position of the feature in the chromosome or scaffold. The first base in a chromosome is numbered 0.
+    #             ... For example, the first 100 bases of chromosome 1 are defined as chrom=1, chromStart=0, chromEnd=100"
+    gapsGR <- makeGRangesFromDataFrame(gaps_selected, starts.in.df.are.0based=T, keep.extra.columns = TRUE)
+    # Sort GR object
+    gapsGR <- sort(gapsGR)
+    # Select seqinfo data for the gaps object
+      # Subset and match to chromosomes in the gapsGR object
+      # Common chromosomes
+      chromosomes_common <- intersect(chrom_data$chrom, seqlevels(gapsGR))
+      # Subset gapsGR
+      gapsGR <- keepSeqlevels(gapsGR, chromosomes_common, pruning.mode = "tidy")      
+      # Subset chrom_data
+      chrom_data_subset <- chrom_data[chrom_data$chrom %in% chromosomes_common, ]
+      # Match objects
+      chrom_data_subset <- chrom_data_subset[match(seqlevels(gapsGR), chrom_data_subset$chrom), ]
+      # Check if chromosome order is the same
+      if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
+        print(paste("Chromosome order does not match for", genome_id, "genome."))
+        break
+      }
+
+    # Assign seqinfo data
+    seqlengths(gapsGR) <- chrom_data_subset$size
+    isCircular(gapsGR) <- chrom_data_subset$circular
+    genome(gapsGR)     <- genome_id
+    # Proceed only if non-empty. Note empty ones
+    if (length(gapsGR) == 0) {
+      print(paste(mtx$Name[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))], "is empty")) # Do nothing, just print
+    } else {
+      # Construct file name, e.g., hg19.UCSC.gap_centromere.bed
+      fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
+      # Save as Rds object
+      saveRDS(object = gapsGR, file = file.path(dir_results, "rds", fileNameOut))
+      # Save as bed file
+      fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".bed")
+      export.bed(gapsGR, con=file.path(dir_results, "bed", fileNameOut))
+    # Save missing chromosomes, if any
+    chromosomes_missing[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- ifelse(length(setdiff(chromosomes_standard, seqlevels(gapsGR))) == 0, "", paste(setdiff(chromosomes_standard, seqlevels(gapsGR)), collapse = ", "))
+     # Save the number of original and filtered regions, the same here
+    counts_standard[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- length(gapsGR)
+    # Save width statistics
+    width_min[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- min(width(gapsGR))
+    width_median[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- median(width(gapsGR))
+    width_max[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- max(width(gapsGR))
+    # Save percent genome covered
+    fraction_genome[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- ( sum(width(gapsGR)) / sum(chrom_data$size) ) 
+    }
+  }
+}
+```
+
+## NUMTs for hg19 and mm9
+
+```{r}
+for (genome_id in c("hg19", "mm9")) {
+  # Get chromosome info
+  chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome = genome_id, assembled.molecules.only = TRUE)
+      # Keep standard chromosomes
+      chromosomes_standard <- chrom_data$chrom
+  # Get numtS
+  mySession <- browserSession()
+  genome(mySession) <- genome_id
+  query <- ucscTableQuery(mySession, table = "numtS")
+  gaps <- getTable(query)
+  # Look inside Original data
+  print(head(gaps))
+  # Process
+  gap_type <- 'numtS'
+  # mm9 has additional columns throwing an error when creating GRanges
+  gapsGR <- makeGRangesFromDataFrame(gaps[, 1:7], starts.in.df.are.0based=T, keep.extra.columns = TRUE)
+      # Sort GR object
+      gapsGR <- sort(gapsGR)
+      # Number of the original gaps
+      counts_original[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- length(gapsGR)
+  # Select seqinfo data for the centromeres object
+        # Subset and match to chromosomes in the gapsGR object
+        # Common chromosomes
+        chromosomes_common <- intersect(chrom_data$chrom, seqlevels(gapsGR))
+        # Subset gapsGR
+        gapsGR <- keepSeqlevels(gapsGR, chromosomes_common, pruning.mode = "tidy")      
+        # Subset chrom_data
+        chrom_data_subset <- chrom_data[chrom_data$chrom %in% chromosomes_common, ]
+        # Match objects
+        chrom_data_subset <- chrom_data_subset[match(seqlevels(gapsGR), chrom_data_subset$chrom), ]
+        # Check if chromosome order is the same
+        if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
+          print(paste("Chromosome order does not match for", genome_id, "genome."))
+          break
+        }
+  
+  # Assign seqinfo data
+  seqlengths(gapsGR) <- chrom_data_subset$size
+  isCircular(gapsGR) <- chrom_data_subset$circular
+  genome(gapsGR)     <- genome_id
+      # Proceed only if non-empty. Note empty ones
+      if (length(gapsGR) == 0) {
+        print(paste(mtx$Name[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))], "is empty")) # Do nothing, just print
+      } else {
+        # Construct file name, e.g., hg19.UCSC.gap_centromere.rds
+        fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
+        # Save as Rds object
+        saveRDS(object = gapsGR, file = file.path(dir_results, "rds", fileNameOut))
+        # save as bed file
+        fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".bed")
+        export.bed(gapsGR, con=file.path(dir_results, "bed", fileNameOut))
+          # Save missing chromosomes, if any
+          chromosomes_missing[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- ifelse(length(setdiff(chromosomes_standard, seqlevels(gapsGR))) == 0, "", paste(setdiff(chromosomes_standard, seqlevels(gapsGR)), collapse = ", "))
+           # Save the number of original and filtered regions, the same here
+          counts_standard[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- length(gapsGR)
+          # Save width statistics
+          width_min[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- min(width(gapsGR))
+          width_median[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- median(width(gapsGR))
+          width_max[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- max(width(gapsGR))
+          # Save percent genome covered
+          fraction_genome[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- ( sum(width(gapsGR)) / sum(chrom_data$size) ) 
+      }
+}
+```
+
+
+## Centromeres for hg38
+
+http://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=1437565635_U2sAaxz33rn7nXsmt4Tu3HAzZOEq&db=hg38&g=centromeres
+
+```{r}
+# Get hg38 centromeres track, not part of gap table
+# Get chromosome info
+genome_id <- 'hg38'
+chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome = genome_id, assembled.molecules.only = TRUE)
+    # Keep standard chromosomes
+    chromosomes_standard <- chrom_data$chrom
+# Get hg38 centromere gaps
+mySession <- browserSession()
+genome(mySession) <- genome_id
+query <- ucscTableQuery(mySession, table = "centromeres")
+gaps <- getTable(query)
+# Look inside Original data
+print(head(gaps))
+# Process
+gap_type <- 'centromere'
+gapsGR <- makeGRangesFromDataFrame(gaps, starts.in.df.are.0based=T, keep.extra.columns = TRUE)
+    # Sort GR object
+    gapsGR <- sort(gapsGR)
+    # Number of the original gaps
+    counts_original[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- length(gapsGR)
+# Select seqinfo data for the centromeres object
+      # Subset and match to chromosomes in the gapsGR object
+      # Common chromosomes
+      chromosomes_common <- intersect(chrom_data$chrom, seqlevels(gapsGR))
+      # Subset gapsGR
+      gapsGR <- keepSeqlevels(gapsGR, chromosomes_common, pruning.mode = "tidy")      
+      # Subset chrom_data
+      chrom_data_subset <- chrom_data[chrom_data$chrom %in% chromosomes_common, ]
+      # Match objects
+      chrom_data_subset <- chrom_data_subset[match(seqlevels(gapsGR), chrom_data_subset$chrom), ]
+      # Check if chromosome order is the same
+      if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
+        print(paste("Chromosome order does not match for", genome_id, "genome."))
+        break
+      }
+
+# Assign seqinfo data
+seqlengths(gapsGR) <- chrom_data_subset$size
+isCircular(gapsGR) <- chrom_data_subset$circular
+genome(gapsGR)     <- genome_id
+    # Proceed only if non-empty. Note empty ones
+    if (length(gapsGR) == 0) {
+      print(paste(mtx$Name[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))], "is empty")) # Do nothing, just print
+    } else {
+      # Construct file name, e.g., hg19.UCSC.gap_centromere.rds
+      fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
+      # Save as Rds object
+      saveRDS(object = gapsGR, file = file.path(dir_results, "rds", fileNameOut))
+      # save as bed file
+      fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".bed")
+      export.bed(gapsGR, con=file.path(dir_results, "bed", fileNameOut))
+        # Save missing chromosomes, if any
+        chromosomes_missing[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- ifelse(length(setdiff(chromosomes_standard, seqlevels(gapsGR))) == 0, "", paste(setdiff(chromosomes_standard, seqlevels(gapsGR)), collapse = ", "))
+         # Save the number of original and filtered regions, the same here
+        counts_standard[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- length(gapsGR)
+        # Save width statistics
+        width_min[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- min(width(gapsGR))
+        width_median[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- median(width(gapsGR))
+        width_max[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- max(width(gapsGR))
+        # Save percent genome covered
+        fraction_genome[which(mtx$Name == paste0(genome_id, ".UCSC.", gap_type))] <- ( sum(width(gapsGR)) / sum(chrom_data$size) ) 
+    }
+```
+
+# T2T centromere
+
+```{r}
+### Get T2T-unique track
+genome_id <- "T2T-CHM13v2.0"
+# T2T is NOT registered in GenomeInfoDb, see GenomeInfoDb::registered_UCSC_genomes()
+# location of T2T unique regions
+fileNameURL <- "https://s3-us-west-2.amazonaws.com/human-pangenomics/T2T/CHM13/assemblies/annotation/chm13.draft_v2.0.cen_mask.bed"
+# out file names
+# BED
+fileNameout1 <- file.path(dir_results,'chm13.draft_v2.0.cen_mask.bed')
+# bed
+fileNameout2 <- file.path(dir_results, "bed", 'T2T.CHM13.chm13.draft_v2.0.cen_mask.bed')
+# rds
+fileNameout3 <- file.path(dir_results, "rds", 'T2T.CHM13.chm13.draft_v2.0.cen_mask.rds')
+# download T2T unique regions
+if (!file.exists(fileNameout1)) download.file(fileNameURL, fileNameout1)
+# convert T2T unique to bed
+# system(paste0(bigBedtoBed.out,' ',fileNameout1,' ',fileNameout2))
+# read in T2T unique
+gapsGR <- import.bed(fileNameout1)
+    # Sort GR object
+    gapsGR <- sort(gapsGR)
+# Look inside 
+print(gapsGR)
+    # Number of the original gaps
+    counts_original[which(mtx$Name == "T2T.CHM13.chm13.draft_v2.0.cen_mask")] <- length(gapsGR)
+# get chromosome info
+chrom_data <- GenomeInfoDb::getChromInfoFromNCBI(assembly = genome_id, assembled.molecules.only = TRUE)
+chrom_data$AssignedMolecule <- as.character(paste0("chr", chrom_data$AssignedMolecule))
+      # Make the same format as UCSC chromosome data
+      chrom_data <- data.frame(chrom = chrom_data$AssignedMolecule,
+                               size = chrom_data$SequenceLength,
+                               assembled = ifelse(chrom_data$AssemblyUnit == "Primary Assembly", TRUE, FALSE),
+                               circular = chrom_data$circular)
+    # Rename chrMT to chrM, for T2T assembly
+    chrom_data$chrom[chrom_data$chrom == "chrMT"] <- "chrM"
+    # Keep standard chromosomes
+    chromosomes_standard <- chrom_data$chrom
+      # Subset and match to chromosomes in the gapsGR object
+      # Common chromosomes
+      chromosomes_common <- intersect(chrom_data$chrom, seqlevels(gapsGR))
+      # Subset gapsGR
+      gapsGR <- keepSeqlevels(gapsGR, chromosomes_common, pruning.mode = "tidy")      
+      # Subset chrom_data
+      chrom_data_subset <- chrom_data[chrom_data$chrom %in% chromosomes_common, ]
+      # Match objects
+      chrom_data_subset <- chrom_data_subset[match(seqlevels(gapsGR), chrom_data_subset$chrom), ]
+      # Check if chromosome order is the same
+      if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
+        print(paste("Chromosome order does not match for", genome_id, "genome."))
+        break
+      }
+# Assign seqinfo data
+seqlengths(gapsGR) <- chrom_data_subset$size
+isCircular(gapsGR) <- ifelse(is.na(chrom_data_subset$circular), FALSE, TRUE)
+genome(gapsGR)     <- genome_id
+    # Proceed only if non-empty. Note empty ones
+    if (length(gapsGR) == 0) {
+      print(paste(mtx$Name[which(mtx$Name == "T2T.CHM13.chm13.draft_v2.0.cen_mask")], "is empty")) # Do nothing, just print
+    } else {
+      # save as .rds
+      saveRDS(object = gapsGR, file = fileNameout3)
+      # save as .bed
+      export.bed(gapsGR, con=fileNameout2)
+        # Save missing chromosomes, if any
+        chromosomes_missing[which(mtx$Name == "T2T.CHM13.chm13.draft_v2.0.cen_mask")] <- ifelse(length(setdiff(chromosomes_standard, seqlevels(gapsGR))) == 0, "", paste(setdiff(chromosomes_standard, seqlevels(gapsGR)), collapse = ", "))
+         # Save the number of original and filtered regions, the same here
+        counts_standard[which(mtx$Name == "T2T.CHM13.chm13.draft_v2.0.cen_mask")] <- length(gapsGR)
+        # Save width statistics
+        width_min[which(mtx$Name == "T2T.CHM13.chm13.draft_v2.0.cen_mask")] <- min(width(gapsGR))
+        width_median[which(mtx$Name == "T2T.CHM13.chm13.draft_v2.0.cen_mask")] <- median(width(gapsGR))
+        width_max[which(mtx$Name == "T2T.CHM13.chm13.draft_v2.0.cen_mask")] <- max(width(gapsGR))
+        # Save percent genome covered
+        fraction_genome[which(mtx$Name == "T2T.CHM13.chm13.draft_v2.0.cen_mask")] <- ( sum(width(gapsGR)) / sum(chrom_data$size) ) 
+    }
+```
+
+# T2T telomere
+
+```{r}
+### Get T2T-unique track
+genome_id <- "T2T-CHM13v1.1"
+# T2T is NOT registered in GenomeInfoDb, see GenomeInfoDb::registered_UCSC_genomes()
+# location of T2T unique regions
+fileNameURL <- 'https://s3-us-west-2.amazonaws.com/human-pangenomics/T2T/CHM13/assemblies/annotation/chm13.draft_v1.1.telomere.bed.gz'
+# out file names
+# BED
+fileNameout1 <- file.path(dir_results,'chm13.draft_v1.1.telomere.bed.gz')
+# bed
+fileNameout2 <- file.path(dir_results, "bed", 'T2T.CHM13.chm13.draft_v1.1.telomere.bed')
+# rds
+fileNameout3 <- file.path(dir_results, "rds", 'T2T.CHM13.chm13.draft_v1.1.telomere.rds')
+# download T2T unique regions
+if (!file.exists(fileNameout1)) download.file(fileNameURL, fileNameout1)
+# convert T2T unique to bed
+# system(paste0(bigBedtoBed.out,' ',fileNameout1,' ',fileNameout2))
+# read in T2T unique
+gapsGR <- import.bed(fileNameout1)
+    # Sort GR object
+    gapsGR <- sort(gapsGR)
+# Look inside 
+print(gapsGR)
+    # Number of the original gaps
+    counts_original[which(mtx$Name == "T2T.CHM13.chm13.draft_v1.1.telomere")] <- length(gapsGR)
+# get chromosome info
+chrom_data <- GenomeInfoDb::getChromInfoFromNCBI(assembly = genome_id, assembled.molecules.only = TRUE)
+chrom_data$AssignedMolecule <- as.character(paste0("chr", chrom_data$AssignedMolecule))
+      # Make the same format as UCSC chromosome data
+      chrom_data <- data.frame(chrom = chrom_data$AssignedMolecule,
+                               size = chrom_data$SequenceLength,
+                               assembled = ifelse(chrom_data$AssemblyUnit == "Primary Assembly", TRUE, FALSE),
+                               circular = chrom_data$circular)
+    # Rename chrMT to chrM, for T2T assembly
+    chrom_data$chrom[chrom_data$chrom == "chrMT"] <- "chrM"
+    # Keep standard chromosomes
+    chromosomes_standard <- chrom_data$chrom
+      # Subset and match to chromosomes in the gapsGR object
+      # Common chromosomes
+      chromosomes_common <- intersect(chrom_data$chrom, seqlevels(gapsGR))
+      # Subset gapsGR
+      gapsGR <- keepSeqlevels(gapsGR, chromosomes_common, pruning.mode = "tidy")      
+      # Subset chrom_data
+      chrom_data_subset <- chrom_data[chrom_data$chrom %in% chromosomes_common, ]
+      # Match objects
+      chrom_data_subset <- chrom_data_subset[match(seqlevels(gapsGR), chrom_data_subset$chrom), ]
+      # Check if chromosome order is the same
+      if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
+        print(paste("Chromosome order does not match for", genome_id, "genome."))
+        break
+      }
+# Assign seqinfo data
+seqlengths(gapsGR) <- chrom_data_subset$size
+isCircular(gapsGR) <- ifelse(is.na(chrom_data_subset$circular), FALSE, TRUE)
+genome(gapsGR)     <- genome_id
+    # Proceed only if non-empty. Note empty ones
+    if (length(gapsGR) == 0) {
+      print(paste(mtx$Name[which(mtx$Name == "T2T.CHM13.chm13.draft_v1.1.telomere")], "is empty")) # Do nothing, just print
+    } else {
+      # save as .rds
+      saveRDS(object = gapsGR, file = fileNameout3)
+      # save as .bed
+      export.bed(gapsGR, con=fileNameout2)
+        # Save missing chromosomes, if any
+        chromosomes_missing[which(mtx$Name == "T2T.CHM13.chm13.draft_v1.1.telomere")] <- ifelse(length(setdiff(chromosomes_standard, seqlevels(gapsGR))) == 0, "", paste(setdiff(chromosomes_standard, seqlevels(gapsGR)), collapse = ", "))
+         # Save the number of original and filtered regions, the same here
+        counts_standard[which(mtx$Name == "T2T.CHM13.chm13.draft_v1.1.telomere")] <- length(gapsGR)
+        # Save width statistics
+        width_min[which(mtx$Name == "T2T.CHM13.chm13.draft_v1.1.telomere")] <- min(width(gapsGR))
+        width_median[which(mtx$Name == "T2T.CHM13.chm13.draft_v1.1.telomere")] <- median(width(gapsGR))
+        width_max[which(mtx$Name == "T2T.CHM13.chm13.draft_v1.1.telomere")] <- max(width(gapsGR))
+        # Save percent genome covered
+        fraction_genome[which(mtx$Name == "T2T.CHM13.chm13.draft_v1.1.telomere")] <- ( sum(width(gapsGR)) / sum(chrom_data$size) ) 
+    }
+```
+
+# T2T censat
+
+https://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=1442173875_xl0BfJ3LEBGqgf39yvScUu7oeJVT&db=hub_3267197_GCA_009914755.4&c=CP068269.2&g=hub_3267197_censat
+
+track name="cenSat_v1" description="T2T peri/centromeric satellite annotation (v2.0, 20220329, CHM13 v2.0)" itemRgb="On" visibility="1"
+
+```{r}
+### Get T2T-unique track
+genome_id <- "T2T-CHM13v2.0"
+# T2T is NOT registered in GenomeInfoDb, see GenomeInfoDb::registered_UCSC_genomes()
+# location of T2T unique regions
+fileNameURL <- 'https://hgdownload.soe.ucsc.edu/hubs/GCA/009/914/755/GCA_009914755.4/bbi/GCA_009914755.4_T2T-CHM13v2.0.censat/censat.bb'
+# out file names
+# BED
+fileNameout1 <- file.path(dir_results,'censat.bb')
+# bed
+fileNameout2 <- file.path(dir_results, "bed", 'T2T.UCSC.censat.bed')
+# rds
+fileNameout3 <- file.path(dir_results, "rds", 'T2T.UCSC.censat.rds')
+# download T2T unique regions
+if (!file.exists(fileNameout1)) download.file(fileNameURL, fileNameout1)
+# convert T2T unique to bed
+system(paste0(bigBedtoBed.out,' ',fileNameout1,' ',fileNameout2))
+# read in T2T unique
+extraCols_names <- c("character", "character")
+names(extraCols_names) <- c("reserved", "component")
+gapsGR <- import.bed(fileNameout2, extraCols = extraCols_names)
+    # Sort GR object
+    gapsGR <- sort(gapsGR)
+# Add censat type
+gapsGR$type <- sapply(gapsGR$name, function(x) strsplit(x, "_")[[1]][1])
+# Look inside 
+print(gapsGR)
+# Types of censat regions
+print(table(gapsGR$type))
+    # Number of the original gaps
+    counts_original[which(mtx$Name == "T2T.UCSC.censat")] <- length(gapsGR)
+# get chromosome info
+chrom_data <- GenomeInfoDb::getChromInfoFromNCBI(assembly = genome_id, assembled.molecules.only = TRUE)
+chrom_data$AssignedMolecule <- as.character(paste0("chr", chrom_data$AssignedMolecule))
+      # Make the same format as UCSC chromosome data
+      chrom_data <- data.frame(chrom = chrom_data$AssignedMolecule,
+                               size = chrom_data$SequenceLength,
+                               assembled = ifelse(chrom_data$AssemblyUnit == "Primary Assembly", TRUE, FALSE),
+                               circular = chrom_data$circular)
+    # Rename chrMT to chrM, for T2T assembly
+    chrom_data$chrom[chrom_data$chrom == "chrMT"] <- "chrM"
+    # Keep standard chromosomes
+    chromosomes_standard <- chrom_data$chrom
+      # Subset and match to chromosomes in the gapsGR object
+      # Common chromosomes
+      chromosomes_common <- intersect(chrom_data$chrom, seqlevels(gapsGR))
+      # Subset gapsGR
+      gapsGR <- keepSeqlevels(gapsGR, chromosomes_common, pruning.mode = "tidy")      
+      # Subset chrom_data
+      chrom_data_subset <- chrom_data[chrom_data$chrom %in% chromosomes_common, ]
+      # Match objects
+      chrom_data_subset <- chrom_data_subset[match(seqlevels(gapsGR), chrom_data_subset$chrom), ]
+      # Check if chromosome order is the same
+      if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
+        print(paste("Chromosome order does not match for", genome_id, "genome."))
+        break
+      }
+# Assign seqinfo data
+seqlengths(gapsGR) <- chrom_data_subset$size
+isCircular(gapsGR) <- ifelse(is.na(chrom_data_subset$circular), FALSE, TRUE)
+genome(gapsGR)     <- genome_id
+    # Proceed only if non-empty. Note empty ones
+    if (length(gapsGR) == 0) {
+      print(paste(mtx$Name[which(mtx$Name == "T2T.UCSC.censat")], "is empty")) # Do nothing, just print
+    } else {
+      # save as .rds
+      saveRDS(object = gapsGR, file = fileNameout3)
+      # save as .bed
+      export.bed(gapsGR, con=fileNameout2)
+        # Save missing chromosomes, if any
+        chromosomes_missing[which(mtx$Name == "T2T.UCSC.censat")] <- ifelse(length(setdiff(chromosomes_standard, seqlevels(gapsGR))) == 0, "", paste(setdiff(chromosomes_standard, seqlevels(gapsGR)), collapse = ", "))
+         # Save the number of original and filtered regions, the same here
+        counts_standard[which(mtx$Name == "T2T.UCSC.censat")] <- length(gapsGR)
+        # Save width statistics
+        width_min[which(mtx$Name == "T2T.UCSC.censat")] <- min(width(gapsGR))
+        width_median[which(mtx$Name == "T2T.UCSC.censat")] <- median(width(gapsGR))
+        width_max[which(mtx$Name == "T2T.UCSC.censat")] <- max(width(gapsGR))
+        # Save percent genome covered
+        fraction_genome[which(mtx$Name == "T2T.UCSC.censat")] <- ( sum(width(gapsGR)) / sum(chrom_data$size) ) 
+    }
+```
+
+# T2T gap
+
+http://genome.ucsc.edu/cgi-bin/hgTables?db=hub_2395475_t2t-chm13-v1.0&hgta_group=map&hgta_track=hub_2395475_gap&hgta_table=hub_2395475_gap&hgta_doSchema=describe+table+schema
+
+```{r}
+### Get T2T-unique track
+genome_id <- "T2T-CHM13v1.0"
+# T2T is NOT registered in GenomeInfoDb, see GenomeInfoDb::registered_UCSC_genomes()
+# location of T2T unique regions
+fileNameURL <- 'http://t2t.gi.ucsc.edu/chm13/hub/t2t-chm13-v1.0/gap.bigBed'
+# out file names
+# BED
+fileNameout1 <- file.path(dir_results,'gap.bigBed')
+# bed
+fileNameout2 <- file.path(dir_results, "bed", 'T2T.UCSC.gap.bed')
+# rds
+fileNameout3 <- file.path(dir_results, "rds", 'T2T.UCSC.gap.rds')
+# download T2T unique regions
+if (!file.exists(fileNameout1)) download.file(fileNameURL, fileNameout1)
+# convert T2T unique to bed
+system(paste0(bigBedtoBed.out,' ',fileNameout1,' ',fileNameout2))
+# read in T2T unique
+gapsGR <- import.bed(fileNameout2)
+    # Sort GR object
+    gapsGR <- sort(gapsGR)
+# Look inside 
+print(gapsGR)
+    # Number of the original gaps
+    counts_original[which(mtx$Name == "T2T.UCSC.gap")] <- length(gapsGR)
+# get chromosome info
+chrom_data <- GenomeInfoDb::getChromInfoFromNCBI(assembly = genome_id, assembled.molecules.only = TRUE)
+chrom_data$AssignedMolecule <- as.character(paste0("chr", chrom_data$AssignedMolecule))
+      # Make the same format as UCSC chromosome data
+      chrom_data <- data.frame(chrom = chrom_data$AssignedMolecule,
+                               size = chrom_data$SequenceLength,
+                               assembled = ifelse(chrom_data$AssemblyUnit == "Primary Assembly", TRUE, FALSE),
+                               circular = chrom_data$circular)
+    # Rename chrMT to chrM, for T2T assembly
+    chrom_data$chrom[chrom_data$chrom == "chrMT"] <- "chrM"
+    # Keep standard chromosomes
+    chromosomes_standard <- chrom_data$chrom
+      # Subset and match to chromosomes in the gapsGR object
+      # Common chromosomes
+      chromosomes_common <- intersect(chrom_data$chrom, seqlevels(gapsGR))
+      # Subset gapsGR
+      gapsGR <- keepSeqlevels(gapsGR, chromosomes_common, pruning.mode = "tidy")      
+      # Subset chrom_data
+      chrom_data_subset <- chrom_data[chrom_data$chrom %in% chromosomes_common, ]
+      # Match objects
+      chrom_data_subset <- chrom_data_subset[match(seqlevels(gapsGR), chrom_data_subset$chrom), ]
+      # Check if chromosome order is the same
+      if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
+        print(paste("Chromosome order does not match for", genome_id, "genome."))
+        break
+      }
+# Assign seqinfo data
+seqlengths(gapsGR) <- chrom_data_subset$size
+isCircular(gapsGR) <- ifelse(is.na(chrom_data_subset$circular), FALSE, TRUE)
+genome(gapsGR)     <- genome_id
+    # Proceed only if non-empty. Note empty ones
+    if (length(gapsGR) == 0) {
+      print(paste(mtx$Name[which(mtx$Name == "T2T.UCSC.gap")], "is empty")) # Do nothing, just print
+    } else {
+      # save as .rds
+      saveRDS(object = gapsGR, file = fileNameout3)
+      # save as .bed
+      export.bed(gapsGR, con=fileNameout2)
+        # Save missing chromosomes, if any
+        chromosomes_missing[which(mtx$Name == "T2T.UCSC.gap")] <- ifelse(length(setdiff(chromosomes_standard, seqlevels(gapsGR))) == 0, "", paste(setdiff(chromosomes_standard, seqlevels(gapsGR)), collapse = ", "))
+         # Save the number of original and filtered regions, the same here
+        counts_standard[which(mtx$Name == "T2T.UCSC.gap")] <- length(gapsGR)
+        # Save width statistics
+        width_min[which(mtx$Name == "T2T.UCSC.gap")] <- min(width(gapsGR))
+        width_median[which(mtx$Name == "T2T.UCSC.gap")] <- median(width(gapsGR))
+        width_max[which(mtx$Name == "T2T.UCSC.gap")] <- max(width(gapsGR))
+        # Save percent genome covered
+        fraction_genome[which(mtx$Name == "T2T.UCSC.gap")] <- ( sum(width(gapsGR)) / sum(chrom_data$size) ) 
+    }
+```
+
+# T2T hgUniqueHg38
+
+https://genome.ucsc.edu/cgi-bin/hgTables?db=hub_3267197_GCA_009914755.4&hgta_group=map&hgta_track=hub_3267197_hgUnique&hgta_table=hub_3267197_hgUniqueHg38&hgta_doSchema=describe+table+schema
+
+```{r}
+### Get T2T-unique track
+genome_id <- "T2T-CHM13v2.0"
+# T2T is NOT registered in GenomeInfoDb, see GenomeInfoDb::registered_UCSC_genomes()
+# location of T2T unique regions
+fileNameURL <- 'https://hgdownload.soe.ucsc.edu/hubs/GCA/009/914/755/GCA_009914755.4/bbi/GCA_009914755.4_T2T-CHM13v2.0.hgUnique/hgUnique.hg38.bb'
+# out file names
+# bigbed
+fileNameout1 <- file.path(dir_results,'T2T.UCSC.hgUnique.hg38.bb')
+# bed
+fileNameout2 <- file.path(dir_results, "bed", 'T2T.UCSC.hgUnique.hg38.bed')
+# rds
+fileNameout3 <- file.path(dir_results, "rds", 'T2T.UCSC.hgUnique.hg38.rds')
+# download T2T unique regions
+if (!file.exists(fileNameout1)) download.file(fileNameURL, fileNameout1)
+# convert T2T unique to bed
+system(paste0(bigBedtoBed.out,' ',fileNameout1,' ',fileNameout2))
+# read in T2T unique
+gapsGR <- import.bed(fileNameout2)
+    # Sort GR object
+    gapsGR <- sort(gapsGR)
+# Look inside 
+print(gapsGR)
+    # Number of the original gaps
+    counts_original[which(mtx$Name == "T2T.UCSC.hgUnique.hg38")] <- length(gapsGR)
+# get chromosome info
+chrom_data <- GenomeInfoDb::getChromInfoFromNCBI(assembly = genome_id, assembled.molecules.only = TRUE)
+chrom_data$AssignedMolecule <- as.character(paste0("chr", chrom_data$AssignedMolecule))
+      # Make the same format as UCSC chromosome data
+      chrom_data <- data.frame(chrom = chrom_data$AssignedMolecule,
+                               size = chrom_data$SequenceLength,
+                               assembled = ifelse(chrom_data$AssemblyUnit == "Primary Assembly", TRUE, FALSE),
+                               circular = chrom_data$circular)
+    # Rename chrMT to chrM, for T2T assembly
+    chrom_data$chrom[chrom_data$chrom == "chrMT"] <- "chrM"
+    # Keep standard chromosomes
+    chromosomes_standard <- chrom_data$chrom
+      # Subset and match to chromosomes in the gapsGR object
+      # Common chromosomes
+      chromosomes_common <- intersect(chrom_data$chrom, seqlevels(gapsGR))
+      # Subset gapsGR
+      gapsGR <- keepSeqlevels(gapsGR, chromosomes_common, pruning.mode = "tidy")      
+      # Subset chrom_data
+      chrom_data_subset <- chrom_data[chrom_data$chrom %in% chromosomes_common, ]
+      # Match objects
+      chrom_data_subset <- chrom_data_subset[match(seqlevels(gapsGR), chrom_data_subset$chrom), ]
+      # Check if chromosome order is the same
+      if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
+        print(paste("Chromosome order does not match for", genome_id, "genome."))
+        break
+      }
+# Assign seqinfo data
+seqlengths(gapsGR) <- chrom_data_subset$size
+isCircular(gapsGR) <- ifelse(is.na(chrom_data_subset$circular), FALSE, TRUE)
+genome(gapsGR)     <- genome_id
+    # Proceed only if non-empty. Note empty ones
+    if (length(gapsGR) == 0) {
+      print(paste(mtx$Name[which(mtx$Name == "T2T.UCSC.hgUnique.hg38")], "is empty")) # Do nothing, just print
+    } else {
+      # save as .rds
+      saveRDS(object = gapsGR, file = fileNameout3)
+      # save as .bed
+      export.bed(gapsGR, con=fileNameout2)
+        # Save missing chromosomes, if any
+        chromosomes_missing[which(mtx$Name == "T2T.UCSC.hgUnique.hg38")] <- ifelse(length(setdiff(chromosomes_standard, seqlevels(gapsGR))) == 0, "", paste(setdiff(chromosomes_standard, seqlevels(gapsGR)), collapse = ", "))
+         # Save the number of original and filtered regions, the same here
+        counts_standard[which(mtx$Name == "T2T.UCSC.hgUnique.hg38")] <- length(gapsGR)
+        # Save width statistics
+        width_min[which(mtx$Name == "T2T.UCSC.hgUnique.hg38")] <- min(width(gapsGR))
+        width_median[which(mtx$Name == "T2T.UCSC.hgUnique.hg38")] <- median(width(gapsGR))
+        width_max[which(mtx$Name == "T2T.UCSC.hgUnique.hg38")] <- max(width(gapsGR))
+        # Save percent genome covered
+        fraction_genome[which(mtx$Name == "T2T.UCSC.hgUnique.hg38")] <- ( sum(width(gapsGR)) / sum(chrom_data$size) ) 
+    }
+```
+
+# TAIR10
+
+http://genome.ucsc.edu/cgi-bin/hgTables?db=hub_2961057_araTha1&hgta_group=map&hgta_track=hub_2961057_gap&hgta_table=hub_2961057_gap&hgta_doSchema=describe+table+schema
+
+```{r}
+### Get T2T-unique track
+genome_id <- "TAIR10" # "GCA_000001735.1"
+# location of araTha1 gap regions
+fileNameURL <- 'https://genome-test.gi.ucsc.edu/~hiram/hubs/Plants/araTha1/bbi/araTha1.gap.bb'
+# out file names
+# BED
+fileNameout1 <- file.path(dir_results,'araTha1.gap.bb')
+# bed
+fileNameout2 <- file.path(dir_results,"bed", 'TAIR10.UCSC.araTha1.gap.bed')
+# rds
+fileNameout3 <- file.path(dir_results,"rds", 'TAIR10.UCSC.araTha1.gap.rds')
+# download araTha1 gap regions
+if (!file.exists(fileNameout1)) download.file(fileNameURL, fileNameout1)
+# convert araTha1 gap to bed
+system(paste0(bigBedtoBed.out,' ',fileNameout1,' ',fileNameout2))
+# read in araTha1 gap
+gapsGR <- import.bed(fileNameout2)
+    # Sort GR object
+    gapsGR <- sort(gapsGR)
+# Look inside 
+print(gapsGR)
+    # Number of the original gaps
+    counts_original[which(mtx$Name == "TAIR10.UCSC.araTha1.gap")] <- length(gapsGR)
+# get chromosome info
+chrom_data <- GenomeInfoDb::getChromInfoFromNCBI(assembly = genome_id, assembled.molecules.only = TRUE)
+chrom_data$AssignedMolecule <- as.character(paste0("chr", chrom_data$AssignedMolecule))
+      # Make the same format as UCSC chromosome data
+      chrom_data <- data.frame(chrom = chrom_data$AssignedMolecule,
+                               size = chrom_data$SequenceLength,
+                               assembled = ifelse(chrom_data$AssemblyUnit == "Primary Assembly", TRUE, FALSE),
+                               circular = chrom_data$circular)
+    # Keep standard chromosomes
+    chromosomes_standard <- chrom_data$chrom
+      # Subset and match to chromosomes in the gapsGR object
+      # Common chromosomes
+      chromosomes_common <- intersect(chrom_data$chrom, seqlevels(gapsGR))
+      # Subset gapsGR
+      gapsGR <- keepSeqlevels(gapsGR, chromosomes_common, pruning.mode = "tidy")      
+      # Subset chrom_data
+      chrom_data_subset <- chrom_data[chrom_data$chrom %in% chromosomes_common, ]
+      # Match objects
+      chrom_data_subset <- chrom_data_subset[match(seqlevels(gapsGR), chrom_data_subset$chrom), ]
+      # Check if chromosome order is the same
+      if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
+        print(paste("Chromosome order does not match for", genome_id, "genome."))
+        break
+      }
+# Assign seqinfo data
+seqlengths(gapsGR) <- chrom_data_subset$size
+isCircular(gapsGR) <- ifelse(is.na(chrom_data_subset$circular), FALSE, TRUE)
+genome(gapsGR)     <- genome_id
+    # Proceed only if non-empty. Note empty ones
+    if (length(gapsGR) == 0) {
+      print(paste(mtx$Name[which(mtx$Name == "TAIR10.UCSC.araTha1.gap")], "is empty")) # Do nothing, just print
+    } else {
+      # save as .rds
+      saveRDS(object = gapsGR, file = fileNameout3)
+      # save as .bed
+      export.bed(gapsGR, con=fileNameout2)
+        # Save missing chromosomes, if any
+        chromosomes_missing[which(mtx$Name == "TAIR10.UCSC.araTha1.gap")] <- ifelse(length(setdiff(chromosomes_standard, seqlevels(gapsGR))) == 0, "", paste(setdiff(chromosomes_standard, seqlevels(gapsGR)), collapse = ", "))
+         # Save the number of original and filtered regions, the same here
+        counts_standard[which(mtx$Name == "TAIR10.UCSC.araTha1.gap")] <- length(gapsGR)
+        # Save width statistics
+        width_min[which(mtx$Name == "TAIR10.UCSC.araTha1.gap")] <- min(width(gapsGR))
+        width_median[which(mtx$Name == "TAIR10.UCSC.araTha1.gap")] <- median(width(gapsGR))
+        width_max[which(mtx$Name == "TAIR10.UCSC.araTha1.gap")] <- max(width(gapsGR))
+        # Save percent genome covered
+        fraction_genome[which(mtx$Name == "TAIR10.UCSC.araTha1.gap")] <- ( sum(width(gapsGR)) / sum(chrom_data$size) ) 
+    }
+```
+
+# Processing summary
+
+```{r}
+mtx_summary <- data.frame(Name = mtx$Name, 
+                          Assembly = mtx$Assembly,
+                          Description = mtx$Description,
+                          `Original Region count` = counts_original, 
+                          `Filtered Range count` = counts_standard,
+                          `Missing Chromosomes` = chromosomes_missing,
+                          `Width, min/median/max, bp` = paste(formatC(width_min, format = "f", digits = 0), formatC(width_median, format = "f", digits = 0), formatC(width_max, format = "f", digits = 0), sep = "/"),
+                          `Percent of the genome, %` = formatC(fraction_genome * 100, format = "f", digits = 4),
+                          `Year last updated` = mtx$`Year last updated`,
+                          Source = mtx$Source,
+                          `ID/URL` = mtx$`ID/URL`)
+# Save the data
+# write mtx out as table
+write_csv(mtx_summary, file = fileNameOutSummary)
+```
