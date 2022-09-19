@@ -17,7 +17,7 @@ c(
             as.person("Douglas Phanstiel"),
             as.person("Michael Love")),
         year = format(Sys.Date(), "%Y"),
-        url = "https://github.com/mdozmorov/excluderanges",
+        url = "https://github.com/dozmorovlab/excluderanges",
         note = pkgVer('excluderanges'),
         doi = ''
     )
