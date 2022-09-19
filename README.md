@@ -1,7 +1,7 @@
 
--   <a href="#excluderanges---genomic-ranges-of-problematic-genomic-regions"
-    id="toc-excluderanges---genomic-ranges-of-problematic-genomic-regions">excluderanges
-    - genomic ranges of problematic genomic regions</a>
+-   <a href="#excluderanges-genomic-ranges-of-problematic-genomic-regions"
+    id="toc-excluderanges-genomic-ranges-of-problematic-genomic-regions">excluderanges,
+    genomic ranges of problematic genomic regions</a>
 -   <a href="#install-excluderanges" id="toc-install-excluderanges">Install
     <code>excluderanges</code></a>
 -   <a href="#use-excluderanges" id="toc-use-excluderanges">Use
@@ -30,7 +30,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# excluderanges - genomic ranges of problematic genomic regions
+# excluderanges, genomic ranges of problematic genomic regions
 
 <img id="excluderanges_logo_by_Mike_Love" src="man/figures/logo.png" align="right" width="125"/>
 
@@ -492,7 +492,7 @@ token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 #> Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]
-#>   Date: 2022-09-19 15:06
+#>   Date: 2022-09-19 15:10
 #>   Status: 200
 #>   Content-Type: application/vnd.realvnc.bed
 #>   Size: 11.8 kB
