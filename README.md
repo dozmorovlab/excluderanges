@@ -3,7 +3,7 @@
     id="toc-excluderanges-genomic-ranges-of-problematic-genomic-regions">excluderanges,
     genomic ranges of problematic genomic regions</a>
 -   <a href="#install-excluderanges" id="toc-install-excluderanges">Install
-    <code>excluderanges</code></a>
+    excluderanges</a>
 -   <a href="#use-excluderanges" id="toc-use-excluderanges">Use
     excluderanges</a>
     -   <a href="#compare-the-number-of-excludable-regions"
@@ -46,7 +46,9 @@ badges: end -->
 [T2T-CHM13](http://bedbase.org/#/bedsplash/6548a002754cc1e882035293541b59a8)
 and mouse
 [GRCm39/mm39](http://bedbase.org/#/bedsplash/edc716833d4b5ee75c34a0692fc353d5)
-genome assemblies are available.
+genome assemblies are available. R code to download
+
+<script src="https://gist.github.com/mdozmorov/7f4393f90932fb6bd911c43c20425ca0.js"></script>
 
 **TL;DR** - For human hg38 genome assembly,
 [Anshul](https://twitter.com/anshulkundaje/status/1263546023151992832?s=20)
@@ -76,7 +78,7 @@ Naming convention: `<genome assembly>.<lab>.<original file name>`, e.g.,
 See [make-data.R](inst/scripts/make-data.R) how we created excluderanges
 objects.
 
-# Install `excluderanges`
+# Install excluderanges
 
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
@@ -456,7 +458,7 @@ lcc1 = lol(cc1) # list of lists
 
 ``` r
 # Construct output file name
-fileNameOut <- paste0(lol_pull(lcc1, "data[*][*].Name"), ".bed")
+fileNameOut <- paste0(lol_pull(lcc1, "data[*][*].Name"), ".bed.gz")
 # API token for BED data
 token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
@@ -486,17 +488,17 @@ Example of the `hg38.Lareau.hg38_peaks` object
 # Get hg38.Lareau.hg38_peaks BEDbase ID
 bedbase_id <- "9fa55701a3bd3e7a598d1d2815e3390f"
 # Construct output file name
-fileNameOut <- "hg38.Lareau.hg38_peak.bed"
+fileNameOut <- "hg38.Lareau.hg38_peak.bed.gz"
 # API token for BED data
 token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 #> Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]
-#>   Date: 2022-09-19 15:10
+#>   Date: 2022-09-19 23:35
 #>   Status: 200
 #>   Content-Type: application/vnd.realvnc.bed
 #>   Size: 11.8 kB
-#> <ON DISK>  /Users/mdozmorov/Documents/Work/GitHub/excluderanges/hg38.Lareau.hg38_peak.bed
+#> <ON DISK>  hg38.Lareau.hg38_peak.bed.gz
 # Read the data in
 hg38.Lareau.hg38_peaks <- readr::read_tsv(fileNameOut, 
                                           col_names = FALSE,
