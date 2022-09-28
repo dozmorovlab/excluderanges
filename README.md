@@ -42,13 +42,14 @@ organisms.
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 badges: end -->
 
-**New** - Exclusion sets for human
+**New (2022-09-20)** - Exclusion sets for human
 [T2T-CHM13](http://bedbase.org/#/bedsplash/6548a002754cc1e882035293541b59a8)
 and mouse
 [GRCm39/mm39](http://bedbase.org/#/bedsplash/edc716833d4b5ee75c34a0692fc353d5)
 genome assemblies are available. R code to download
-
-<script src="https://gist.github.com/mdozmorov/7f4393f90932fb6bd911c43c20425ca0.js"></script>
+[T2T.excluderanges](https://gist.github.com/mdozmorov/7f4393f90932fb6bd911c43c20425ca0)
+and
+[mm39.excluderanges](https://gist.github.com/mdozmorov/33a1fa3234b2942dae238e1fcb39c996).
 
 **TL;DR** - For human hg38 genome assembly,
 [Anshul](https://twitter.com/anshulkundaje/status/1263546023151992832?s=20)
@@ -494,11 +495,11 @@ token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 #> Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]
-#>   Date: 2022-09-19 23:35
+#>   Date: 2022-09-28 12:17
 #>   Status: 200
 #>   Content-Type: application/vnd.realvnc.bed
 #>   Size: 11.8 kB
-#> <ON DISK>  hg38.Lareau.hg38_peak.bed.gz
+#> <ON DISK>  /Users/mdozmorov/Documents/Work/GitHub/excluderanges/hg38.Lareau.hg38_peak.bed.gz
 # Read the data in
 hg38.Lareau.hg38_peaks <- readr::read_tsv(fileNameOut, 
                                           col_names = FALSE,
@@ -617,7 +618,7 @@ gapsGR_hg19_centromere
 
 # Summary table
 
-[Full summary table](inst/extdata/Table_S1.csv). Download all data from
+[Full summary table](man/figures/Table_S1.csv). Download all data from
 the [Google Drive
 folder](https://drive.google.com/drive/folders/1sF9m8Y3eZouTZ3IEEywjs2kfHOWFBSJT?usp=sharing)
 
