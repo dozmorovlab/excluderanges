@@ -43,7 +43,7 @@ working with genomic data. For human, mouse, and selected model organisms.
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 badges: end -->
 
-**New** - Exclusion sets for human [T2T-CHM13](http://bedbase.org/#/bedsplash/6548a002754cc1e882035293541b59a8) 
+**New (2022-09-20)** - Exclusion sets for human [T2T-CHM13](http://bedbase.org/#/bedsplash/6548a002754cc1e882035293541b59a8) 
 and mouse [GRCm39/mm39](http://bedbase.org/#/bedsplash/edc716833d4b5ee75c34a0692fc353d5) 
 genome assemblies are available. R code to download
 [T2T.excluderanges](https://gist.github.com/mdozmorov/7f4393f90932fb6bd911c43c20425ca0) 
@@ -451,10 +451,10 @@ gapsGR_hg19_centromere
 
 # Summary table
 
-[Full summary table](../inst/extdata/Table_S1.csv). Download all data from the [Google Drive folder](https://drive.google.com/drive/folders/1sF9m8Y3eZouTZ3IEEywjs2kfHOWFBSJT?usp=sharing)
+[Full summary table](../man/figures/Table_S1.csv). Download all data from the [Google Drive folder](https://drive.google.com/drive/folders/1sF9m8Y3eZouTZ3IEEywjs2kfHOWFBSJT?usp=sharing)
 
 ```{r echo=FALSE}
-mtx <- read.csv("../inst/extdata/Table_S1.csv")
+mtx <- read.csv("../man/figures/Table_S1.csv")
 mtx$BEDbase.URL <- ifelse(!is.na(mtx$BEDbase.ID), paste0("[link](http://bedbase.org/#/bedsplash/", mtx$BEDbase.ID, ")"), "NA")
 knitr::kable(mtx[, c("Name", "AnnotationHub.ID", "BEDbase.URL", "Description", "Filtered.Region.count")])
 ```
