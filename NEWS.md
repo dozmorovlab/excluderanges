@@ -1,3 +1,8 @@
+# excluderanges 0.99.7 (2022-09-30)
+- Add 43 new objects, including T2T and mm39 excluderanges sets
+- Covering six organisms, various genome assemblies, includes NUMTs
+- Use BEDbase for storage/overview of excluderanges
+
 # excluderanges 0.99.5 (2021-10-09)
 - Use AHub data in vignette and README
 
