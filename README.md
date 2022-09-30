@@ -473,7 +473,7 @@ x <- calcChromBinsRef(query, "hg38")
 plotChromBins(x)
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-GenomicDistributions1-1.png" width="100%" />
 
 # Mitochondrial DNA sequences, NUMTs
 
@@ -505,7 +505,7 @@ token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 #> Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]
-#>   Date: 2022-09-30 20:16
+#>   Date: 2022-09-30 20:28
 #>   Status: 200
 #>   Content-Type: application/vnd.realvnc.bed
 #>   Size: 11.8 kB

@@ -331,7 +331,7 @@ the basic functionality and refer to the package's vignettes for detailed usage.
 
 We can observe how excludable regions are distributed across all chromosomes.
 
-```{r warning=FALSE}
+```{r GenomicDistributions1, warning=FALSE}
 suppressMessages(library(GenomicDistributions))
 # First, calculate the distribution
 query <- excludeGR.hg38.Kundaje.1 # Kundaje.GRCh38_unified_Excludable
