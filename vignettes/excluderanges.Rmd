@@ -45,9 +45,7 @@ badges: end -->
 
 **New (2022-09-20)** - Exclusion sets for human [T2T-CHM13](http://bedbase.org/#/bedsplash/6548a002754cc1e882035293541b59a8) 
 and mouse [GRCm39/mm39](http://bedbase.org/#/bedsplash/edc716833d4b5ee75c34a0692fc353d5) 
-genome assemblies are available. R code to download
-[T2T.excluderanges](https://gist.github.com/mdozmorov/7f4393f90932fb6bd911c43c20425ca0) 
-and [mm39.excluderanges](https://gist.github.com/mdozmorov/33a1fa3234b2942dae238e1fcb39c996).
+genome assemblies are available. Download all data from the [Google Drive folder](https://drive.google.com/drive/folders/1sF9m8Y3eZouTZ3IEEywjs2kfHOWFBSJT?usp=sharing).
  
 **TL;DR** - For human hg38 genome assembly, [Anshul](https://twitter.com/anshulkundaje/status/1263546023151992832?s=20) 
 and we recommend [ENCFF356LFX exclusion list regions](https://www.encodeproject.org/files/ENCFF356LFX/).
@@ -299,7 +297,7 @@ knitr::include_graphics('man/figures/excluderanges_hg38_Reddy_metadata.png')
 ```
 
 One may decide to combine the excludable ranges from all labs, although from previous 
-results we may decide to follow Anshul's [advice](https://twitter.com/anshulkundaje/status/1263546023151992832?s=20) advice about the [ENCFF356LFX exclusion list regions](https://www.encodeproject.org/files/ENCFF356LFX/) 
+results we may decide to follow Anshul's [advice](https://twitter.com/anshulkundaje/status/1263546023151992832?s=20) about the [ENCFF356LFX exclusion list regions](https://www.encodeproject.org/files/ENCFF356LFX/) 
 and use the `excludeGR.hg38.Kundaje.1` object.
 
 ```{r combinedexcluderanges}
@@ -326,34 +324,33 @@ Using BEDbase ID (e.g., `1a561729234c2844303a051b16f66656` for the
 `hg38.Kundaje.GRCh38_unified_Excludable` excluderanges object), we can construct
 a URL showing the splash screen with detailed information of the corresponding
 object, http://bedbase.org/#/bedsplash/1a561729234c2844303a051b16f66656.
-We can also get the BED data.
 
-```{r}
-suppressMessages(library(httr))
-suppressMessages(library(hca))
-# bedbase_id
-bedbase_id <- "1a561729234c2844303a051b16f66656"
-# API token for metadata, we need object "Name"
-token1 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/metadata")
-q1 <- GET(token1)
-cc1 = httr::content(q1)
-# Simplify returned data
-lcc1 = lol(cc1) # list of lists
-# # Optionally, explore the data
-# lol_path(lcc1)
-# # Column names
-# (lcc1_cols <- lol_pull(lcc1, "columns[*]"))
-# # Data for those columns
-# (lcc1_data <- lol_lpull(lcc1, "data[*][*]"))
+We can also get the BED file using the [BEDbase API](http://bedbase.org/docs).
+
+```{bash eval=FALSE}
+wget http://bedbase.org/api/bed/1a561729234c2844303a051b16f66656/file/bed \
+  -O hg38.Kundaje.GRCh38_unified_Excludable.bed.gz 
 ```
 
-```{r eval=FALSE}
-# Construct output file name
-fileNameOut <- paste0(lol_pull(lcc1, "data[*][*].Name"), ".bed.gz")
-# API token for BED data
-token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
-# Download file
-GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
+See also the R code to download
+[T2T.excluderanges](https://gist.github.com/mdozmorov/7f4393f90932fb6bd911c43c20425ca0) 
+and [mm39.excluderanges](https://gist.github.com/mdozmorov/33a1fa3234b2942dae238e1fcb39c996).
+
+# GenomicDistributions
+
+The `r BiocStyle::Biocpkg('GenomicDistributions')` package provides functionality
+to get basic statistics about genomic ranges of interest. Here, we demonstrate
+the basic functionality and refer to the package's vignettes for detailed usage.
+
+We can observe how excludable regions are distributed across all chromosomes.
+
+```{r warning=FALSE}
+suppressMessages(library(GenomicDistributions))
+# First, calculate the distribution
+query <- excludeGR.hg38.Kundaje.1 # Kundaje.GRCh38_unified_Excludable
+x <- calcChromBinsRef(query, "hg38")
+# Then, plot the result
+plotChromBins(x)
 ```
 
 # Mitochondrial DNA sequences, NUMTs
@@ -375,6 +372,7 @@ These NUMT sets can be combined with exclusion sets.
 Example of the  `hg38.Lareau.hg38_peaks` object
 
 ```{r}
+suppressMessages(library(httr))
 # Get hg38.Lareau.hg38_peaks BEDbase ID
 bedbase_id <- "9fa55701a3bd3e7a598d1d2815e3390f"
 # Construct output file name
@@ -451,7 +449,7 @@ gapsGR_hg19_centromere
 
 # Summary table
 
-[Full summary table](../man/figures/Table_S1.csv). Download all data from the [Google Drive folder](https://drive.google.com/drive/folders/1sF9m8Y3eZouTZ3IEEywjs2kfHOWFBSJT?usp=sharing)
+[Full summary table](../man/figures/Table_S1.csv). 
 
 ```{r echo=FALSE}
 mtx <- read.csv("../man/figures/Table_S1.csv")
