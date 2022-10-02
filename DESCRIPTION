@@ -48,7 +48,6 @@ Suggests:
     GenomicDistributions,
     httr,
     pheatmap,
-    ggplot,
     AnnotationHub
 VignetteBuilder: knitr
 biocViews: AnnotationData, AnnotationHub, FunctionalAnnotation, GenomicSequence
