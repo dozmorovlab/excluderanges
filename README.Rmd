@@ -323,6 +323,7 @@ See also the R code to download
 [T2T.excluderanges](https://gist.github.com/mdozmorov/7f4393f90932fb6bd911c43c20425ca0) 
 and [mm39.excluderanges](https://gist.github.com/mdozmorov/33a1fa3234b2942dae238e1fcb39c996).
 
+<!--
 # GenomicDistributions
 
 The `r BiocStyle::Biocpkg('GenomicDistributions')` package provides functionality
@@ -339,6 +340,7 @@ x <- calcChromBinsRef(query, "hg38")
 # Then, plot the result
 plotChromBins(x)
 ```
+-->
 
 # Mitochondrial DNA sequences, NUMTs
 

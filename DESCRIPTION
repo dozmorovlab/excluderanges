@@ -45,7 +45,6 @@ Suggests:
     RefManageR,
     rmarkdown,
     ggridges,
-    GenomicDistributions,
     httr,
     pheatmap,
     AnnotationHub
