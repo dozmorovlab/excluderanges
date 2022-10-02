@@ -48,9 +48,8 @@ badges: end -->
 [T2T-CHM13](http://bedbase.org/#/bedsplash/6548a002754cc1e882035293541b59a8)
 and mouse
 [GRCm39/mm39](http://bedbase.org/#/bedsplash/edc716833d4b5ee75c34a0692fc353d5)
-genome assemblies are available. Download all data from the [Google
-Drive
-folder](https://drive.google.com/drive/folders/1sF9m8Y3eZouTZ3IEEywjs2kfHOWFBSJT?usp=sharing).
+genome assemblies are available. Download all data from [Google
+Drive](https://drive.google.com/drive/folders/1sF9m8Y3eZouTZ3IEEywjs2kfHOWFBSJT?usp=sharing).
 
 **TL;DR** - For human hg38 genome assembly,
 [Anshul](https://twitter.com/anshulkundaje/status/1263546023151992832?s=20)
@@ -505,7 +504,7 @@ token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 #> Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]
-#>   Date: 2022-09-30 20:28
+#>   Date: 2022-10-02 18:38
 #>   Status: 200
 #>   Content-Type: application/vnd.realvnc.bed
 #>   Size: 11.8 kB

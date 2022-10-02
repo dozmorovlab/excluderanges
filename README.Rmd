@@ -32,7 +32,7 @@ badges: end -->
 
 **New (2022-09-20)** - Exclusion sets for human [T2T-CHM13](http://bedbase.org/#/bedsplash/6548a002754cc1e882035293541b59a8) 
 and mouse [GRCm39/mm39](http://bedbase.org/#/bedsplash/edc716833d4b5ee75c34a0692fc353d5) 
-genome assemblies are available. Download all data from the [Google Drive folder](https://drive.google.com/drive/folders/1sF9m8Y3eZouTZ3IEEywjs2kfHOWFBSJT?usp=sharing).
+genome assemblies are available. Download all data from [Google Drive](https://drive.google.com/drive/folders/1sF9m8Y3eZouTZ3IEEywjs2kfHOWFBSJT?usp=sharing).
  
 **TL;DR** - For human hg38 genome assembly, [Anshul](https://twitter.com/anshulkundaje/status/1263546023151992832?s=20) 
 and we recommend [ENCFF356LFX exclusion list regions](https://www.encodeproject.org/files/ENCFF356LFX/).
