@@ -447,31 +447,6 @@ See also the R code to download
 and
 [mm39.excluderanges](https://gist.github.com/mdozmorov/33a1fa3234b2942dae238e1fcb39c996).
 
-<!--
-# GenomicDistributions
-
-The *[GenomicDistributions](https://bioconductor.org/packages/3.15/GenomicDistributions)* package provides functionality
-to get basic statistics about genomic ranges of interest. Here, we demonstrate
-the basic functionality and refer to the package's vignettes for detailed usage.
-
-We can observe how excludable regions are distributed across all chromosomes.
-
-
-```r
-suppressMessages(library(GenomicDistributions))
-# First, calculate the distribution
-query <- excludeGR.hg38.Kundaje.1 # Kundaje.GRCh38_unified_Excludable
-x <- calcChromBinsRef(query, "hg38")
-#> snapshotDate(): 2022-04-26
-#> see ?GenomicDistributionsData and browseVignettes('GenomicDistributionsData') for documentation
-#> loading from cache
-# Then, plot the result
-plotChromBins(x)
-```
-
-<img src="man/figures/README-GenomicDistributions1-1.png" width="100%" />
--->
-
 # Mitochondrial DNA sequences, NUMTs
 
 Mitochondrial DNA sequences (mtDNA, 100-600K mitochondria per human
@@ -502,7 +477,7 @@ token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 #> Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]
-#>   Date: 2022-10-02 23:40
+#>   Date: 2022-10-03 00:26
 #>   Status: 200
 #>   Content-Type: application/vnd.realvnc.bed
 #>   Size: 11.8 kB
