@@ -48,6 +48,7 @@ Suggests:
     httr,
     readr,
     pheatmap,
+    rtracklayer,
     AnnotationHub
 VignetteBuilder: knitr
 biocViews: AnnotationData, AnnotationHub, FunctionalAnnotation, GenomicSequence
