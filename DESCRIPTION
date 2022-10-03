@@ -46,6 +46,7 @@ Suggests:
     rmarkdown,
     ggridges,
     httr,
+    readr,
     pheatmap,
     AnnotationHub
 VignetteBuilder: knitr
