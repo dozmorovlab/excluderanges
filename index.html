@@ -6,6 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Genomic coordinates of problematic genomic regions • excluderanges</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -17,12 +23,15 @@
     regions (formerly known as blacklisted), centromeres, telomeres, known 
     heterochromatin regions, etc. (UCSC gap table data). Primarily for human 
     and mouse genomes, hg19/hg38 and mm9/mm10 genome assemblies. ">
+<meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -35,18 +44,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">excluderanges</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.7</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="articles/excluderanges.html">Get started</a>
 </li>
@@ -59,7 +62,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/mdozmorov/excluderanges/">
+  <a href="https://github.com/mdozmorov/excluderanges/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -76,757 +79,1142 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="exclude-ranges" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#exclude-ranges" class="anchor"></a>Exclude ranges</h1></div>
-<p>Genomic ranges of problematic genomic regions that should be avoided when working with genomic data. For human, mouse, and selected model organisms.</p>
-<!-- badges: start -->
-<p><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <!-- badges: end --></p>
-<p>TL;DR - For human hg38 genome assembly, <a href="https://twitter.com/anshulkundaje">Anshul</a> <a href="https://twitter.com/anshulkundaje/status/1263546023151992832?s=20">recommends</a> <a href="https://www.encodeproject.org/files/ENCFF356LFX/">ENCFF356LFX exclusion list regions</a>.</p>
-<p>BED files of exclusion regions are available on the <a href="https://www.encodeproject.org/search/?searchTerm=exclusion+list">ENCODE project</a> website (Amemiya, Kundaje, and Boyle 2019). Human (hg19, hg38) and mouse (mm9, mm10) exclusion regions are available. However, exclusion lists generated by multiple labs often create uncertainty what to use. The purpose of this package is to provide a unified place for informed retrieval of exclusion regions.</p>
-<p>Naming convention: <code>&lt;genome assembly&gt;.&lt;lab&gt;.&lt;original file name&gt;</code>, e.g., <code>hg19.Birney.wgEncodeDacMapabilityConsensusExcludable</code>.</p>
-<p>Download all data from the <a href="https://drive.google.com/drive/folders/1MFn6LPZD1zZRQz7biR0Fyl-mzkx4CIxS?usp=sharing">Google Drive folder</a></p>
-<p>See <a href="inst/scripts/make-data.R">make-data.R</a> how to create the excluderanges GRanges objects.</p>
-<div id="install-excluderanges" class="section level2">
-<h2 class="hasAnchor">
-<a href="#install-excluderanges" class="anchor"></a>Install <code>excluderanges</code>
-</h2>
-<!--`R` is an open-source statistical environment which can be easily modified to enhance its functionality via packages. *[excluderanges](https://bioconductor.org/packages/3.13/excluderanges)* is a `R` package available via the [Bioconductor](http://bioconductor.org) repository for packages. `R` can be installed on any operating system from [CRAN](https://cran.r-project.org/) after which you can install *[excluderanges](https://bioconductor.org/packages/3.13/excluderanges)* by using the following commands in your `R` session:-->
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
-<span class="op">}</span>
-<span class="co"># Install the development version of Bioconductor (need 3.14 and above)</span>
-<span class="co"># BiocManager::install(version = "devel")</span>
-<span class="co"># Check that you have a valid Bioconductor installation</span>
-<span class="co"># BiocManager::valid()</span>
 
-<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html">install</a></span><span class="op">(</span><span class="st">"mdozmorov/excluderanges"</span><span class="op">)</span></code></pre></div>
+<ul>
+<li><a href="#excluderanges-genomic-ranges-of-problematic-genomic-regions" id="toc-excluderanges-genomic-ranges-of-problematic-genomic-regions">excluderanges, genomic ranges of problematic genomic regions</a></li>
+<li><a href="#install-excluderanges" id="toc-install-excluderanges">Install excluderanges</a></li>
+<li>
+<a href="#use-excluderanges" id="toc-use-excluderanges">Use excluderanges</a><ul>
+<li><a href="#compare-the-number-of-excludable-regions" id="toc-compare-the-number-of-excludable-regions">Compare the number of excludable regions</a></li>
+<li><a href="#compare-the-width-of-excludable-regions" id="toc-compare-the-width-of-excludable-regions">Compare the width of excludable regions</a></li>
+<li><a href="#compare-overlaps-among-sets" id="toc-compare-overlaps-among-sets">Compare overlaps among sets</a></li>
+<li><a href="#metadata-analysis" id="toc-metadata-analysis">Metadata analysis</a></li>
+</ul>
+</li>
+<li><a href="#bedbase-data-download" id="toc-bedbase-data-download">BEDbase data download</a></li>
+<li><a href="#mitochondrial-dna-sequences-numts" id="toc-mitochondrial-dna-sequences-numts">Mitochondrial DNA sequences, NUMTs</a></li>
+<li><a href="#centromeres-telomeres-etc" id="toc-centromeres-telomeres-etc">Centromeres, telomeres, etc.</a></li>
+<li><a href="#summary-table" id="toc-summary-table">Summary table</a></li>
+<li><a href="#citation" id="toc-citation">Citation</a></li>
+<li><a href="#code-of-conduct" id="toc-code-of-conduct">Code of Conduct</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
+</ul>
+<!-- README.md is generated from README.Rmd. Please edit that file --><div class="section level1">
+<div class="page-header"><h1 id="excluderanges-genomic-ranges-of-problematic-genomic-regions">excluderanges, genomic ranges of problematic genomic regions<a class="anchor" aria-label="anchor" href="#excluderanges-genomic-ranges-of-problematic-genomic-regions"></a>
+</h1></div>
+<p><img id="excluderanges_logo_by_Mike_Love" src="reference/figures/logo.png" align="right" width="125"></p>
+<p>Coordinates of problematic genomic regions that should be avoided when working with genomic data. For human, mouse, and selected model organisms.</p>
+<!-- badges: start
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+badges: end --><p><strong>New (2022-09-20)</strong> - Exclusion sets for human <a href="http://bedbase.org/#/bedsplash/6548a002754cc1e882035293541b59a8" class="external-link">T2T-CHM13</a> and mouse <a href="http://bedbase.org/#/bedsplash/edc716833d4b5ee75c34a0692fc353d5" class="external-link">GRCm39/mm39</a> genome assemblies are available. Download all data from <a href="https://drive.google.com/drive/folders/1sF9m8Y3eZouTZ3IEEywjs2kfHOWFBSJT?usp=sharing" class="external-link">Google Drive</a>.</p>
+<p><strong>TL;DR</strong> - For human hg38 genome assembly, <a href="https://twitter.com/anshulkundaje/status/1263546023151992832?s=20" class="external-link">Anshul</a> and we recommend <a href="https://www.encodeproject.org/files/ENCFF356LFX/" class="external-link">ENCFF356LFX exclusion list regions</a>. Also available as <code>hg38.Kundaje.GRCh38_unified_Excludable</code> excluderanges object (AnnotationHub ID: AH95917) and <a href="http://bedbase.org/#/bedsplash/1a561729234c2844303a051b16f66656" class="external-link">BEDbase.org</a>.</p>
+<p>BED files of exclusion regions are available on the <a href="https://www.encodeproject.org/search/?searchTerm=exclusion+list" class="external-link">ENCODE project</a> website and scattered across various websites, such as <a href="https://github.com/Boyle-Lab/Blacklist/tree/master/lists" class="external-link">Blacklist</a> (Amemiya, Kundaje, and Boyle 2019), <a href="https://github.com/ewimberley/peakPass/tree/main/excludedlists" class="external-link">Peakpass</a> (Wimberley and Heber 2019), <a href="https://github.com/sklasfeld/GreenscreenProject/tree/main/data" class="external-link">Greenscreen</a> (Klasfeld and Wagner 2022). Human and mouse genome assemblies have the largest number of exclusion sets generated by multiple labs. These exclusion sets frequently lack annotation and curation methods, creating uncertainty what to use. The purpose of this package is to provide a unified place for informed retrieval of exclusion regions.</p>
+<p>Naming convention: <code>&lt;genome assembly&gt;.&lt;lab&gt;.&lt;original file name&gt;</code>, e.g., <code>hg19.Birney.wgEncodeDacMapabilityConsensusExcludable</code>.</p>
+<p>See <a href="inst/scripts/make-data.R">make-data.R</a> how we created excluderanges objects.</p>
 </div>
-<div id="use-excluderanges" class="section level2">
-<h2 class="hasAnchor">
-<a href="#use-excluderanges" class="anchor"></a>Use excluderanges</h2>
+<div class="section level1">
+<h1 id="install-excluderanges">Install excluderanges<a class="anchor" aria-label="anchor" href="#install-excluderanges"></a>
+</h1>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co"># Install the development version of Bioconductor (need 3.15 or above)</span></span>
+<span><span class="co"># BiocManager::install(version = "devel")</span></span>
+<span><span class="co"># Check that you have a valid Bioconductor installation</span></span>
+<span><span class="co"># BiocManager::valid()</span></span>
+<span><span class="co"># Install the package</span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"excluderanges"</span>, version <span class="op">=</span> <span class="st">"devel"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># BiocManager::install("dozmorovlab/excluderanges")</span></span></code></pre></div>
+</div>
+<div class="section level1">
+<h1 id="use-excluderanges">Use excluderanges<a class="anchor" aria-label="anchor" href="#use-excluderanges"></a>
+</h1>
+<p>Get an overview of what’s available</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># hg38 excluderanges coordinates</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="st">"https://drive.google.com/uc?export=download&amp;id=1Jy_7cvFj5ZHUUwHgGUKZeFk8lFCalpKk"</span>, destfile <span class="op">=</span> <span class="st">"hg38.Kundaje.GRCh38_unified_Excludable.rds"</span><span class="op">)</span>
-<span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"hg38.Kundaje.GRCh38_unified_Excludable.rds"</span><span class="op">)</span>
-<span class="va">excludeGR.hg38.Kundaje.1</span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="op">&gt;</span><span class="st"> </span>excludeGR.hg38.Kundaje<span class="fl">.1</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a>GRanges object with <span class="dv">910</span> ranges and <span class="dv">0</span> metadata columns<span class="op">:</span></span>
-<span id="cb3-3"><a href="#cb3-3"></a><span class="st">        </span>seqnames            ranges strand</span>
-<span id="cb3-4"><a href="#cb3-4"></a>           <span class="op">&lt;</span>Rle<span class="op">&gt;</span><span class="st">         </span><span class="er">&lt;</span>IRanges<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>Rle<span class="op">&gt;</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="st">    </span>[<span class="dv">1</span>]     chr1     <span class="dv">628903-635104</span>      <span class="op">*</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a><span class="st">    </span>[<span class="dv">2</span>]     chr1   <span class="dv">5850087-5850571</span>      <span class="op">*</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="st">    </span>[<span class="dv">3</span>]     chr1   <span class="dv">8909610-8910014</span>      <span class="op">*</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a><span class="st">    </span>[<span class="dv">4</span>]     chr1   <span class="dv">9574580-9574997</span>      <span class="op">*</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a><span class="st">    </span>[<span class="dv">5</span>]     chr1 <span class="dv">32043823-32044203</span>      <span class="op">*</span></span>
-<span id="cb3-10"><a href="#cb3-10"></a><span class="st">    </span>...      ...               ...    ...</span>
-<span id="cb3-11"><a href="#cb3-11"></a>  [<span class="dv">906</span>]     chrY <span class="dv">11290797-11334278</span>      <span class="op">*</span></span>
-<span id="cb3-12"><a href="#cb3-12"></a><span class="st">  </span>[<span class="dv">907</span>]     chrY <span class="dv">11493053-11592850</span>      <span class="op">*</span></span>
-<span id="cb3-13"><a href="#cb3-13"></a><span class="st">  </span>[<span class="dv">908</span>]     chrY <span class="dv">11671014-11671046</span>      <span class="op">*</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a><span class="st">  </span>[<span class="dv">909</span>]     chrY <span class="dv">11721528-11749472</span>      <span class="op">*</span></span>
-<span id="cb3-15"><a href="#cb3-15"></a><span class="st">  </span>[<span class="dv">910</span>]     chrY <span class="dv">56694632-56889743</span>      <span class="op">*</span></span>
-<span id="cb3-16"><a href="#cb3-16"></a><span class="st">  </span><span class="op">-------</span></span>
-<span id="cb3-17"><a href="#cb3-17"></a><span class="st">  </span>seqinfo<span class="op">:</span><span class="st"> </span><span class="dv">24</span> sequences from hg38 genome</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges" class="external-link">GenomicRanges</a></span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'IRanges' was built under R version 4.2.1</span></span>
+<span><span class="co">#&gt; Warning: package 'GenomeInfoDb' was built under R version 4.2.1</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; snapshotDate(): 2022-04-25</span></span>
+<span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="st">"excluderanges"</span><span class="op">)</span></span>
+<span><span class="co"># You can search for multiple terms</span></span>
+<span><span class="co"># query_data &lt;- query(ah, c("excluderanges", "Kundaje"))</span></span>
+<span><span class="va">query_data</span></span>
+<span><span class="co">#&gt; AnnotationHub with 42 records</span></span>
+<span><span class="co">#&gt; # snapshotDate(): 2022-04-25</span></span>
+<span><span class="co">#&gt; # $dataprovider: UCSC, ENCODE, mitra.stanford.edu/kundaje/akundaje/release/b...</span></span>
+<span><span class="co">#&gt; # $species: Homo sapiens, Mus musculus, Drosophila melanogaster, Caenorhabdi...</span></span>
+<span><span class="co">#&gt; # $rdataclass: GRanges</span></span>
+<span><span class="co">#&gt; # additional mcols(): taxonomyid, genome, description,</span></span>
+<span><span class="co">#&gt; #   coordinate_1_based, maintainer, rdatadateadded, preparerclass, tags,</span></span>
+<span><span class="co">#&gt; #   rdatapath, sourceurl, sourcetype </span></span>
+<span><span class="co">#&gt; # retrieve records with, e.g., 'object[["AH95908"]]' </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;             title                                                    </span></span>
+<span><span class="co">#&gt;   AH95908 | ce10.Kundaje.ce10-Excludable.rds                         </span></span>
+<span><span class="co">#&gt;   AH95909 | dm3.Kundaje.dm3-Excludable.rds                           </span></span>
+<span><span class="co">#&gt;   AH95910 | hg19.Bernstein.Mint_Excludable_hg19.rds                  </span></span>
+<span><span class="co">#&gt;   AH95911 | hg19.Birney.wgEncodeDacMapabilityConsensusExcludable.rds </span></span>
+<span><span class="co">#&gt;   AH95912 | hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable.rds</span></span>
+<span><span class="co">#&gt;   ...       ...                                                      </span></span>
+<span><span class="co">#&gt;   AH95945 | mm10.UCSC.telomere.rds                                   </span></span>
+<span><span class="co">#&gt;   AH95946 | mm9.UCSC.centromere.rds                                  </span></span>
+<span><span class="co">#&gt;   AH95947 | mm9.UCSC.contig.rds                                      </span></span>
+<span><span class="co">#&gt;   AH95948 | mm9.UCSC.fragment.rds                                    </span></span>
+<span><span class="co">#&gt;   AH95949 | mm10.UCSC.scaffold.rds</span></span></code></pre></div>
+<p>hg38 excluderanges coordinates recommended by Anshul</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Check titles</span></span>
+<span><span class="co"># as.data.frame(mcols(query_data[1:10])["title"]) </span></span>
+<span><span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH95917"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; loading from cache</span></span>
+<span><span class="co"># Always a good idea to sort GRanges and keep standard chromosomes</span></span>
+<span><span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op">&lt;-</span> <span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqlevels-wrappers.html" class="external-link">keepStandardChromosomes</a></span><span class="op">(</span>pruning.mode <span class="op">=</span> <span class="st">"tidy"</span><span class="op">)</span></span>
+<span><span class="va">excludeGR.hg38.Kundaje.1</span></span>
+<span><span class="co">#&gt; GRanges object with 910 ranges and 0 metadata columns:</span></span>
+<span><span class="co">#&gt;         seqnames            ranges strand</span></span>
+<span><span class="co">#&gt;            &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt;</span></span>
+<span><span class="co">#&gt;     [1]     chr1     628903-635104      *</span></span>
+<span><span class="co">#&gt;     [2]     chr1   5850087-5850571      *</span></span>
+<span><span class="co">#&gt;     [3]     chr1   8909610-8910014      *</span></span>
+<span><span class="co">#&gt;     [4]     chr1   9574580-9574997      *</span></span>
+<span><span class="co">#&gt;     [5]     chr1 32043823-32044203      *</span></span>
+<span><span class="co">#&gt;     ...      ...               ...    ...</span></span>
+<span><span class="co">#&gt;   [906]     chrY 11290797-11334278      *</span></span>
+<span><span class="co">#&gt;   [907]     chrY 11493053-11592850      *</span></span>
+<span><span class="co">#&gt;   [908]     chrY 11671014-11671046      *</span></span>
+<span><span class="co">#&gt;   [909]     chrY 11721528-11749472      *</span></span>
+<span><span class="co">#&gt;   [910]     chrY 56694632-56889743      *</span></span>
+<span><span class="co">#&gt;   -------</span></span>
+<span><span class="co">#&gt;   seqinfo: 24 sequences from hg38 genome</span></span></code></pre></div>
 <p>Save the data in a BED file, if needed.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">rtracklayer</span><span class="fu">::</span><span class="fu">export</span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span>, <span class="st">"hg38.Kundaje.GRCh38_unified_Excludable.bed"</span>, format <span class="op">=</span> <span class="st">"bed"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Note that rtracklayer::import and rtracklayer::export perform unexplained</span></span>
+<span><span class="co"># start coordinate conversion, likely related to 0- and 1-based coordinate</span></span>
+<span><span class="co"># system. We recommend converting GRanges to a data frame and save tab-separated</span></span>
+<span><span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_tsv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span><span class="op">)</span>, </span>
+<span>                 file <span class="op">=</span> <span class="st">"hg38.Kundaje.GRCh38_unified_Excludable.bed"</span>,</span>
+<span>                 col_names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>We can load other excludable regions for the hg38 genome assembly and compare them.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="st">"https://drive.google.com/uc?export=download&amp;id=13RQmvqwC9qaYE65i74U1N-Rb4R-Sy2ud"</span>, destfile <span class="op">=</span> <span class="st">"hg38.Bernstein.Mint_Excludable_GRCh38.rds"</span><span class="op">)</span>
-<span class="va">excludeGR.hg38.Bernstein</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"hg38.Bernstein.Mint_Excludable_GRCh38.rds"</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="st">"https://drive.google.com/uc?export=download&amp;id=1ULI6uvs0vTlPcZ5yyLdsSgX1mIqnnlpp"</span>, destfile <span class="op">=</span> <span class="st">"hg38.Kundaje.GRCh38.Excludable.rds"</span><span class="op">)</span>
-<span class="va">excludeGR.hg38.Kundaje.2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"hg38.Kundaje.GRCh38.Excludable.rds"</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="st">"https://drive.google.com/uc?export=download&amp;id=1TA5Y8nmutoAyhL8XEl2qQTnmW6gl8CAg"</span>, destfile <span class="op">=</span> <span class="st">"hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.rds"</span><span class="op">)</span>
-<span class="va">excludeGR.hg38.Reddy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.rds"</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="st">"https://drive.google.com/uc?export=download&amp;id=1psVWkiaLy4nxAWssqv5dEZyNUrDIm005"</span>, destfile <span class="op">=</span> <span class="st">"hg38.Wold.hg38mitoExcludable.rds"</span><span class="op">)</span>
-<span class="va">excludeGR.hg38.Wold</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"hg38.Wold.hg38mitoExcludable.rds"</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="st">"https://drive.google.com/uc?export=download&amp;id=1pwbBEOHFfnVb6I9UljF3bJQLF3et4WV7"</span>, destfile <span class="op">=</span> <span class="st">"hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds"</span><span class="op">)</span>
-<span class="va">excludeGR.hg38.Yeo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds"</span><span class="op">)</span></code></pre></div>
-<p>Compare the number of excludable regions.</p>
+<code class="sourceCode R"><span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"excluderanges"</span>, <span class="st">"hg38"</span>, <span class="st">"Exclusion regions"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">query_data</span></span>
+<span><span class="co">#&gt; AnnotationHub with 6 records</span></span>
+<span><span class="co">#&gt; # snapshotDate(): 2022-04-25</span></span>
+<span><span class="co">#&gt; # $dataprovider: ENCODE</span></span>
+<span><span class="co">#&gt; # $species: Homo sapiens</span></span>
+<span><span class="co">#&gt; # $rdataclass: GRanges</span></span>
+<span><span class="co">#&gt; # additional mcols(): taxonomyid, genome, description,</span></span>
+<span><span class="co">#&gt; #   coordinate_1_based, maintainer, rdatadateadded, preparerclass, tags,</span></span>
+<span><span class="co">#&gt; #   rdatapath, sourceurl, sourcetype </span></span>
+<span><span class="co">#&gt; # retrieve records with, e.g., 'object[["AH95915"]]' </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;             title                                                       </span></span>
+<span><span class="co">#&gt;   AH95915 | hg38.Bernstein.Mint_Excludable_GRCh38.rds                   </span></span>
+<span><span class="co">#&gt;   AH95916 | hg38.Kundaje.GRCh38.Excludable.rds                          </span></span>
+<span><span class="co">#&gt;   AH95917 | hg38.Kundaje.GRCh38_unified_Excludable.rds                  </span></span>
+<span><span class="co">#&gt;   AH95918 | hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.rds</span></span>
+<span><span class="co">#&gt;   AH95919 | hg38.Wold.hg38mitoExcludable.rds                            </span></span>
+<span><span class="co">#&gt;   AH95920 | hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds</span></span>
+<span><span class="va">excludeGR.hg38.Bernstein</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH95915"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; loading from cache</span></span>
+<span><span class="va">excludeGR.hg38.Kundaje.2</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH95916"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; loading from cache</span></span>
+<span><span class="va">excludeGR.hg38.Reddy</span>     <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH95918"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; loading from cache</span></span>
+<span><span class="va">excludeGR.hg38.Wold</span>      <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH95919"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; loading from cache</span></span>
+<span><span class="va">excludeGR.hg38.Yeo</span>       <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH95920"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; loading from cache</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="compare-the-number-of-excludable-regions">Compare the number of excludable regions<a class="anchor" aria-label="anchor" href="#compare-the-number-of-excludable-regions"></a>
+</h2>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
-<span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>Count <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span><span class="op">)</span>, 
-                                    <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span><span class="op">)</span>, 
-                                    <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.2</span><span class="op">)</span>, 
-                                    <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span>, 
-                                    <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Wold</span><span class="op">)</span>, 
-                                    <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Yeo</span><span class="op">)</span><span class="op">)</span>,
-                          Source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Bernstein.Mint_Excludable_GRCh38"</span>, 
-                                     <span class="st">"Kundaje.GRCh38_unified_Excludable"</span>, 
-                                     <span class="st">"Kundaje.GRCh38.Excludable"</span>, 
-                                     <span class="st">"Reddy.wgEncodeDacMapabilityConsensusExcludable"</span>, 
-                                     <span class="st">"Wold.hg38mitoExcludable"</span>, 
-                                     <span class="st">"Yeo.eCLIP_Excludableregions.hg38liftover.bed"</span><span class="op">)</span><span class="op">)</span>
-<span class="co"># Order Source by the number of regions</span>
-<span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Source</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Source</span>, levels <span class="op">=</span> <span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Source</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Count</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
-
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mtx_to_plot</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Source</span>, y <span class="op">=</span> <span class="va">Count</span>, fill <span class="op">=</span> <span class="va">Source</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"man/figures/excluderanges_hg38_count.png"</span>, width <span class="op">=</span> <span class="fl">5.5</span>, height <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/excluderanges_hg38_count.png" width="100%"></p>
-<p>Compare the width of excludable regions. log2 scale because of heavy right tail distributions.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Count <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span><span class="op">)</span>, </span>
+<span>                                    <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span><span class="op">)</span>, </span>
+<span>                                    <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.2</span><span class="op">)</span>, </span>
+<span>                                    <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span>, </span>
+<span>                                    <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Wold</span><span class="op">)</span>, </span>
+<span>                                    <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Yeo</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                          Source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Bernstein.Mint_Excludable_GRCh38"</span>, </span>
+<span>                                     <span class="st">"Kundaje.GRCh38_unified_Excludable"</span>, </span>
+<span>                                     <span class="st">"Kundaje.GRCh38.Excludable"</span>, </span>
+<span>                                     <span class="st">"Reddy.wgEncodeDacMapabilityConsensusExcludable"</span>, </span>
+<span>                                     <span class="st">"Wold.hg38mitoExcludable"</span>, </span>
+<span>                                     <span class="st">"Yeo.eCLIP_Excludableregions.hg38liftover.bed"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Order Source by the number of regions</span></span>
+<span><span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Source</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Source</span>, levels <span class="op">=</span> <span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Source</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Count</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtx_to_plot</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Source</span>, y <span class="op">=</span> <span class="va">Count</span>, fill <span class="op">=</span> <span class="va">Source</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-excluderanges_hg38_count-1.png" width="100%"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ggridges</span><span class="op">)</span>
-<span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>Width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span><span class="op">)</span>, 
-                                    <span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span><span class="op">)</span>, 
-                                    <span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.2</span><span class="op">)</span>, 
-                                    <span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span>, 
-                                    <span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Wold</span><span class="op">)</span>, 
-                                    <span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Yeo</span><span class="op">)</span><span class="op">)</span>,
-                          Source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"Bernstein.Mint_Excludable_GRCh38"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span><span class="op">)</span><span class="op">)</span>,
-                                     <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"Kundaje.GRCh38_unified_Excludable"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span><span class="op">)</span><span class="op">)</span>,
-                                     <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"Kundaje.GRCh38.Excludable"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.2</span><span class="op">)</span><span class="op">)</span>,
-                                     <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"Reddy.wgEncodeDacMapabilityConsensusExcludable"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span><span class="op">)</span>,
-                                     <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"Wold.hg38mitoExcludable"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Wold</span><span class="op">)</span><span class="op">)</span>,
-                                     <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"Yeo.eCLIP_Excludableregions.hg38liftover.bed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Yeo</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mtx_to_plot</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="va">Width</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">Source</span>, fill <span class="op">=</span> <span class="va">Source</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_density_ridges</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"man/figures/excluderanges_hg38_width.png"</span>, width <span class="op">=</span> <span class="fl">5.5</span>, height <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/excluderanges_hg38_width.png" width="100%"></p>
-<p>We can investigate the total width of each set of excludable ranges.</p>
+<code class="sourceCode R"><span><span class="co"># ggsave("man/figures/excluderanges_hg38_count.png", width = 5.5, height = 2)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="compare-the-width-of-excludable-regions">Compare the width of excludable regions<a class="anchor" aria-label="anchor" href="#compare-the-width-of-excludable-regions"></a>
+</h2>
+<p>log2 scale because of heavy right tail distributions.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>TotalWidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span><span class="op">)</span><span class="op">)</span>, 
-                                         <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span><span class="op">)</span><span class="op">)</span>, 
-                                         <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.2</span><span class="op">)</span><span class="op">)</span>, 
-                                         <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span><span class="op">)</span>, 
-                                         <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Wold</span><span class="op">)</span><span class="op">)</span>, 
-                                         <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.Yeo</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, 
-                          Source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Bernstein.Mint_Excludable_GRCh38"</span>, 
-                                     <span class="st">"Kundaje.GRCh38_unified_Excludable"</span>, 
-                                     <span class="st">"Kundaje.GRCh38.Excludable"</span>, 
-                                     <span class="st">"Reddy.wgEncodeDacMapabilityConsensusExcludable"</span>, 
-                                     <span class="st">"Wold.hg38mitoExcludable"</span>, 
-                                     <span class="st">"Yeo.eCLIP_Excludableregions.hg38liftover"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mtx_to_plot</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">TotalWidth</span>, y <span class="op">=</span> <span class="va">Source</span>, fill <span class="op">=</span> <span class="va">Source</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_discrete.html">scale_y_discrete</a></span><span class="op">(</span>label<span class="op">=</span><span class="va">abbreviate</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"log10 total width"</span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"man/figures/excluderanges_hg38_sumwidth.png"</span>, width <span class="op">=</span> <span class="fl">6.5</span>, height <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/excluderanges_hg38_sumwidth.png" width="100%"></p>
-<p>We can compare Jaccard overlap between those sets of excludable regions.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/ggridges/" class="external-link">ggridges</a></span><span class="op">)</span></span>
+<span><span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span><span class="op">)</span>, </span>
+<span>                                    <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span><span class="op">)</span>, </span>
+<span>                                    <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.2</span><span class="op">)</span>, </span>
+<span>                                    <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span>, </span>
+<span>                                    <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Wold</span><span class="op">)</span>, </span>
+<span>                                    <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Yeo</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                          Source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Bernstein.Mint_Excludable_GRCh38"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                                     <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Kundaje.GRCh38_unified_Excludable"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                                     <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Kundaje.GRCh38.Excludable"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.2</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                                     <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Reddy.wgEncodeDacMapabilityConsensusExcludable"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                                     <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Wold.hg38mitoExcludable"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Wold</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                                     <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Yeo.eCLIP_Excludableregions.hg38liftover.bed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Yeo</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtx_to_plot</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">Width</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">Source</span>, fill <span class="op">=</span> <span class="va">Source</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://wilkelab.org/ggridges/reference/geom_density_ridges.html" class="external-link">geom_density_ridges</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Picking joint bandwidth of 0.372</span></span></code></pre></div>
+<p><img src="reference/figures/README-excluderanges_hg38_width-1.png" width="100%"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://stringr.tidyverse.org">stringr</a></span><span class="op">)</span>
-<span class="co"># Jaccard calculations</span>
-<span class="va">jaccard</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">gr_a</span>, <span class="va">gr_b</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">intersects</span> <span class="op">&lt;-</span> <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/setops-methods.html">intersect</a></span><span class="op">(</span><span class="va">gr_a</span>, <span class="va">gr_b</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-  <span class="va">intersection</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">intersects</span><span class="op">)</span><span class="op">)</span>
-  <span class="va">union</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/setops-methods.html">union</a></span><span class="op">(</span><span class="va">gr_a</span>, <span class="va">gr_b</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-  <span class="fu">DataFrame</span><span class="op">(</span><span class="va">intersection</span>, <span class="va">union</span>, 
-            jaccard <span class="op">=</span> <span class="va">intersection</span><span class="op">/</span><span class="va">union</span>,
-             n_intersections <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">intersects</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span>
-<span class="co"># List and names of all excludable regions</span>
-<span class="va">all_excludeGR_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span>, 
-                        <span class="va">excludeGR.hg38.Kundaje.1</span>, 
-                        <span class="va">excludeGR.hg38.Kundaje.2</span>,
-                        <span class="va">excludeGR.hg38.Reddy</span>,
-                        <span class="va">excludeGR.hg38.Wold</span>,
-                        <span class="va">excludeGR.hg38.Yeo</span><span class="op">)</span>
-<span class="va">all_excludeGR_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Bernstein.Mint_Excludable_GRCh38"</span>, 
-                     <span class="st">"Kundaje.GRCh38_unified_Excludable"</span>, 
-                     <span class="st">"Kundaje.GRCh38.Excludable"</span>, 
-                     <span class="st">"Reddy.wgEncodeDacMapabilityConsensusExcludable"</span>, 
-                     <span class="st">"Wold.hg38mitoExcludable"</span>, 
-                     <span class="st">"Yeo.eCLIP_Excludableregions.hg38liftover"</span><span class="op">)</span>
-<span class="co"># Correlation matrix, empty</span>
-<span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fl">0</span>, nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">all_excludeGR_list</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">all_excludeGR_list</span><span class="op">)</span><span class="op">)</span>
-<span class="co"># Fill it in</span>
-<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">all_excludeGR_list</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-  <span class="kw">for</span> <span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">all_excludeGR_list</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-    <span class="co"># If diagonal, set to zero</span>
-    <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">==</span> <span class="va">j</span><span class="op">)</span> <span class="va">mtx_to_plot</span><span class="op">[</span><span class="va">i</span>, <span class="va">j</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span>
-    <span class="co"># Process only one half, the other is symmetric</span>
-    <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">&gt;</span> <span class="va">j</span><span class="op">)</span> <span class="op">{</span>
-      <span class="va">mtx_to_plot</span><span class="op">[</span><span class="va">i</span>, <span class="va">j</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">mtx_to_plot</span><span class="op">[</span><span class="va">j</span>, <span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">jaccard</span><span class="op">(</span><span class="va">all_excludeGR_list</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, <span class="va">all_excludeGR_list</span><span class="op">[[</span><span class="va">j</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="st">"jaccard"</span><span class="op">]</span><span class="op">]</span>
-    <span class="op">}</span>
-  <span class="op">}</span>
-<span class="op">}</span>
-<span class="co"># Trim row/colnames</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trunc.html">str_trunc</a></span><span class="op">(</span><span class="va">all_excludeGR_name</span>, width <span class="op">=</span> <span class="fl">25</span><span class="op">)</span> 
-<span class="co"># Save the plot</span>
-<span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"man/figures/excluderanges_hg38_jaccard.png"</span>, width <span class="op">=</span> <span class="fl">1000</span>, height <span class="op">=</span> <span class="fl">900</span>, res <span class="op">=</span> <span class="fl">200</span><span class="op">)</span>
-<span class="fu">pheatmap</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.matrix.html">data.matrix</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/excluderanges_hg38_jaccard.png" width="100%"></p>
-<p>Note that some excludable ranges objects contain six columns, implying there may be some interesting metadata. Let’s explore one.</p>
+<code class="sourceCode R"><span><span class="co"># ggsave("man/figures/excluderanges_hg38_width.png", width = 5.5, height = 2)</span></span></code></pre></div>
+<p>We can investigate the total width of each set of excludable ranges.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">mcols</span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span>
-<span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu">mcols</span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span><span class="op">[[</span><span class="st">"name"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Type"</span>, <span class="st">"Number"</span><span class="op">)</span>
-<span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="va">mtx_to_plot</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Number</span><span class="op">)</span>, <span class="op">]</span>
-<span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Type</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Type</span>, levels <span class="op">=</span> <span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Type</span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mtx_to_plot</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Number</span>, y <span class="op">=</span> <span class="va">Type</span>, fill <span class="op">=</span> <span class="va">Type</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"man/figures/excluderanges_hg38_Reddy_metadata.png"</span>, width <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/excluderanges_hg38_Reddy_metadata.png" width="100%"></p>
-<p>One may decide to combine the excludable ranges from all labs, although from previous results we may decide to follow Anshul’s <a href="https://twitter.com/anshulkundaje/status/1263546023151992832?s=20">advice</a> advice about the <a href="https://www.encodeproject.org/files/ENCFF356LFX/">ENCFF356LFX exclusion list regions</a> and use the <code>excludeGR.hg38.Kundaje.1</code> object.</p>
+<code class="sourceCode R"><span><span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>TotalWidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>                                         <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.1</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>                                         <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Kundaje.2</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>                                         <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>                                         <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Wold</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>                                         <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Yeo</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>                          Source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Bernstein.Mint_Excludable_GRCh38"</span>, </span>
+<span>                                     <span class="st">"Kundaje.GRCh38_unified_Excludable"</span>, </span>
+<span>                                     <span class="st">"Kundaje.GRCh38.Excludable"</span>, </span>
+<span>                                     <span class="st">"Reddy.wgEncodeDacMapabilityConsensusExcludable"</span>, </span>
+<span>                                     <span class="st">"Wold.hg38mitoExcludable"</span>, </span>
+<span>                                     <span class="st">"Yeo.eCLIP_Excludableregions.hg38liftover"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtx_to_plot</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">TotalWidth</span>, y <span class="op">=</span> <span class="va">Source</span>, fill <span class="op">=</span> <span class="va">Source</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_bar</a></span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_discrete.html" class="external-link">scale_y_discrete</a></span><span class="op">(</span>label<span class="op">=</span><span class="va">abbreviate</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"log10 total width"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-excluderanges_hg38_sumwidth-1.png" width="100%"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">excludeGR.hg38.all</span> <span class="op">&lt;-</span> <span class="fu">reduce</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span>, <span class="va">excludeGR.hg38.Kundaje.1</span>, <span class="va">excludeGR.hg38.Kundaje.2</span>, <span class="va">excludeGR.hg38.Reddy</span>, <span class="va">excludeGR.hg38.Wold</span>, <span class="va">excludeGR.hg38.Yeo</span><span class="op">)</span><span class="op">)</span>
-<span class="co"># Keep only standard chromosomes</span>
-<span class="va">excludeGR.hg38.all</span> <span class="op">&lt;-</span> <span class="fu">keepStandardChromosomes</span><span class="op">(</span><span class="va">excludeGR.hg38.all</span>, pruning.mode <span class="op">=</span> <span class="st">"coarse"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.all</span><span class="op">)</span><span class="op">)</span>
-<span class="co"># [1] 13239</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">excludeGR.hg38.all</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
-<span class="co">#       5    1778    2306    8153    2859 5407757 </span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># ggsave("man/figures/excluderanges_hg38_sumwidth.png", width = 6.5, height = 2)</span></span></code></pre></div>
 </div>
-<div id="centromeres-telomeres-etc" class="section level2">
-<h2 class="hasAnchor">
-<a href="#centromeres-telomeres-etc" class="anchor"></a>Centromeres, telomeres, etc.</h2>
-<p>Besides the ENCODE-produced excludable regions, we may want to exclude centromeres, telomeres, and other gap locations. The “Gap Locations” track for Homo Sapiens is available for the GRcH37/hg19 genome assembly as a <a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema">UCSC ‘gap’ table</a>. It can be retrieved from <em><a href="https://bioconductor.org/packages/3.13/AnnotationHub">AnnotationHub</a></em>, but lacks the metadata columns needed to decide the type of gaps.</p>
+<div class="section level2">
+<h2 id="compare-overlaps-among-sets">Compare overlaps among sets<a class="anchor" aria-label="anchor" href="#compare-overlaps-among-sets"></a>
+</h2>
+<p>We can compare <a href="https://en.wikipedia.org/wiki/Overlap_coefficient" class="external-link">overlap coefficients</a> between those sets of excludable regions.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span><span class="op">)</span>
-<span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co"># Search for the gap track</span>
-<span class="co"># ahData &lt;- query(ah, c("gap", "Homo sapiens", "hg19"))</span>
-<span class="co"># ahData[ctcfData$title == "Gap"]</span>
-<span class="va">gaps</span> <span class="op">&lt;-</span> <span class="va">ahData</span><span class="op">[[</span><span class="st">"AH6444"</span><span class="op">]</span><span class="op">]</span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="op">&gt;</span><span class="st"> </span>gaps</span>
-<span id="cb13-2"><a href="#cb13-2"></a>UCSC track <span class="st">'gap'</span></span>
-<span id="cb13-3"><a href="#cb13-3"></a>UCSCData object with <span class="dv">457</span> ranges and <span class="dv">0</span> metadata columns<span class="op">:</span></span>
-<span id="cb13-4"><a href="#cb13-4"></a><span class="st">               </span>seqnames              ranges strand</span>
-<span id="cb13-5"><a href="#cb13-5"></a>                  <span class="op">&lt;</span>Rle<span class="op">&gt;</span><span class="st">           </span><span class="er">&lt;</span>IRanges<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>Rle<span class="op">&gt;</span></span>
-<span id="cb13-6"><a href="#cb13-6"></a><span class="st">    </span>[<span class="dv">1</span>]            chr1 <span class="dv">124535435-142535434</span>      <span class="op">*</span></span>
-<span id="cb13-7"><a href="#cb13-7"></a><span class="st">    </span>[<span class="dv">2</span>]            chr1 <span class="dv">121535435-124535434</span>      <span class="op">*</span></span>
-<span id="cb13-8"><a href="#cb13-8"></a><span class="st">    </span>[<span class="dv">3</span>]            chr1     <span class="dv">3845269-3995268</span>      <span class="op">*</span></span>
-<span id="cb13-9"><a href="#cb13-9"></a><span class="st">    </span>[<span class="dv">4</span>]            chr1   <span class="dv">13219913-13319912</span>      <span class="op">*</span></span>
-<span id="cb13-10"><a href="#cb13-10"></a><span class="st">    </span>[<span class="dv">5</span>]            chr1   <span class="dv">17125659-17175658</span>      <span class="op">*</span></span>
-<span id="cb13-11"><a href="#cb13-11"></a><span class="st">    </span>...             ...                 ...    ...</span>
-<span id="cb13-12"><a href="#cb13-12"></a>  [<span class="dv">453</span>]  chr6_ssto_hap7     <span class="dv">4639807-4661556</span>      <span class="op">*</span></span>
-<span id="cb13-13"><a href="#cb13-13"></a><span class="st">  </span>[<span class="dv">454</span>]  chr6_ssto_hap7     <span class="dv">4723510-4774367</span>      <span class="op">*</span></span>
-<span id="cb13-14"><a href="#cb13-14"></a><span class="st">  </span>[<span class="dv">455</span>]  chr6_ssto_hap7     <span class="dv">4783799-4836049</span>      <span class="op">*</span></span>
-<span id="cb13-15"><a href="#cb13-15"></a><span class="st">  </span>[<span class="dv">456</span>] chr17_ctg5_hap1     <span class="dv">1256795-1306794</span>      <span class="op">*</span></span>
-<span id="cb13-16"><a href="#cb13-16"></a><span class="st">  </span>[<span class="dv">457</span>] chr17_ctg5_hap1     <span class="dv">1588969-1638968</span>      <span class="op">*</span></span>
-<span id="cb13-17"><a href="#cb13-17"></a><span class="st">  </span><span class="op">-------</span></span>
-<span id="cb13-18"><a href="#cb13-18"></a><span class="st">  </span>seqinfo<span class="op">:</span><span class="st"> </span><span class="dv">93</span> <span class="kw">sequences</span> (<span class="dv">1</span> circular) from hg19 genome</span></code></pre></div>
-<p>The <a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema">UCSC ‘gap’ table</a> provides better granularity about the types of gaps available. E.g., for human, hg19, we have the following types and the number of gaps.</p>
-<p><img src="reference/figures/excluderanges_hg19_gaps_number.png" width="100%"></p>
-<p>Those objects are provided as individual GRanges.</p>
-<p>Naming convention: <code>&lt;genome assembly&gt;.UCSC.&lt;gap type&gt;</code>, e.g., <code>hg19.UCSC.gap_centromere</code>.</p>
-<p>Download all data from the <a href="https://drive.google.com/drive/folders/1MFn6LPZD1zZRQz7biR0Fyl-mzkx4CIxS?usp=sharing">Google Drive folder</a></p>
-<p>We can similarly load any gap type object.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
+<span><span class="co"># Overlap coefficient calculations</span></span>
+<span><span class="va">overlap_coefficient</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">gr_a</span>, <span class="va">gr_b</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">intersects</span> <span class="op">&lt;-</span> <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">gr_a</span>, <span class="va">gr_b</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">intersection_width</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">intersects</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">min_width</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">gr_a</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">gr_b</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/DataFrame-class.html" class="external-link">DataFrame</a></span><span class="op">(</span><span class="va">intersection_width</span>, <span class="va">min_width</span>, </span>
+<span>            overlap_coefficient <span class="op">=</span> <span class="va">intersection_width</span><span class="op">/</span><span class="va">min_width</span>,</span>
+<span>             n_intersections <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">intersects</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co"># List and names of all excludable regions</span></span>
+<span><span class="va">all_excludeGR_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span>, </span>
+<span>                        <span class="va">excludeGR.hg38.Kundaje.1</span>, </span>
+<span>                        <span class="va">excludeGR.hg38.Kundaje.2</span>,</span>
+<span>                        <span class="va">excludeGR.hg38.Reddy</span>,</span>
+<span>                        <span class="va">excludeGR.hg38.Wold</span>,</span>
+<span>                        <span class="va">excludeGR.hg38.Yeo</span><span class="op">)</span></span>
+<span><span class="va">all_excludeGR_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Bernstein.Mint_Excludable_GRCh38"</span>, </span>
+<span>                     <span class="st">"Kundaje.GRCh38_unified_Excludable"</span>, </span>
+<span>                     <span class="st">"Kundaje.GRCh38.Excludable"</span>, </span>
+<span>                     <span class="st">"Reddy.wgEncodeDacMapabilityConsensusExcludable"</span>, </span>
+<span>                     <span class="st">"Wold.hg38mitoExcludable"</span>, </span>
+<span>                     <span class="st">"Yeo.eCLIP_Excludableregions.hg38liftover"</span><span class="op">)</span></span>
+<span><span class="co"># Correlation matrix, empty</span></span>
+<span><span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fl">0</span>, nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">all_excludeGR_list</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">all_excludeGR_list</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Fill it in</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">all_excludeGR_list</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">all_excludeGR_list</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># If diagonal, set to zero</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">==</span> <span class="va">j</span><span class="op">)</span> <span class="va">mtx_to_plot</span><span class="op">[</span><span class="va">i</span>, <span class="va">j</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
+<span>    <span class="co"># Process only one half, the other is symmetric</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">&gt;</span> <span class="va">j</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">mtx_to_plot</span><span class="op">[</span><span class="va">i</span>, <span class="va">j</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">mtx_to_plot</span><span class="op">[</span><span class="va">j</span>, <span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">overlap_coefficient</span><span class="op">(</span><span class="va">all_excludeGR_list</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, <span class="va">all_excludeGR_list</span><span class="op">[[</span><span class="va">j</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="st">"overlap_coefficient"</span><span class="op">]</span><span class="op">]</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co"># Trim row/colnames</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trunc.html" class="external-link">str_trunc</a></span><span class="op">(</span><span class="va">all_excludeGR_name</span>, width <span class="op">=</span> <span class="fl">25</span><span class="op">)</span> </span>
+<span><span class="co"># Save the plot</span></span>
+<span><span class="co"># png("man/figures/excluderanges_hg38_jaccard.png", width = 1000, height = 900, res = 200)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/pheatmap/man/pheatmap.html" class="external-link">pheatmap</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.matrix.html" class="external-link">data.matrix</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-excluderanges_hg38_overlap_coefficient-1.png" width="100%"></p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># dev.off()</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="metadata-analysis">Metadata analysis<a class="anchor" aria-label="anchor" href="#metadata-analysis"></a>
+</h2>
+<p>Note that some excludable ranges objects contain six columns, implying there may be some interesting metadata. Let’s explore one.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="st">"https://drive.google.com/uc?export=download&amp;id=1uno7XzgCdFJeMjYI6GMfU5bAwEBWaUlR"</span>, destfile <span class="op">=</span> <span class="st">"hg19.UCSC.centromere.rds"</span><span class="op">)</span>
-<span class="va">gapsGR_hg19_centromere</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"hg19.UCSC.centromere.rds"</span><span class="op">)</span>
-<span class="va">gapsGR_hg19_centromere</span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="op">&gt;</span><span class="st"> </span>gapsGR_hg19_centromere</span>
-<span id="cb15-2"><a href="#cb15-2"></a>GRanges object with <span class="dv">24</span> ranges and <span class="dv">6</span> metadata columns<span class="op">:</span></span>
-<span id="cb15-3"><a href="#cb15-3"></a><span class="st">      </span>seqnames              ranges strand <span class="op">|</span><span class="st">       </span>bin        ix           n      size        type      bridge</span>
-<span id="cb15-4"><a href="#cb15-4"></a>         <span class="op">&lt;</span>Rle<span class="op">&gt;</span><span class="st">           </span><span class="er">&lt;</span>IRanges<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>Rle<span class="op">&gt;</span><span class="st"> </span><span class="er">|</span><span class="st"> </span><span class="er">&lt;</span>numeric<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>numeric<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>character<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>numeric<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>character<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>character<span class="op">&gt;</span></span>
-<span id="cb15-5"><a href="#cb15-5"></a><span class="st">    </span><span class="dv">2</span>     chr1 <span class="dv">121535434-124535434</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">23</span>      <span class="dv">1270</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb15-6"><a href="#cb15-6"></a>  <span class="dv">184</span>    chr21   <span class="dv">11288129-14288129</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">10</span>        <span class="dv">22</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb15-7"><a href="#cb15-7"></a>  <span class="dv">199</span>    chr22   <span class="dv">13000000-16000000</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">10</span>         <span class="dv">3</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb15-8"><a href="#cb15-8"></a>  <span class="dv">206</span>    chr19   <span class="dv">24681782-27681782</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">         </span><span class="dv">1</span>       <span class="dv">410</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb15-9"><a href="#cb15-9"></a>  <span class="dv">224</span>     chrY   <span class="dv">10104553-13104553</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">10</span>       <span class="dv">105</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb15-10"><a href="#cb15-10"></a>  ...      ...                 ...    ... .       ...       ...         ...       ...         ...         ...</span>
-<span id="cb15-11"><a href="#cb15-11"></a>  <span class="dv">439</span>     chr6   <span class="dv">58830166-61830166</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">16</span>       <span class="dv">628</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb15-12"><a href="#cb15-12"></a>  <span class="dv">453</span>     chr5   <span class="dv">46405641-49405641</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">14</span>       <span class="dv">452</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb15-13"><a href="#cb15-13"></a>  <span class="dv">460</span>     chr4   <span class="dv">49660117-52660117</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">         </span><span class="dv">1</span>       <span class="dv">447</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb15-14"><a href="#cb15-14"></a>  <span class="dv">476</span>     chr3   <span class="dv">90504854-93504854</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">         </span><span class="dv">2</span>       <span class="dv">784</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb15-15"><a href="#cb15-15"></a>  <span class="dv">481</span>     chr2   <span class="dv">92326171-95326171</span>      <span class="op">*</span><span class="st"> </span><span class="er">|</span><span class="st">        </span><span class="dv">20</span>       <span class="dv">770</span>           N   <span class="dv">3000000</span>  centromere          no</span>
-<span id="cb15-16"><a href="#cb15-16"></a>  <span class="op">-------</span></span>
-<span id="cb15-17"><a href="#cb15-17"></a><span class="st">  </span>seqinfo<span class="op">:</span><span class="st"> </span><span class="dv">24</span> sequences from hg19 genome</span></code></pre></div>
-<div id="centromeres-for-the-hg38-genome-assembly" class="section level3">
-<h3 class="hasAnchor">
-<a href="#centromeres-for-the-hg38-genome-assembly" class="anchor"></a>Centromeres for the hg38 genome assembly</h3>
-<p>Note that the UCSC ‘gap’ table for the hg38 human genome assembly does not contain genomic coordinates for the “centromere” gap type. These can be obtained from the <em><a href="https://bioconductor.org/packages/3.13/rCGH">rCGH</a></em> package as follows:</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">mcols</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span></span>
+<span><span class="co">#&gt; DataFrame with 401 rows and 2 columns</span></span>
+<span><span class="co">#&gt;                       name     score</span></span>
+<span><span class="co">#&gt;                &lt;character&gt; &lt;numeric&gt;</span></span>
+<span><span class="co">#&gt; 1   High_Mappability_isl..      1000</span></span>
+<span><span class="co">#&gt; 2         Satellite_repeat      1000</span></span>
+<span><span class="co">#&gt; 3                 BSR/Beta      1000</span></span>
+<span><span class="co">#&gt; 4   Low_mappability_island      1000</span></span>
+<span><span class="co">#&gt; 5                 (CATTC)n      1000</span></span>
+<span><span class="co">#&gt; ...                    ...       ...</span></span>
+<span><span class="co">#&gt; 397                   TAR1      1000</span></span>
+<span><span class="co">#&gt; 398       Satellite_repeat      1000</span></span>
+<span><span class="co">#&gt; 399               (CATTC)n      1000</span></span>
+<span><span class="co">#&gt; 400               (CATTC)n      1000</span></span>
+<span><span class="co">#&gt; 401                   TAR1      1000</span></span>
+<span><span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">mcols</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Reddy</span><span class="op">)</span><span class="op">[[</span><span class="st">"name"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Type"</span>, <span class="st">"Number"</span><span class="op">)</span></span>
+<span><span class="va">mtx_to_plot</span> <span class="op">&lt;-</span> <span class="va">mtx_to_plot</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Number</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Type</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Type</span>, </span>
+<span>                           levels <span class="op">=</span> <span class="va">mtx_to_plot</span><span class="op">$</span><span class="va">Type</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtx_to_plot</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Number</span>, y <span class="op">=</span> <span class="va">Type</span>, fill <span class="op">=</span> <span class="va">Type</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_bar</a></span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-excluderanges_hg38_Reddy_metadata-1.png" width="100%"></p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># ggsave("man/figures/excluderanges_hg38_Reddy_metadata.png", width = 5, height = 2.5)</span></span></code></pre></div>
+<p>One may decide to combine the excludable ranges from all labs, although from previous results we may decide to follow Anshul’s <a href="https://twitter.com/anshulkundaje/status/1263546023151992832?s=20" class="external-link">advice</a> about the <a href="https://www.encodeproject.org/files/ENCFF356LFX/" class="external-link">ENCFF356LFX exclusion list regions</a> and use the <code>excludeGR.hg38.Kundaje.1</code> object.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/fredcommo/rCGH">rCGH</a></span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges">GenomicRanges</a></span><span class="op">)</span><span class="op">)</span>
-<span class="co"># hg38 # data.frame</span>
-<span class="co"># Adjust chromosome names</span>
-<span class="va">hg38</span><span class="op">$</span><span class="va">chrom</span><span class="op">[</span><span class="va">hg38</span><span class="op">$</span><span class="va">chrom</span> <span class="op">==</span> <span class="fl">23</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"X"</span>
-<span class="va">hg38</span><span class="op">$</span><span class="va">chrom</span><span class="op">[</span><span class="va">hg38</span><span class="op">$</span><span class="va">chrom</span> <span class="op">==</span> <span class="fl">24</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"Y"</span>
-<span class="va">hg38</span><span class="op">$</span><span class="va">chrom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"chr"</span>, <span class="va">hg38</span><span class="op">$</span><span class="va">chrom</span><span class="op">)</span>
-<span class="co"># Make GRanges object</span>
-<span class="va">hg38.UCSC.centromere</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/makeGRangesFromDataFrame.html">makeGRangesFromDataFrame</a></span><span class="op">(</span><span class="va">hg38</span>, seqnames.field <span class="op">=</span> <span class="st">"chrom"</span>, start.field <span class="op">=</span> <span class="st">"centromerStart"</span>, end.field <span class="op">=</span> <span class="st">"centromerEnd"</span><span class="op">)</span>
-<span class="co"># Assign seqinfo data</span>
-<span class="fu">seqlengths</span><span class="op">(</span><span class="va">hg38.UCSC.centromere</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">hg38</span><span class="op">$</span><span class="va">length</span>
-<span class="fu">genome</span><span class="op">(</span><span class="va">hg38.UCSC.centromere</span><span class="op">)</span>     <span class="op">&lt;-</span> <span class="st">"hg38"</span>
-<span class="co"># Resulting object</span>
-<span class="va">hg38.UCSC.centromere</span>
-<span class="co">#&gt; GRanges object with 24 ranges and 0 metadata columns:</span>
-<span class="co">#&gt;        seqnames              ranges strand</span>
-<span class="co">#&gt;           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt;</span>
-<span class="co">#&gt;    [1]     chr1 121535434-124535434      *</span>
-<span class="co">#&gt;    [2]     chr2   92326171-95326171      *</span>
-<span class="co">#&gt;    [3]     chr3   90504854-93504854      *</span>
-<span class="co">#&gt;    [4]     chr4   49660117-52660117      *</span>
-<span class="co">#&gt;    [5]     chr5   46405641-49405641      *</span>
-<span class="co">#&gt;    ...      ...                 ...    ...</span>
-<span class="co">#&gt;   [20]    chr20   26369569-29369569      *</span>
-<span class="co">#&gt;   [21]    chr21   11288129-14288129      *</span>
-<span class="co">#&gt;   [22]    chr22   13000000-16000000      *</span>
-<span class="co">#&gt;   [23]     chrX   58632012-61632012      *</span>
-<span class="co">#&gt;   [24]     chrY   10104553-13104553      *</span>
-<span class="co">#&gt;   -------</span>
-<span class="co">#&gt;   seqinfo: 24 sequences from hg38 genome</span></code></pre></div>
-<p>The <em><a href="https://bioconductor.org/packages/3.13/rCGH">rCGH</a></em> package also contains data for the <code>hg19</code> and <code>hg18</code> genomes. The <code>hg19</code> centromere data is equivalent to the <code>hg19.UCSC.centromere</code> object provided in our <em><a href="https://bioconductor.org/packages/3.13/excluderanges">excluderanges</a></em> package.</p>
+<code class="sourceCode R"><span><span class="va">excludeGR.hg38.all</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/inter-range-methods.html" class="external-link">reduce</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">excludeGR.hg38.Bernstein</span>, </span>
+<span>                               <span class="va">excludeGR.hg38.Kundaje.1</span>, </span>
+<span>                               <span class="va">excludeGR.hg38.Kundaje.2</span>, </span>
+<span>                               <span class="va">excludeGR.hg38.Reddy</span>, </span>
+<span>                               <span class="va">excludeGR.hg38.Wold</span>, </span>
+<span>                               <span class="va">excludeGR.hg38.Yeo</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in valid.GenomicRanges.seqinfo(x, suggest.trim = TRUE): GRanges object contains 1 out-of-bound range located on sequence</span></span>
+<span><span class="co">#&gt;   chr4_GL000008v2_random. Note that ranges located on a sequence whose</span></span>
+<span><span class="co">#&gt;   length is unknown (NA) or on a circular sequence are not considered</span></span>
+<span><span class="co">#&gt;   out-of-bound (use seqlengths() and isCircular() to get the lengths and</span></span>
+<span><span class="co">#&gt;   circularity flags of the underlying sequences). You can use trim() to</span></span>
+<span><span class="co">#&gt;   trim these ranges. See ?`trim,GenomicRanges-method` for more</span></span>
+<span><span class="co">#&gt;   information.</span></span>
+<span><span class="co"># Sort and Keep only standard chromosomes</span></span>
+<span><span class="va">excludeGR.hg38.all</span> <span class="op">&lt;-</span> <span class="va">excludeGR.hg38.all</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">sort</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqlevels-wrappers.html" class="external-link">keepStandardChromosomes</a></span><span class="op">(</span>pruning.mode <span class="op">=</span> <span class="st">"tidy"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">excludeGR.hg38.all</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 13239</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="va">excludeGR.hg38.all</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
+<span><span class="co">#&gt;       5    1778    2306    8153    2859 5407757</span></span></code></pre></div>
 </div>
 </div>
-<div id="source-data-for-the-excludable-regions" class="section level2">
-<h2 class="hasAnchor">
-<a href="#source-data-for-the-excludable-regions" class="anchor"></a>Source data for the excludable regions</h2>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mtx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"inst/extdata/table_excluderanges.csv"</span><span class="op">)</span>
-<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">mtx</span><span class="op">)</span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="27%">
-<col width="8%">
-<col width="4%">
-<col width="11%">
-<col width="8%">
-<col width="38%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">Object</th>
-<th align="right">Number.of.regions</th>
-<th align="left">Assembly</th>
-<th align="left">Lab</th>
-<th align="right">Number.of.columns</th>
-<th align="left">Source</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">ce10.Kundaje.ce10-Excludable.rds</td>
-<td align="right">122</td>
-<td align="left">ce10</td>
-<td align="left">Anshul Kundaje, Stanford</td>
-<td align="right">3</td>
-<td align="left"><a href="http://mitra.stanford.edu/kundaje/akundaje/release/Excludables/ce10-C.elegans" class="uri">http://mitra.stanford.edu/kundaje/akundaje/release/Excludables/ce10-C.elegans</a></td>
-</tr>
-<tr class="even">
-<td align="left">dm3.Kundaje.dm3-Excludable.rds</td>
-<td align="right">492</td>
-<td align="left">dm3</td>
-<td align="left">Anshul Kundaje, Stanford</td>
-<td align="right">3</td>
-<td align="left"><a href="http://mitra.stanford.edu/kundaje/akundaje/release/Excludables/dm3-D.melanogaster/" class="uri">http://mitra.stanford.edu/kundaje/akundaje/release/Excludables/dm3-D.melanogaster/</a></td>
-</tr>
-<tr class="odd">
-<td align="left">hg19.Bernstein.Mint_Excludable_hg19.rds</td>
-<td align="right">9035</td>
-<td align="left">hg19</td>
-<td align="left">Bradley Bernstein, Broad</td>
-<td align="right">6</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF200UUD/" class="uri">https://www.encodeproject.org/files/ENCFF200UUD/</a></td>
-</tr>
-<tr class="even">
-<td align="left">hg19.Birney.wgEncodeDacMapabilityConsensusExcludable.rds</td>
-<td align="right">411</td>
-<td align="left">hg19</td>
-<td align="left">Ewan Birney, EBI</td>
-<td align="right">6</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF001TDO/" class="uri">https://www.encodeproject.org/files/ENCFF001TDO/</a></td>
-</tr>
-<tr class="odd">
-<td align="left">hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable.rds</td>
-<td align="right">1649</td>
-<td align="left">hg19</td>
-<td align="left">Gregory Crawford, Duke</td>
-<td align="right">6</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF001THR/" class="uri">https://www.encodeproject.org/files/ENCFF001THR/</a></td>
-</tr>
-<tr class="even">
-<td align="left">hg19.Wold.hg19mitoExcludable.rds</td>
-<td align="right">295</td>
-<td align="left">hg19</td>
-<td align="left">Barbara Wold, Caltech</td>
-<td align="right">3</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF055QTV/" class="uri">https://www.encodeproject.org/files/ENCFF055QTV/</a></td>
-</tr>
-<tr class="odd">
-<td align="left">hg19.Yeo.eCLIP_Excludableregions.hg19.rds</td>
-<td align="right">57</td>
-<td align="left">hg19</td>
-<td align="left">Gene Yeo, UCSD</td>
-<td align="right">6</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF039QTN/" class="uri">https://www.encodeproject.org/files/ENCFF039QTN/</a></td>
-</tr>
-<tr class="even">
-<td align="left">hg38.Bernstein.Mint_Excludable_GRCh38.rds</td>
-<td align="right">12052</td>
-<td align="left">hg38</td>
-<td align="left">Bradley Bernstein, Broad</td>
-<td align="right">6</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF023CZC/" class="uri">https://www.encodeproject.org/files/ENCFF023CZC/</a></td>
-</tr>
-<tr class="odd">
-<td align="left">hg38.Kundaje.GRCh38.Excludable.rds</td>
-<td align="right">38</td>
-<td align="left">hg38</td>
-<td align="left">Anshul Kundaje, Stanford</td>
-<td align="right">3</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF356LFX/" class="uri">https://www.encodeproject.org/files/ENCFF356LFX/</a></td>
-</tr>
-<tr class="even">
-<td align="left">hg38.Kundaje.GRCh38_unified_Excludable.rds</td>
-<td align="right">910</td>
-<td align="left">hg38</td>
-<td align="left">Anshul Kundaje, Stanford</td>
-<td align="right">3</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF419RSJ/" class="uri">https://www.encodeproject.org/files/ENCFF419RSJ/</a></td>
-</tr>
-<tr class="odd">
-<td align="left">hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.rds</td>
-<td align="right">401</td>
-<td align="left">hg38</td>
-<td align="left">Tim Reddy, Duke</td>
-<td align="right">6</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF220FIN/" class="uri">https://www.encodeproject.org/files/ENCFF220FIN/</a></td>
-</tr>
-<tr class="even">
-<td align="left">hg38.Wold.hg38mitoExcludable.rds</td>
-<td align="right">299</td>
-<td align="left">hg38</td>
-<td align="left">Barbara Wold, Caltech</td>
-<td align="right">3</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF940NTE/" class="uri">https://www.encodeproject.org/files/ENCFF940NTE/</a></td>
-</tr>
-<tr class="odd">
-<td align="left">hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds</td>
-<td align="right">56</td>
-<td align="left">hg38</td>
-<td align="left">Gene Yeo, UCSD</td>
-<td align="right">6</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF269URO/" class="uri">https://www.encodeproject.org/files/ENCFF269URO/</a></td>
-</tr>
-<tr class="even">
-<td align="left">mm10.Hardison.Excludable.full.rds</td>
-<td align="right">7865</td>
-<td align="left">mm10</td>
-<td align="left">Ross Hardison, PennState</td>
-<td align="right">3</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF790DJT/" class="uri">https://www.encodeproject.org/files/ENCFF790DJT/</a></td>
-</tr>
-<tr class="odd">
-<td align="left">mm10.Hardison.psuExcludable.mm10.rds</td>
-<td align="right">5552</td>
-<td align="left">mm10</td>
-<td align="left">Ross Hardison, PennState</td>
-<td align="right">3</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF226BDM/" class="uri">https://www.encodeproject.org/files/ENCFF226BDM/</a></td>
-</tr>
-<tr class="even">
-<td align="left">mm10.Kundaje.anshul.Excludable.mm10.rds</td>
-<td align="right">3010</td>
-<td align="left">mm10</td>
-<td align="left">Anshul Kundaje, Stanford</td>
-<td align="right">3</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF999QPV/" class="uri">https://www.encodeproject.org/files/ENCFF999QPV/</a></td>
-</tr>
-<tr class="odd">
-<td align="left">mm10.Kundaje.mm10.Excludable.rds</td>
-<td align="right">164</td>
-<td align="left">mm10</td>
-<td align="left">Anshul Kundaje, Stanford</td>
-<td align="right">3</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF547MET/" class="uri">https://www.encodeproject.org/files/ENCFF547MET/</a></td>
-</tr>
-<tr class="even">
-<td align="left">mm10.Wold.mm10mitoExcludable.rds</td>
-<td align="right">123</td>
-<td align="left">mm10</td>
-<td align="left">Barbara Wold, Caltech</td>
-<td align="right">3</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF759PJK/" class="uri">https://www.encodeproject.org/files/ENCFF759PJK/</a></td>
-</tr>
-<tr class="odd">
-<td align="left">mm9.Wold.mm9mitoExcludable.rds</td>
-<td align="right">123</td>
-<td align="left">mm9</td>
-<td align="left">Barbara Wold, Caltech</td>
-<td align="right">3</td>
-<td align="left"><a href="https://www.encodeproject.org/files/ENCFF299EZH/" class="uri">https://www.encodeproject.org/files/ENCFF299EZH/</a></td>
-</tr>
-</tbody>
-</table>
+<div class="section level1">
+<h1 id="bedbase-data-download">BEDbase data download<a class="anchor" aria-label="anchor" href="#bedbase-data-download"></a>
+</h1>
+<p><a href="http://bedbase.org/" class="external-link">BEDbase.org</a> is a repository for storing and analyzing BED files and BED sets, developed by <a href="https://databio.org/" class="external-link">Sheffield lab</a>. It provides API for data access and retrieval.</p>
+<p>Using BEDbase ID (e.g., <code>1a561729234c2844303a051b16f66656</code> for the <code>hg38.Kundaje.GRCh38_unified_Excludable</code> excluderanges object), we can construct a URL showing the splash screen with detailed information of the corresponding object, <a href="http://bedbase.org/#/bedsplash/1a561729234c2844303a051b16f66656" class="external-link uri">http://bedbase.org/#/bedsplash/1a561729234c2844303a051b16f66656</a>.</p>
+<p>We can also get the BED file using the <a href="http://bedbase.org/docs" class="external-link">BEDbase API</a>.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1"></a><span class="fu">wget</span> http://bedbase.org/api/bed/1a561729234c2844303a051b16f66656/file/bed \</span>
+<span id="cb17-2"><a href="#cb17-2"></a>  -O hg38.Kundaje.GRCh38_unified_Excludable.bed.gz </span></code></pre></div>
+<p>See also the R code to download <a href="https://gist.github.com/mdozmorov/7f4393f90932fb6bd911c43c20425ca0" class="external-link">T2T.excluderanges</a> and <a href="https://gist.github.com/mdozmorov/33a1fa3234b2942dae238e1fcb39c996" class="external-link">mm39.excluderanges</a>.</p>
+</div>
+<div class="section level1">
+<h1 id="mitochondrial-dna-sequences-numts">Mitochondrial DNA sequences, NUMTs<a class="anchor" aria-label="anchor" href="#mitochondrial-dna-sequences-numts"></a>
+</h1>
+<p>Mitochondrial DNA sequences (mtDNA, 100-600K mitochondria per human cell) transferred to the nucleus give rise to the so-called mitochondrial DNA sequences in the nuclear genome (NUMTs). In the settings of DNA/chromatin sequencing (e.g., ATAC-seq), we may observe up to 80% of mitochondrial sequencing reads that may pile up in the NUMT sequences. Similar to exclusion sets, genomic regions highly homologous to mtDNA can be masked to improve biological signal.</p>
+<p>The reference human nuclear mitochondrial sequences have been available in the UCSC genome browser for hg19 and mm8 human/mouse genome assemblies. We collected NUMT sets for hg38, T2T-CHM13, mm10, generated by Caleb Lareau in the <a href="https://github.com/caleblareau/mitoblacklist" class="external-link">mitoblacklist</a> GitHub repository. These NUMT sets can be combined with exclusion sets.</p>
+<p>Example of the <code>hg38.Lareau.hg38_peaks</code> object</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mtx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"inst/extdata/table_gap.csv"</span><span class="op">)</span>
-<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">mtx</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://httr.r-lib.org/" class="external-link">httr</a></span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Get hg38.Lareau.hg38_peaks BEDbase ID</span></span>
+<span><span class="va">bedbase_id</span> <span class="op">&lt;-</span> <span class="st">"9fa55701a3bd3e7a598d1d2815e3390f"</span></span>
+<span><span class="co"># Construct output file name</span></span>
+<span><span class="va">fileNameOut</span> <span class="op">&lt;-</span> <span class="st">"hg38.Lareau.hg38_peak.bed.gz"</span></span>
+<span><span class="co"># API token for BED data</span></span>
+<span><span class="va">token2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"http://bedbase.org/api/bed/"</span>, <span class="va">bedbase_id</span>, <span class="st">"/file/bed"</span><span class="op">)</span></span>
+<span><span class="co"># Download file</span></span>
+<span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">token2</span>, <span class="fu"><a href="https://httr.r-lib.org/reference/write_disk.html" class="external-link">write_disk</a></span><span class="op">(</span><span class="va">fileNameOut</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="co"># , verbose()</span></span>
+<span><span class="co">#&gt; Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]</span></span>
+<span><span class="co">#&gt;   Date: 2022-10-03 00:26</span></span>
+<span><span class="co">#&gt;   Status: 200</span></span>
+<span><span class="co">#&gt;   Content-Type: application/vnd.realvnc.bed</span></span>
+<span><span class="co">#&gt;   Size: 11.8 kB</span></span>
+<span><span class="co">#&gt; &lt;ON DISK&gt;  /Users/mdozmorov/Documents/Work/GitHub/excluderanges/hg38.Lareau.hg38_peak.bed.gz</span></span>
+<span><span class="co"># Read the data in</span></span>
+<span><span class="va">hg38.Lareau.hg38_peaks</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_tsv</a></span><span class="op">(</span><span class="va">fileNameOut</span>, </span>
+<span>                                          col_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                                          col_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cddcdc"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Assign column names depending on the number of columns</span></span>
+<span><span class="va">all_columns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr"</span>, <span class="st">"start"</span>, <span class="st">"stop"</span>, <span class="st">"name"</span>, <span class="st">"score"</span>, <span class="st">"strand"</span>, </span>
+<span>                 <span class="st">"signalValue"</span>, <span class="st">"pValue"</span>, <span class="st">"qValue"</span>, <span class="st">"peak"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">hg38.Lareau.hg38_peaks</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">all_columns</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">hg38.Lareau.hg38_peaks</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co"># Convert to GRanges object</span></span>
+<span><span class="va">hg38.Lareau.hg38_peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/makeGRangesFromDataFrame.html" class="external-link">makeGRangesFromDataFrame</a></span><span class="op">(</span><span class="va">hg38.Lareau.hg38_peaks</span>, </span>
+<span>                                                   keep.extra.columns <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">hg38.Lareau.hg38_peaks</span></span>
+<span><span class="co">#&gt; GRanges object with 784 ranges and 2 metadata columns:</span></span>
+<span><span class="co">#&gt;         seqnames              ranges strand |                name     score</span></span>
+<span><span class="co">#&gt;            &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; |         &lt;character&gt; &lt;numeric&gt;</span></span>
+<span><span class="co">#&gt;     [1]     chr1       628903-635104      * |   peaks/hg38_peak_1   2523899</span></span>
+<span><span class="co">#&gt;     [2]     chr1     5850087-5850571      * |   peaks/hg38_peak_2     32940</span></span>
+<span><span class="co">#&gt;     [3]     chr1     8909610-8910014      * |   peaks/hg38_peak_3       123</span></span>
+<span><span class="co">#&gt;     [4]     chr1     9574580-9574997      * |   peaks/hg38_peak_4     28828</span></span>
+<span><span class="co">#&gt;     [5]     chr1   32043823-32044203      * |   peaks/hg38_peak_5      8083</span></span>
+<span><span class="co">#&gt;     ...      ...                 ...    ... .                 ...       ...</span></span>
+<span><span class="co">#&gt;   [780]     chrX 143431716-143432219      * | peaks/hg38_peak_780     41434</span></span>
+<span><span class="co">#&gt;   [781]     chrX 143432410-143433212      * | peaks/hg38_peak_781      9271</span></span>
+<span><span class="co">#&gt;   [782]     chrX 143433510-143434156      * | peaks/hg38_peak_782      5741</span></span>
+<span><span class="co">#&gt;   [783]     chrX 143543636-143544023      * | peaks/hg38_peak_783      3320</span></span>
+<span><span class="co">#&gt;   [784]     chrX 146995842-146996224      * | peaks/hg38_peak_784     27222</span></span>
+<span><span class="co">#&gt;   -------</span></span>
+<span><span class="co">#&gt;   seqinfo: 23 sequences from an unspecified genome; no seqlengths</span></span></code></pre></div>
+</div>
+<div class="section level1">
+<h1 id="centromeres-telomeres-etc">Centromeres, telomeres, etc.<a class="anchor" aria-label="anchor" href="#centromeres-telomeres-etc"></a>
+</h1>
+<p>Besides the ENCODE-produced excludable regions, we may want to exclude centromeres, telomeres, and other gap locations. The “Gap Locations” track for Homo Sapiens is available for the GRcH37/hg19 genome assembly as a <a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="external-link">UCSC ‘gap’ table</a>. It can be retrieved from <em><a href="https://bioconductor.org/packages/3.15/AnnotationHub" class="external-link">AnnotationHub</a></em>, but lacks the metadata columns needed to decide the type of gaps.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Search for the gap track</span></span>
+<span><span class="co"># ahData &lt;- query(ah, c("gap", "Homo sapiens", "hg19"))</span></span>
+<span><span class="co"># ahData[ahData$title == "Gap"]</span></span>
+<span><span class="va">gaps</span> <span class="op">&lt;-</span> <span class="va">ahData</span><span class="op">[[</span><span class="st">"AH6444"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
+<p>The <a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="external-link">UCSC ‘gap’ table</a> provides better granularity about the types of gaps available. E.g., for human, hg19, we have the following types and the number of gaps.</p>
+<p><img src="reference/figures/README-gapcounts-1.png" width="70%" height="70%"></p>
+<p>Those objects are provided as individual GRanges.</p>
+<p>Naming convention: <code>&lt;genome assembly&gt;.UCSC.&lt;gap type&gt;</code>, e.g., <code>hg19.UCSC.gap_centromere</code>. We can similarly load any gap type object.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"excluderanges"</span>, <span class="st">"UCSC"</span>, <span class="st">"Homo Sapiens"</span>, <span class="st">"hg19"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">query_data</span></span>
+<span><span class="co">#&gt; AnnotationHub with 7 records</span></span>
+<span><span class="co">#&gt; # snapshotDate(): 2022-04-25</span></span>
+<span><span class="co">#&gt; # $dataprovider: UCSC</span></span>
+<span><span class="co">#&gt; # $species: Homo sapiens</span></span>
+<span><span class="co">#&gt; # $rdataclass: GRanges</span></span>
+<span><span class="co">#&gt; # additional mcols(): taxonomyid, genome, description,</span></span>
+<span><span class="co">#&gt; #   coordinate_1_based, maintainer, rdatadateadded, preparerclass, tags,</span></span>
+<span><span class="co">#&gt; #   rdatapath, sourceurl, sourcetype </span></span>
+<span><span class="co">#&gt; # retrieve records with, e.g., 'object[["AH95927"]]' </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;             title                        </span></span>
+<span><span class="co">#&gt;   AH95927 | hg19.UCSC.centromere.rds     </span></span>
+<span><span class="co">#&gt;   AH95928 | hg19.UCSC.clone.rds          </span></span>
+<span><span class="co">#&gt;   AH95929 | hg19.UCSC.contig.rds         </span></span>
+<span><span class="co">#&gt;   AH95930 | hg19.UCSC.heterochromatin.rds</span></span>
+<span><span class="co">#&gt;   AH95931 | hg19.UCSC.scaffold.rds       </span></span>
+<span><span class="co">#&gt;   AH95932 | hg19.UCSC.short_arm.rds      </span></span>
+<span><span class="co">#&gt;   AH95933 | hg19.UCSC.telomere.rds</span></span>
+<span></span>
+<span><span class="va">gapsGR_hg19_centromere</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH95927"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; loading from cache</span></span>
+<span><span class="va">gapsGR_hg19_centromere</span></span>
+<span><span class="co">#&gt; GRanges object with 24 ranges and 6 metadata columns:</span></span>
+<span><span class="co">#&gt;       seqnames              ranges strand |       bin        ix           n</span></span>
+<span><span class="co">#&gt;          &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt; &lt;numeric&gt; &lt;character&gt;</span></span>
+<span><span class="co">#&gt;     2     chr1 121535434-124535434      * |        23      1270           N</span></span>
+<span><span class="co">#&gt;   184    chr21   11288129-14288129      * |        10        22           N</span></span>
+<span><span class="co">#&gt;   199    chr22   13000000-16000000      * |        10         3           N</span></span>
+<span><span class="co">#&gt;   206    chr19   24681782-27681782      * |         1       410           N</span></span>
+<span><span class="co">#&gt;   224     chrY   10104553-13104553      * |        10       105           N</span></span>
+<span><span class="co">#&gt;   ...      ...                 ...    ... .       ...       ...         ...</span></span>
+<span><span class="co">#&gt;   439     chr6   58830166-61830166      * |        16       628           N</span></span>
+<span><span class="co">#&gt;   453     chr5   46405641-49405641      * |        14       452           N</span></span>
+<span><span class="co">#&gt;   460     chr4   49660117-52660117      * |         1       447           N</span></span>
+<span><span class="co">#&gt;   476     chr3   90504854-93504854      * |         2       784           N</span></span>
+<span><span class="co">#&gt;   481     chr2   92326171-95326171      * |        20       770           N</span></span>
+<span><span class="co">#&gt;            size        type      bridge</span></span>
+<span><span class="co">#&gt;       &lt;numeric&gt; &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">#&gt;     2     3e+06  centromere          no</span></span>
+<span><span class="co">#&gt;   184     3e+06  centromere          no</span></span>
+<span><span class="co">#&gt;   199     3e+06  centromere          no</span></span>
+<span><span class="co">#&gt;   206     3e+06  centromere          no</span></span>
+<span><span class="co">#&gt;   224     3e+06  centromere          no</span></span>
+<span><span class="co">#&gt;   ...       ...         ...         ...</span></span>
+<span><span class="co">#&gt;   439     3e+06  centromere          no</span></span>
+<span><span class="co">#&gt;   453     3e+06  centromere          no</span></span>
+<span><span class="co">#&gt;   460     3e+06  centromere          no</span></span>
+<span><span class="co">#&gt;   476     3e+06  centromere          no</span></span>
+<span><span class="co">#&gt;   481     3e+06  centromere          no</span></span>
+<span><span class="co">#&gt;   -------</span></span>
+<span><span class="co">#&gt;   seqinfo: 24 sequences from hg19 genome</span></span></code></pre></div>
+</div>
+<div class="section level1">
+<h1 id="summary-table">Summary table<a class="anchor" aria-label="anchor" href="#summary-table"></a>
+</h1>
+<p><a href="man/figures/Table_S1.csv">Full summary table</a>.</p>
 <table class="table">
 <colgroup>
+<col width="16%">
+<col width="3%">
 <col width="14%">
-<col width="8%">
-<col width="4%">
-<col width="2%">
-<col width="8%">
 <col width="60%">
+<col width="4%">
 </colgroup>
 <thead><tr class="header">
-<th align="left">Object</th>
-<th align="right">Number.of.regions</th>
-<th align="left">Assembly</th>
-<th align="left">Lab</th>
-<th align="right">Number.of.columns</th>
-<th align="left">Source</th>
+<th align="left">Name</th>
+<th align="left">AnnotationHub.ID</th>
+<th align="left">BEDbase.URL</th>
+<th align="left">Description</th>
+<th align="right">Filtered.Region.count</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">hg19.UCSC.centromere.rds</td>
-<td align="right">24</td>
-<td align="left">hg19</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
+<td align="left">T2T.excluderanges</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/6548a002754cc1e882035293541b59a8" class="external-link">link</a></td>
+<td align="left">Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions</td>
+<td align="right">3565</td>
 </tr>
 <tr class="even">
-<td align="left">hg19.UCSC.clone.rds</td>
-<td align="right">207</td>
-<td align="left">hg19</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
+<td align="left">hg38.Kundaje.GRCh38_unified_Excludable</td>
+<td align="left">AH95917</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/1a561729234c2844303a051b16f66656" class="external-link">link</a></td>
+<td align="left">Defined as a combination of hg38.Lareau.hg38_peaks, hg38.Boyle.hg38-Excludable.v2, and hg38.Wimberley.peakPass60Perc_sorted, followed by manual curation. Supersedes hg38.Kundaje.GRCh38.Excludable.</td>
+<td align="right">910</td>
 </tr>
 <tr class="odd">
-<td align="left">hg19.UCSC.contig.rds</td>
-<td align="right">163</td>
-<td align="left">hg19</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
+<td align="left">hg38.Bernstein.Mint_Excludable_GRCh38</td>
+<td align="left">AH95915</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/80e335903b77b597b8245f9817fcd9cd" class="external-link">link</a></td>
+<td align="left">Defined from Mint-ChIP (low input, multiplexed ChIP-seq) data</td>
+<td align="right">12052</td>
 </tr>
 <tr class="even">
-<td align="left">hg19.UCSC.heterochromatin.rds</td>
-<td align="right">12</td>
-<td align="left">hg19</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
+<td align="left">hg38.Boyle.hg38-Excludable.v2</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/ac58962c9ec98fe9258c12092a0c8832" class="external-link">link</a></td>
+<td align="left">Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions</td>
+<td align="right">636</td>
 </tr>
 <tr class="odd">
-<td align="left">hg19.UCSC.scaffold.rds</td>
-<td align="right">40</td>
-<td align="left">hg19</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
+<td align="left">hg38.Kundaje.GRCh38.Excludable</td>
+<td align="left">AH95916</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/cb701496bde7eeb18add96fdbc3b8b11" class="external-link">link</a></td>
+<td align="left">Defined by Anshul Kundaje as a part of ENCODE and modENCODE consortia</td>
+<td align="right">38</td>
 </tr>
 <tr class="even">
-<td align="left">hg19.UCSC.short_arm.rds</td>
+<td align="left">hg38.Lareau.hg38.full.Excludable</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/5a12c1de138ace1a73a45e6faf9ba669" class="external-link">link</a></td>
+<td align="left">ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)</td>
+<td align="right">820</td>
+</tr>
+<tr class="odd">
+<td align="left">hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38</td>
+<td align="left">AH95918</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/148622e896f6798f7c4abf448bab67c4" class="external-link">link</a></td>
+<td align="left">Defined by the ENCODE consortium, includes satellite repeats (CATTC, GAATG, GAGTG, ACRO1), RepeatMasker repeats (ALR/Alpha, BSR/Beta), centromeric repeats, chrM, High/Low mappability islands. Has extra chromosomes, use keepStandardChromosomes() filtering</td>
+<td align="right">396</td>
+</tr>
+<tr class="even">
+<td align="left">hg38.Wimberley.peakPass60Perc_sorted</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/f4a9bb19ed29e993592813e970e7dd90" class="external-link">link</a></td>
+<td align="left">Defined by the ewimberley/peakPass software</td>
+<td align="right">5078</td>
+</tr>
+<tr class="odd">
+<td align="left">hg38.Wold.hg38mitoExcludable</td>
+<td align="left">AH95919</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/a714dcba99821801b5c426fba9c80988" class="external-link">link</a></td>
+<td align="left">Definition method unknown</td>
+<td align="right">299</td>
+</tr>
+<tr class="even">
+<td align="left">hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed</td>
+<td align="left">AH95920</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/1a02a65fafefefd65ff4a060273304ed" class="external-link">link</a></td>
+<td align="left">Defined from eCLIP data</td>
+<td align="right">56</td>
+</tr>
+<tr class="odd">
+<td align="left">hg19.Boyle.hg19-Excludable.v2</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/6eb180d456f2f3b71b419e5fab107fc9" class="external-link">link</a></td>
+<td align="left">Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions</td>
+<td align="right">834</td>
+</tr>
+<tr class="even">
+<td align="left">hg19.Bernstein.Mint_Excludable_hg19</td>
+<td align="left">AH95910</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/d1a6047ed5bec84acefe9c52cf63b593" class="external-link">link</a></td>
+<td align="left">Defined from Mint-ChIP (low input, multiplexed ChIP-seq) data</td>
+<td align="right">9035</td>
+</tr>
+<tr class="odd">
+<td align="left">hg19.Birney.wgEncodeDacMapabilityConsensusExcludable</td>
+<td align="left">AH95911</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/5b6b19dea85a8bc6007ef07a0960267b" class="external-link">link</a></td>
+<td align="left">Defined by the ENCODE consortium, includes satellite repeats (CATTC, GAATG, GAGTG, ACRO1), RepeatMasker repeats (ALR/Alpha, BSR/Beta), centromeric repeats, chrM, High/Low mappability islands</td>
+<td align="right">411</td>
+</tr>
+<tr class="even">
+<td align="left">hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable</td>
+<td align="left">AH95912</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/dac2eda4e8687eb039611ac6cd595821" class="external-link">link</a></td>
+<td align="left">Defined by the ENCODE consortium, includes satellite repeats (CATTC, GAATG, GAGTG, ACRO1), RepeatMasker repeats (ALR/Alpha, BSR/Beta), human satellite repeat HSATII, chrM, ribosomal subunit consensus sequences LSU-rRNA_Hsa, SSU-rRNA_Hsa. Has extra chromosomes, use keepStandardChromosomes() filtering</td>
+<td align="right">1566</td>
+</tr>
+<tr class="odd">
+<td align="left">hg19.Lareau.hg19.full.Excludable</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/d934d47e8035da9c5a1767c8153db4cc" class="external-link">link</a></td>
+<td align="left">ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)</td>
+<td align="right">902</td>
+</tr>
+<tr class="even">
+<td align="left">hg19.Wold.hg19mitoExcludable</td>
+<td align="left">AH95913</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/182046a0f055b0176178241a95cbd637" class="external-link">link</a></td>
+<td align="left">Definition method unknown</td>
+<td align="right">295</td>
+</tr>
+<tr class="odd">
+<td align="left">hg19.Yeo.eCLIP_Excludableregions.hg19</td>
+<td align="left">AH95914</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/350f49dc47e5307109e1e17d60223a31" class="external-link">link</a></td>
+<td align="left">Defined from eCLIP data, includes skyscraper, rRNA pseudogene, unreliably mapped satellite repeat, and low complexity skyscraper peak regions</td>
+<td align="right">57</td>
+</tr>
+<tr class="even">
+<td align="left">mm39.excluderanges</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/edc716833d4b5ee75c34a0692fc353d5" class="external-link">link</a></td>
+<td align="left">Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions</td>
+<td align="right">3147</td>
+</tr>
+<tr class="odd">
+<td align="left">mm10.Boyle.mm10-Excludable.v2</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/a5311e39fe1590de66c1df6a5881a942" class="external-link">link</a></td>
+<td align="left">Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions</td>
+<td align="right">3435</td>
+</tr>
+<tr class="even">
+<td align="left">mm10.Hardison.Excludable.full</td>
+<td align="left">AH95921</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/087541f51cf8c7d7078995d1bd95fd27" class="external-link">link</a></td>
+<td align="left">Definition method unknown</td>
+<td align="right">7865</td>
+</tr>
+<tr class="odd">
+<td align="left">mm10.Hardison.psuExcludable.mm10</td>
+<td align="left">AH95922</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/fc6b88f936c5cd880545943708e4c2af" class="external-link">link</a></td>
+<td align="left">Definition method unknown</td>
+<td align="right">5552</td>
+</tr>
+<tr class="even">
+<td align="left">mm10.Kundaje.anshul.Excludable.mm10</td>
+<td align="left">AH95923</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/e6a89a8432f4a69bae41f60ed0c7e704" class="external-link">link</a></td>
+<td align="left">Defined by Anshul Kundaje as a part of ENCODE and modENCODE consortia</td>
+<td align="right">3010</td>
+</tr>
+<tr class="odd">
+<td align="left">mm10.Kundaje.mm10.Excludable</td>
+<td align="left">AH95924</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/76c03b6c831f8fecdf4fee7adf2def6a" class="external-link">link</a></td>
+<td align="left">Defined by Anshul Kundaje as a part of ENCODE and modENCODE consortia</td>
+<td align="right">164</td>
+</tr>
+<tr class="even">
+<td align="left">mm10.Lareau.mm10.full.Excludable</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/1bd30517be79d4d051308c693b822798" class="external-link">link</a></td>
+<td align="left">ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)</td>
+<td align="right">523</td>
+</tr>
+<tr class="odd">
+<td align="left">mm10.Wold.mm10mitoExcludable</td>
+<td align="left">AH95925</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/830f1ffd31689e3e7c22ff856f0ba02c" class="external-link">link</a></td>
+<td align="left">Definition method unknown</td>
+<td align="right">123</td>
+</tr>
+<tr class="even">
+<td align="left">mm9.Lareau.mm9.full.Excludable</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/e903b285baefce8167367ce57a8c3d48" class="external-link">link</a></td>
+<td align="left">ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)</td>
+<td align="right">3415</td>
+</tr>
+<tr class="odd">
+<td align="left">mm9.Wold.mm9mitoExcludable</td>
+<td align="left">AH95926</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/9b4389a6a4b937df8abd62dad30fa3a3" class="external-link">link</a></td>
+<td align="left">Definition method unknown</td>
+<td align="right">123</td>
+</tr>
+<tr class="even">
+<td align="left">ce11.Boyle.ce11-Excludable.v2</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/7235114a78b1709be96f0d6a82b4ea36" class="external-link">link</a></td>
+<td align="left">Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions</td>
+<td align="right">97</td>
+</tr>
+<tr class="odd">
+<td align="left">ce10.Boyle.ce10-Excludable.v2</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/6de11bb5f50ee015b23ac96f433f00bb" class="external-link">link</a></td>
+<td align="left">Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions</td>
+<td align="right">100</td>
+</tr>
+<tr class="even">
+<td align="left">ce10.Kundaje.ce10-Excludable</td>
+<td align="left">AH95908</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/32b59590fa83161687cec4cabfa2bb2b" class="external-link">link</a></td>
+<td align="left">Defined by Anshul Kundaje, superseded by ce10.Boyle.ce10-Excludable.v2</td>
+<td align="right">122</td>
+</tr>
+<tr class="odd">
+<td align="left">danRer10.Domingues.Excludableed</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/a0a94af275f858d63550005627d260b7" class="external-link">link</a></td>
+<td align="left">Defined manually using total RNA-seq.</td>
+<td align="right">57</td>
+</tr>
+<tr class="even">
+<td align="left">danRer10.Yang.Supplemental_Table_19.ChIP-seq_black_list_in_the_zebrafish_genome</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/78f5eb585019a4d795ef80159a597b15" class="external-link">link</a></td>
+<td align="left">Defined via MACS2 peak calling using ChIP-seq (PMID: 33239788)</td>
+<td align="right">853</td>
+</tr>
+<tr class="odd">
+<td align="left">dm6.Boyle.dm6-Excludable.v2</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/24186dc2aac492074d3de9caede730a0" class="external-link">link</a></td>
+<td align="left">Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions</td>
+<td align="right">182</td>
+</tr>
+<tr class="even">
+<td align="left">dm3.Boyle.dm3-Excludable.v2</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/7427399e18d9c01e423b2f4963b409ea" class="external-link">link</a></td>
+<td align="left">Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions</td>
+<td align="right">248</td>
+</tr>
+<tr class="odd">
+<td align="left">dm3.Kundaje.dm3-Excludable</td>
+<td align="left">AH95909</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/0801a522159f7ebf2f669d8cade4aa8f" class="external-link">link</a></td>
+<td align="left">Defined by Anshul Kundaje. Contains heterochromatin chromosomes chr2LHet. Superseded by dm3.Boyle.dm3-Excludable.v2</td>
+<td align="right">306</td>
+</tr>
+<tr class="even">
+<td align="left">TAIR10.Wimberley.predicted_excluded_list_sorted_0.6</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/6f3a3ae3ee878b88a92093eb8e3fe982" class="external-link">link</a></td>
+<td align="left">Defined by the ewimberley/peakPass software</td>
+<td align="right">887</td>
+</tr>
+<tr class="odd">
+<td align="left">TAIR10.Klasfeld.arabidopsis_Excludable_20inputs</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/aa1c99c2dd2aef874486b1c0c3bf6b92" class="external-link">link</a></td>
+<td align="left">Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions (DOI: 10.1101/2022.02.27.482177)</td>
+<td align="right">83</td>
+</tr>
+<tr class="even">
+<td align="left">TAIR10.Klasfeld.arabidopsis_greenscreen_20inputs</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/e5d66ee787a8cb0c76438bba768c2331" class="external-link">link</a></td>
+<td align="left">Defined by the green screen pipeline (DOI: 10.1101/2022.02.27.482177)</td>
+<td align="right">36</td>
+</tr>
+<tr class="odd">
+<td align="left">T2T.Lareau.chm13v2.0_peaks</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/354dfced295f54f70ae9656ca8f9b141" class="external-link">link</a></td>
+<td align="left">Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist</td>
+<td align="right">817</td>
+</tr>
+<tr class="even">
+<td align="left">hg38.Lareau.hg38_peaks</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/9fa55701a3bd3e7a598d1d2815e3390f" class="external-link">link</a></td>
+<td align="left">Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist</td>
+<td align="right">784</td>
+</tr>
+<tr class="odd">
+<td align="left">hg19.Lareau.hg19_peaks</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/79e924141251afbd4cde0c38456913fd" class="external-link">link</a></td>
+<td align="left">Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist</td>
+<td align="right">779</td>
+</tr>
+<tr class="even">
+<td align="left">mm10.Lareau.mm10_peaks</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/1b76ab775549e116da5e1a89aad7019b" class="external-link">link</a></td>
+<td align="left">Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist</td>
+<td align="right">387</td>
+</tr>
+<tr class="odd">
+<td align="left">mm9.Lareau.mm9_peaks</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/5c4b1cb28175b72bc56adb0bd7384dfd" class="external-link">link</a></td>
+<td align="left">Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist</td>
+<td align="right">395</td>
+</tr>
+<tr class="even">
+<td align="left">hg19.UCSC.numtS</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/cc4fd05fdfe015e4acd5111dac5b372f" class="external-link">link</a></td>
+<td align="left">Human NumtS mitochondrial sequence</td>
+<td align="right">766</td>
+</tr>
+<tr class="odd">
+<td align="left">mm9.UCSC.numtS</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/29dc50750f0535b6b9c746ee8371c211" class="external-link">link</a></td>
+<td align="left">Mouse NumtS mitochondrial sequence</td>
+<td align="right">172</td>
+</tr>
+<tr class="even">
+<td align="left">T2T.CHM13.chm13.draft_v2.0.cen_mask</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/44138ebb0d3340e70164d12649a47dc8" class="external-link">link</a></td>
+<td align="left">Centromeric satellite masking bed file (v2.0)</td>
+<td align="right">23</td>
+</tr>
+<tr class="odd">
+<td align="left">T2T.CHM13.chm13.draft_v1.1.telomere</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/b72dd2fa5f8a916cc36960b93169c743" class="external-link">link</a></td>
+<td align="left">Telomere identified by the VGP pipeline (v1.1)</td>
+<td align="right">48</td>
+</tr>
+<tr class="even">
+<td align="left">T2T.UCSC.censat</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/f28798df2c4d72810e7c4626b5a62106" class="external-link">link</a></td>
+<td align="left">T2T peri/centromeric satellite annotation (v2.0, 20220329, CHM13 v2.0)</td>
+<td align="right">2523</td>
+</tr>
+<tr class="odd">
+<td align="left">T2T.UCSC.gap</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/0747aae5f4cac92367a16c3eb1c7f3f1" class="external-link">link</a></td>
+<td align="left">Locations of assembly gaps, as determine by strings of ‘N’ characters (v1.0)</td>
 <td align="right">5</td>
-<td align="left">hg19</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
-</tr>
-<tr class="odd">
-<td align="left">hg19.UCSC.telomere.rds</td>
-<td align="right">46</td>
-<td align="left">hg19</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
 </tr>
 <tr class="even">
-<td align="left">hg38.UCSC.contig.rds</td>
-<td align="right">285</td>
-<td align="left">hg38</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
+<td align="left">T2T.UCSC.hgUnique.hg38</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/c3839f43c53a3c47733388528b853690" class="external-link">link</a></td>
+<td align="left">Regions unique to the T2T-CHM13 v2.0 assembly compared to the GRCh38/hg38 and GRCh37/hg19 reference assemblies</td>
+<td align="right">615</td>
 </tr>
 <tr class="odd">
-<td align="left">hg38.UCSC.heterochromatin.rds</td>
+<td align="left">hg38.UCSC.centromere</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/0b1f161675fa0f52ac6d0d4f54b1efb9" class="external-link">link</a></td>
+<td align="left">Gaps from centromeres</td>
+<td align="right">109</td>
+</tr>
+<tr class="even">
+<td align="left">hg38.UCSC.telomere</td>
+<td align="left">AH95938</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/79f964e68d5daa1462c52ca54855b06a" class="external-link">link</a></td>
+<td align="left">Gaps from telomeres</td>
+<td align="right">48</td>
+</tr>
+<tr class="odd">
+<td align="left">hg38.UCSC.short_arm</td>
+<td align="left">AH95937</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/92fc8f64f92d525c6b92c9aab5e2c711" class="external-link">link</a></td>
+<td align="left">Gaps on the short arm of the chromosome</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">hg38.UCSC.heterochromatin</td>
+<td align="left">AH95935</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/8af7b48ab48183229d3bc72005040dc1" class="external-link">link</a></td>
+<td align="left">Gaps from large blocks of heterochromatin</td>
 <td align="right">11</td>
-<td align="left">hg38</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
-</tr>
-<tr class="even">
-<td align="left">hg38.UCSC.scaffold.rds</td>
-<td align="right">478</td>
-<td align="left">hg38</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
 </tr>
 <tr class="odd">
-<td align="left">hg38.UCSC.short_arm.rds</td>
+<td align="left">hg38.UCSC.contig</td>
+<td align="left">AH95934</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/2dd1b22f2add15bc7508580d18bc9495" class="external-link">link</a></td>
+<td align="left">Gaps between contigs in scaffolds</td>
+<td align="right">285</td>
+</tr>
+<tr class="even">
+<td align="left">hg38.UCSC.scaffold</td>
+<td align="left">AH95936</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/de0c7f42f29fb83ac393e86a2ec28374" class="external-link">link</a></td>
+<td align="left">Gaps between scaffolds in chromosome assemblies. Has extra chromosomes, use keepStandardChromosomes() filtering</td>
+<td align="right">254</td>
+</tr>
+<tr class="odd">
+<td align="left">hg19.UCSC.centromere</td>
+<td align="left">AH95927</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/26ecf1381b6323791656f800ad39b69c" class="external-link">link</a></td>
+<td align="left">Gaps from centromeres</td>
+<td align="right">24</td>
+</tr>
+<tr class="even">
+<td align="left">hg19.UCSC.telomere</td>
+<td align="left">AH95933</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/2bcad8794847411e9b3f52ff39c4f377" class="external-link">link</a></td>
+<td align="left">Gaps from telomeres</td>
+<td align="right">46</td>
+</tr>
+<tr class="odd">
+<td align="left">hg19.UCSC.short_arm</td>
+<td align="left">AH95932</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/e09fac8aedf1230ab77ac4194fd75784" class="external-link">link</a></td>
+<td align="left">Gaps on the short arm of the chromosome</td>
 <td align="right">5</td>
-<td align="left">hg38</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
 </tr>
 <tr class="even">
-<td align="left">hg38.UCSC.telomere.rds</td>
-<td align="right">48</td>
-<td align="left">hg38</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=hg38&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
+<td align="left">hg19.UCSC.heterochromatin</td>
+<td align="left">AH95930</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/8ea9b6cdfe68a4b4111e5b03157af371" class="external-link">link</a></td>
+<td align="left">Gaps from large blocks of heterochromatin</td>
+<td align="right">12</td>
 </tr>
 <tr class="odd">
-<td align="left">mm10.UCSC.centromere.rds</td>
+<td align="left">hg19.UCSC.clone</td>
+<td align="left">AH95928</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/4f3b1098a0f4ea5e81747f4414a8d294" class="external-link">link</a></td>
+<td align="left">Gaps between clones in the same map contig. Has extra chromosomes, use keepStandardChromosomes() filtering</td>
+<td align="right">107</td>
+</tr>
+<tr class="even">
+<td align="left">hg19.UCSC.contig</td>
+<td align="left">AH95929</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/a4da41916b0b213d4e3b89f5ab20e1e8" class="external-link">link</a></td>
+<td align="left">Gaps between contigs in scaffolds</td>
+<td align="right">163</td>
+</tr>
+<tr class="odd">
+<td align="left">hg19.UCSC.scaffold</td>
+<td align="left">AH95931</td>
+<td align="left">NA</td>
+<td align="left">Gaps between scaffolds in chromosome assemblies. Only non-autosomal chromosomes</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">mm39.UCSC.centromere</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/1aa3f73ffa8e6d498f0f3f22e0302472" class="external-link">link</a></td>
+<td align="left">Gaps from centromeres</td>
 <td align="right">20</td>
-<td align="left">mm10</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
-</tr>
-<tr class="even">
-<td align="left">mm10.UCSC.clone.rds</td>
-<td align="right">114</td>
-<td align="left">mm10</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
 </tr>
 <tr class="odd">
-<td align="left">mm10.UCSC.contig.rds</td>
-<td align="right">104</td>
-<td align="left">mm10</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
-</tr>
-<tr class="even">
-<td align="left">mm10.UCSC.fragment.rds</td>
-<td align="right">1</td>
-<td align="left">mm10</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
-</tr>
-<tr class="odd">
-<td align="left">mm10.UCSC.other.rds</td>
-<td align="right">384</td>
-<td align="left">mm10</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
-</tr>
-<tr class="even">
-<td align="left">mm10.UCSC.short_arm.rds</td>
-<td align="right">21</td>
-<td align="left">mm10</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
-</tr>
-<tr class="odd">
-<td align="left">mm10.UCSC.telomere.rds</td>
+<td align="left">mm39.UCSC.telomere</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/883bdae38244c6f0e0facfbd4fcc601b" class="external-link">link</a></td>
+<td align="left">Gaps from telomeres</td>
 <td align="right">42</td>
-<td align="left">mm10</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
 </tr>
 <tr class="even">
-<td align="left">mm9.UCSC.centromere.rds</td>
+<td align="left">mm39.UCSC.short_arm</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/f61de62eae0898943e6c9d163b0a3989" class="external-link">link</a></td>
+<td align="left">Gaps on the short arm of the chromosome</td>
 <td align="right">21</td>
-<td align="left">mm9</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
 </tr>
 <tr class="odd">
-<td align="left">mm9.UCSC.contig.rds</td>
-<td align="right">281</td>
-<td align="left">mm9</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
+<td align="left">mm39.UCSC.contig</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/732437d9fcb8992b2e5c6513bfed2586" class="external-link">link</a></td>
+<td align="left">Gaps between contigs in scaffolds</td>
+<td align="right">60</td>
 </tr>
 <tr class="even">
-<td align="left">mm9.UCSC.fragment.rds</td>
-<td align="right">709</td>
-<td align="left">mm9</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=mm9&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
+<td align="left">mm39.UCSC.scaffold</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/97e738326c0681f5ebe94b0d28d058c5" class="external-link">link</a></td>
+<td align="left">Gaps between scaffolds in chromosome assemblies</td>
+<td align="right">115</td>
 </tr>
 <tr class="odd">
-<td align="left">mm10.UCSC.scaffold.rds</td>
-<td align="right">48</td>
-<td align="left">mm10</td>
-<td align="left">UCSC</td>
-<td align="right">9</td>
-<td align="left"><a href="http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema" class="uri">http://genome.ucsc.edu/cgi-bin/hgTables?db=mm10&amp;hgta_group=map&amp;hgta_track=gap&amp;hgta_table=gap&amp;hgta_doSchema=describe+table+schema</a></td>
+<td align="left">mm10.UCSC.centromere</td>
+<td align="left">AH95939</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/b0f9aa3cc8a4a43f59b463891b5d12c8" class="external-link">link</a></td>
+<td align="left">Gaps from centromeres</td>
+<td align="right">20</td>
+</tr>
+<tr class="even">
+<td align="left">mm10.UCSC.telomere</td>
+<td align="left">AH95945</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/051090e82c227bcc55dba3e953bc6daa" class="external-link">link</a></td>
+<td align="left">Gaps from telomeres</td>
+<td align="right">42</td>
+</tr>
+<tr class="odd">
+<td align="left">mm10.UCSC.short_arm</td>
+<td align="left">AH95944</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/f4d2d6fe334deca5800ca9ae39ce95ce" class="external-link">link</a></td>
+<td align="left">Gaps on the short arm of the chromosome</td>
+<td align="right">21</td>
+</tr>
+<tr class="even">
+<td align="left">mm10.UCSC.clone</td>
+<td align="left">AH95940</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/9ecfce46335e4d5b3a1230b69690a25a" class="external-link">link</a></td>
+<td align="left">Gaps between clones in the same map contig. Has extra chromosomes, use keepStandardChromosomes() filtering</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">mm10.UCSC.contig</td>
+<td align="left">AH95941</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/82d2374cf5524a2b13dcf9c3dc487d6f" class="external-link">link</a></td>
+<td align="left">Gaps between contigs in scaffolds</td>
+<td align="right">104</td>
+</tr>
+<tr class="even">
+<td align="left">mm10.UCSC.scaffold</td>
+<td align="left">AH95949</td>
+<td align="left">NA</td>
+<td align="left">Gaps between scaffolds in chromosome assemblies</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">mm10.UCSC.other</td>
+<td align="left">AH95943</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/75662812e5eb228b25c9ae5a28fbb402" class="external-link">link</a></td>
+<td align="left">Sequence of Ns in the assembly that were not marked as gaps in the AGP (A Golden Path) assembly definition file. Has extra chromosomes, use keepStandardChromosomes() filtering</td>
+<td align="right">383</td>
+</tr>
+<tr class="even">
+<td align="left">mm10.UCSC.fragment</td>
+<td align="left">AH95942</td>
+<td align="left">NA</td>
+<td align="left">A single gap of 31 bases in chrX_GL456233_random</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">mm9.UCSC.centromere</td>
+<td align="left">AH95946</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/99e4d2c9a794d321bfcf01709787caac" class="external-link">link</a></td>
+<td align="left">Gaps from centromeres</td>
+<td align="right">21</td>
+</tr>
+<tr class="even">
+<td align="left">mm9.UCSC.fragment</td>
+<td align="left">AH95948</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/ecf3f802759c5dc93f1446b6942c58b3" class="external-link">link</a></td>
+<td align="left">Gaps between the contigs of a draft clone. (In this context, a contig is a set of overlapping sequence reads). Has extra chromosomes, use keepStandardChromosomes() filtering</td>
+<td align="right">436</td>
+</tr>
+<tr class="odd">
+<td align="left">mm9.UCSC.contig</td>
+<td align="left">AH95947</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/4dd8bb54f6432144c045619337d8212e" class="external-link">link</a></td>
+<td align="left">Gaps between contigs in scaffolds. Has extra chromosomes, use keepStandardChromosomes() filtering</td>
+<td align="right">105</td>
+</tr>
+<tr class="even">
+<td align="left">danRer10.UCSC.contig</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/5d41a9fa328769b63734e11e6ae4252b" class="external-link">link</a></td>
+<td align="left">Gaps between contigs in scaffolds</td>
+<td align="right">2338</td>
+</tr>
+<tr class="odd">
+<td align="left">danRer10.UCSC.scaffold</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/a5feefb2d573d265f1085043c208c2ed" class="external-link">link</a></td>
+<td align="left">Gaps between scaffolds in chromosome assemblies</td>
+<td align="right">16496</td>
+</tr>
+<tr class="even">
+<td align="left">dm6.UCSC.other</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/11a80264dcdad6c0868ea48637a799df" class="external-link">link</a></td>
+<td align="left">Sequence of Ns in the assembly that were not marked as gaps in the AGP (A Golden Path) assembly definition file</td>
+<td align="right">268</td>
+</tr>
+<tr class="odd">
+<td align="left">dm3.UCSC.contig</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/f9822a0f88047e92cf92824fe025b2f2" class="external-link">link</a></td>
+<td align="left">Gaps between contigs in scaffolds</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">dm3.UCSC.scaffold</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/d4e31a2c488de8ff335b0cb779c9cef5" class="external-link">link</a></td>
+<td align="left">Gaps between scaffolds in chromosome assemblies</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">TAIR10.UCSC.araTha1.gap</td>
+<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/74585119b9b90d3b4ad077b10b487d39" class="external-link">link</a></td>
+<td align="left">Gaps in the May 2011 Arabidopsis thaliana genome assembly</td>
+<td align="right">357</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div id="citation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#citation" class="anchor"></a>Citation</h2>
-<p>Below is the citation output from using <code><a href="https://rdrr.io/r/utils/citation.html">citation('excluderanges')</a></code> in R. Please run this yourself to check for any updates on how to cite <strong>excluderanges</strong>.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html">citation</a></span><span class="op">(</span><span class="st">"excluderanges"</span><span class="op">)</span>, bibtex <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Dozmorov MG, Davis E, Mu W, Lee S, Triche T, Phanstiel D, Love M</span>
-<span class="co">#&gt; (2021). _excluderanges_.</span>
-<span class="co">#&gt; https://github.com/mdozmorov/excluderanges/excluderanges - R package</span>
-<span class="co">#&gt; version 0.99.3, &lt;URL: https://github.com/mdozmorov/excluderanges&gt;.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; A BibTeX entry for LaTeX users is</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;   @Manual{,</span>
-<span class="co">#&gt;     title = {excluderanges},</span>
-<span class="co">#&gt;     author = {Mikhail G. Dozmorov and Eric Davis and Wancen Mu and Stuart Lee and Tim Triche and Douglas Phanstiel and Michael Love},</span>
-<span class="co">#&gt;     year = {2021},</span>
-<span class="co">#&gt;     url = {https://github.com/mdozmorov/excluderanges},</span>
-<span class="co">#&gt;     note = {https://github.com/mdozmorov/excluderanges/excluderanges - R package version 0.99.3},</span>
-<span class="co">#&gt;   }</span></code></pre></div>
+<div class="section level1">
+<h1 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h1>
+<p>Below is the citation output from using <code>citation('excluderanges')</code> in R. Please run this yourself to check for any updates on how to cite <strong>excluderanges</strong>.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"excluderanges"</span><span class="op">)</span>, bibtex <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="code-of-conduct" class="section level2">
-<h2 class="hasAnchor">
-<a href="#code-of-conduct" class="anchor"></a>Code of Conduct</h2>
-<p>Please note that the <code>excluderanges</code> project is released with a <a href="http://bioconductor.org/about/code-of-conduct/">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
-<p>This package was developed using <em><a href="https://bioconductor.org/packages/3.13/biocthis">biocthis</a></em>.</p>
+<div class="section level1">
+<h1 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
+</h1>
+<p>Please note that the <code>excluderanges</code> project is released with a <a href="https://bioconductor.github.io/bioc_coc_multilingual/" class="external-link">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+<p>This package was developed using <em><a href="https://bioconductor.org/packages/3.15/biocthis" class="external-link">biocthis</a></em>.</p>
 </div>
-<div id="references" class="section level2">
-<h2 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h2>
+<div class="section level1">
+<h1 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h1>
 <div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-Amemiya:2019aa" class="csl-entry">
-<p>Amemiya, Haley M, Anshul Kundaje, and Alan P Boyle. 2019. “The ENCODE Blacklist: Identification of Problematic Regions of the Genome.” <em>Sci Rep</em> 9 (1): 9354. <a href="https://doi.org/10.1038/s41598-019-45839-z" class="uri">https://doi.org/10.1038/s41598-019-45839-z</a>.</p>
+<div id="ref-Amemiya:2019aa" class="csl-entry"><p>Amemiya, Haley M, Anshul Kundaje, and Alan P Boyle. 2019. “The ENCODE Blacklist: Identification of Problematic Regions of the Genome.” <em>Sci Rep</em> 9 (1): 9354. <a href="https://doi.org/10.1038/s41598-019-45839-z" class="external-link uri">https://doi.org/10.1038/s41598-019-45839-z</a>.</p></div>
+<div id="ref-Klasfeld2022-nn" class="csl-entry"><p>Klasfeld, Sammy, and Doris Wagner. 2022. “Greenscreen Decreases Type I Errors and Increases True Peak Detection in Genomic Datasets Including <span class="nocase">ChIP-seq</span>.” <em>bioRxiv</em>.</p></div>
+<div id="ref-Wimberley:2019ub" class="csl-entry"><p>Wimberley, Charles E, and Steffen Heber. 2019. “PeakPass: Automating ChIP-Seq Blacklist Creation.” <em>J Comput Biol</em>, December. <a href="https://doi.org/10.1089/cmb.2019.0295" class="external-link uri">https://doi.org/10.1089/cmb.2019.0295</a>.</p></div>
 </div>
 </div>
-</div>
-</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/mdozmorov/excluderanges/">https://​github.com/​mdozmorov/​excluderanges/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/mdozmorov/excluderanges/issues">https://​github.com/​mdozmorov/​excluderanges/​issues</a>
-</li>
+<li><a href="https://www.bioconductor.org/packages/excluderanges" class="external-link">View on Bioconductor</a></li>
+<li><a href="https://github.com/mdozmorov/excluderanges/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/mdozmorov/excluderanges/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
+<li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
+
+
 <div class="citation">
-<h2>Citation</h2>
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html">Citing excluderanges</a></li>
+<li><a href="authors.html#citation">Citing excluderanges</a></li>
 </ul>
 </div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Mikhail Dozmorov <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-0086-8358" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Mikhail Dozmorov <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-0086-8358" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Eric Davis <br><small class="roles"> Author </small>  </li>
 <li>Wancen Mu <br><small class="roles"> Author </small>  </li>
 <li>Stuart Lee <br><small class="roles"> Author </small>  </li>
@@ -836,16 +1224,20 @@
 </ul>
 </div>
 
+
+
   </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Mikhail Dozmorov, Eric Davis, Wancen Mu, Stuart Lee, Tim Triche, Douglas Phanstiel, Michael Love.</p>
+  <p></p>
+<p>Developed by Mikhail Dozmorov, Eric Davis, Wancen Mu, Stuart Lee, Tim Triche, Douglas Phanstiel, Michael Love.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -853,6 +1245,8 @@
 
   
 
+
+  
 
   </body>
 </html>
