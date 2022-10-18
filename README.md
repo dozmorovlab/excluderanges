@@ -43,7 +43,7 @@ organisms.
 badges: end -->
 
 **New (2022-09-20)** - Exclusion sets for human
-[T2T-CHM13](http://bedbase.org/#/bedsplash/6548a002754cc1e882035293541b59a8)
+[T2T-CHM13](http://bedbase.org/#/bedsplash/8329d8c624880308ab51ba05149a737d)
 and mouse
 [GRCm39/mm39](http://bedbase.org/#/bedsplash/edc716833d4b5ee75c34a0692fc353d5)
 genome assemblies are available. Download all data from [Google
@@ -477,7 +477,7 @@ token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 #> Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]
-#>   Date: 2022-10-03 00:26
+#>   Date: 2022-10-18 14:07
 #>   Status: 200
 #>   Content-Type: application/vnd.realvnc.bed
 #>   Size: 11.8 kB
