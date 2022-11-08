@@ -1,3 +1,6 @@
+# excluderanges 0.99.8 (2022-11-08)
+- Update README and the vignette to work with BioC 3.16
+
 # excluderanges 0.99.7 (2022-09-30)
 - Update and add new objects, including T2T and mm39 excluderanges sets, totaling 82
 - Covering six organisms, various genome assemblies, includes NUMTs

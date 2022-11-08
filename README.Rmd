@@ -14,7 +14,9 @@ knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>",
     fig.path = "man/figures/README-",
-    out.width = "100%"
+    out.width = "100%",
+    warning = FALSE,
+    dpi=300
 )
 library(BiocStyle)
 ```
@@ -55,20 +57,42 @@ Naming convention: `<genome assembly>.<lab>.<original file name>`, e.g.,
 
 See [make-data.R](inst/scripts/make-data.R) how we created excluderanges objects.
 
-# Install excluderanges
+<!--
+# Installation instructions
 
-```{r "install", eval = FALSE}
+Get the latest stable `R` release from [CRAN](http://cran.r-project.org/). Then 
+install `r BiocStyle::Biocpkg('AnnotationHub')` from [Bioconductor](http://bioconductor.org/) 
+using the following code:
+
+```{r 'install', eval = TRUE, message=FALSE, warning=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
-# Install the development version of Bioconductor (need 3.15 or above)
-# BiocManager::install(version = "devel")
-# Check that you have a valid Bioconductor installation
-# BiocManager::valid()
-# Install the package
-BiocManager::install("excluderanges", version = "devel")
+BiocManager::install("AnnotationHub", update = FALSE) 
+# Additional packages
+BiocManager::install("GenomicRanges", update = FALSE)
+BiocManager::install("plyranges", update = FALSE)
+```
+-->
 
-# BiocManager::install("dozmorovlab/excluderanges")
+## Installation instructions
+
+[Install](https://www.bioconductor.org/install/#install-R) the latest 
+release of R, then get the latest version of Bioconductor by starting R and 
+entering the commands:
+
+```{r 'install1', eval = TRUE, message=FALSE, warning=FALSE}
+# if (!require("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# BiocManager::install(version = "3.16")
+```
+
+Then, install additional packages using the following code:
+
+```{r 'install2', eval = TRUE, message=FALSE, warning=FALSE}
+# BiocManager::install("AnnotationHub", update = FALSE) 
+# BiocManager::install("GenomicRanges", update = FALSE)
+# BiocManager::install("plyranges", update = FALSE)
 ```
 
 # Use excluderanges
@@ -79,18 +103,16 @@ Get an overview of what's available
 suppressMessages(library(GenomicRanges))
 suppressMessages(library(AnnotationHub))
 ah <- AnnotationHub()
-query_data <- query(ah, "excluderanges")
+query_data <- subset(ah, preparerclass == "excluderanges")
 # You can search for multiple terms
-# query_data <- query(ah, c("excluderanges", "Kundaje"))
+# query_data <- query(ah, c("excluderanges", "Kundaje", "hg38"))
 query_data
 ```
 
-hg38 excluderanges coordinates recommended by Anshul
+`hg38.Kundaje.GRCh38_unified_Excludable` object recommended by Anshul
 
 ```{r hg38excluderanges}
-# Check titles
-# as.data.frame(mcols(query_data[1:10])["title"]) 
-excludeGR.hg38.Kundaje.1 <- query_data[["AH95917"]]
+excludeGR.hg38.Kundaje.1 <- query_data[["AH107305"]]
 # Always a good idea to sort GRanges and keep standard chromosomes
 excludeGR.hg38.Kundaje.1 <- excludeGR.hg38.Kundaje.1 %>% 
   sort() %>% keepStandardChromosomes(pruning.mode = "tidy")
@@ -103,22 +125,25 @@ Save the data in a BED file, if needed.
 # Note that rtracklayer::import and rtracklayer::export perform unexplained
 # start coordinate conversion, likely related to 0- and 1-based coordinate
 # system. We recommend converting GRanges to a data frame and save tab-separated
-readr::write_tsv(as.data.frame(excludeGR.hg38.Kundaje.1), 
-                 file = "hg38.Kundaje.GRCh38_unified_Excludable.bed",
-                 col_names = FALSE)
+write.table(as.data.frame(excludeGR.hg38.Kundaje.1), 
+            file = "hg38.Kundaje.GRCh38_unified_Excludable.bed",
+            sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
 ```
 
 
 We can load other excludable regions for the hg38 genome assembly and compare them.
 
 ```{r allhg38excluderanges}
-query_data <- query(ah, c("excluderanges", "hg38", "Exclusion regions"))
+query_data <- query(ah, c("excluderanges", "hg38"))
 query_data
-excludeGR.hg38.Bernstein <- query_data[["AH95915"]]
-excludeGR.hg38.Kundaje.2 <- query_data[["AH95916"]]
-excludeGR.hg38.Reddy     <- query_data[["AH95918"]]
-excludeGR.hg38.Wold      <- query_data[["AH95919"]]
-excludeGR.hg38.Yeo       <- query_data[["AH95920"]]
+excludeGR.hg38.Bernstein <- query_data[["AH107306"]]
+excludeGR.hg38.Boyle     <- query_data[["AH107307"]]
+excludeGR.hg38.Kundaje.2 <- query_data[["AH107308"]]
+excludeGR.hg38.Lareau    <- query_data[["AH107309"]]
+excludeGR.hg38.Reddy     <- query_data[["AH107310"]]
+excludeGR.hg38.Wimberley <- query_data[["AH107311"]]
+excludeGR.hg38.Wold      <- query_data[["AH107312"]]
+excludeGR.hg38.Yeo       <- query_data[["AH107313"]]
 ```
 
 ## Compare the number of excludable regions
@@ -126,15 +151,21 @@ excludeGR.hg38.Yeo       <- query_data[["AH95920"]]
 ```{r excluderanges_hg38_count, fig.width=6.5, fig.height=2}
 library(ggplot2)
 mtx_to_plot <- data.frame(Count = c(length(excludeGR.hg38.Bernstein), 
+                                    length(excludeGR.hg38.Boyle),
                                     length(excludeGR.hg38.Kundaje.1), 
                                     length(excludeGR.hg38.Kundaje.2), 
+                                    length(excludeGR.hg38.Lareau),
                                     length(excludeGR.hg38.Reddy), 
+                                    length(excludeGR.hg38.Wimberley),
                                     length(excludeGR.hg38.Wold), 
                                     length(excludeGR.hg38.Yeo)),
                           Source = c("Bernstein.Mint_Excludable_GRCh38", 
+                                     "Boyle.hg38-Excludable.v2",
                                      "Kundaje.GRCh38_unified_Excludable", 
                                      "Kundaje.GRCh38.Excludable", 
+                                     "Lareau.hg38.full.Excludable",
                                      "Reddy.wgEncodeDacMapabilityConsensusExcludable", 
+                                     "Wimberley.peakPass60Perc_sorted",
                                      "Wold.hg38mitoExcludable", 
                                      "Yeo.eCLIP_Excludableregions.hg38liftover.bed"))
 # Order Source by the number of regions
@@ -155,21 +186,32 @@ knitr::include_graphics('man/figures/excluderanges_hg38_count.png')
 
 log2 scale because of heavy right tail distributions.
 
-```{r excluderanges_hg38_width, fig.width=6.5, fig.height=2}
+```{r excluderanges_hg38_width, fig.width=6.5, fig.height=2, message=FALSE}
 library(ggridges)
+library(dplyr)
 mtx_to_plot <- data.frame(Width = c(width(excludeGR.hg38.Bernstein), 
+                                    width(excludeGR.hg38.Boyle),
                                     width(excludeGR.hg38.Kundaje.1), 
                                     width(excludeGR.hg38.Kundaje.2), 
+                                    width(excludeGR.hg38.Lareau),
                                     width(excludeGR.hg38.Reddy), 
+                                    width(excludeGR.hg38.Wimberley),
                                     width(excludeGR.hg38.Wold), 
                                     width(excludeGR.hg38.Yeo)),
                           Source = c(rep("Bernstein.Mint_Excludable_GRCh38", length(excludeGR.hg38.Bernstein)),
+                                     rep("Boyle.hg38-Excludable.v2", length(excludeGR.hg38.Boyle)),
                                      rep("Kundaje.GRCh38_unified_Excludable", length(excludeGR.hg38.Kundaje.1)),
                                      rep("Kundaje.GRCh38.Excludable", length(excludeGR.hg38.Kundaje.2)),
+                                     rep("Lareau.hg38.full.Excludable", length(excludeGR.hg38.Lareau)),
                                      rep("Reddy.wgEncodeDacMapabilityConsensusExcludable", length(excludeGR.hg38.Reddy)),
+                                     rep("Wimberley.peakPass60Perc_sorted", length(excludeGR.hg38.Wimberley)),
                                      rep("Wold.hg38mitoExcludable", length(excludeGR.hg38.Wold)),
                                      rep("Yeo.eCLIP_Excludableregions.hg38liftover.bed", length(excludeGR.hg38.Yeo))))
 
+# Order objects by decreasing width
+mtx_to_plot$Source <- factor(mtx_to_plot$Source, levels = mtx_to_plot %>% 
+                               group_by(Source) %>% summarise(Mean = mean(Width)) %>% 
+                               arrange(Mean) %>% pull(Source))
 ggplot(mtx_to_plot, aes(x = log2(Width), y = Source, fill = Source)) +
   geom_density_ridges() +
   theme_bw() + theme(legend.position = "none")
@@ -182,21 +224,31 @@ knitr::include_graphics('man/figures/excluderanges_hg38_width.png')
 
 We can investigate the total width of each set of excludable ranges.
 
-```{r excluderanges_hg38_sumwidth, fig.width=6.5, fig.height=2}
+```{r excluderanges_hg38_sumwidth, fig.width=6.5, fig.height=3}
 mtx_to_plot <- data.frame(TotalWidth = c(sum(width(excludeGR.hg38.Bernstein)), 
+                                         sum(width(excludeGR.hg38.Boyle)),
                                          sum(width(excludeGR.hg38.Kundaje.1)), 
                                          sum(width(excludeGR.hg38.Kundaje.2)), 
+                                         sum(width(excludeGR.hg38.Lareau)),
                                          sum(width(excludeGR.hg38.Reddy)), 
+                                         sum(width(excludeGR.hg38.Wimberley)),
                                          sum(width(excludeGR.hg38.Wold)), 
                                          sum(width(excludeGR.hg38.Yeo))), 
                           Source = c("Bernstein.Mint_Excludable_GRCh38", 
+                                     "Boyle.hg38-Excludable.v2",
                                      "Kundaje.GRCh38_unified_Excludable", 
                                      "Kundaje.GRCh38.Excludable", 
+                                     "Lareau.hg38.full.Excludable",
                                      "Reddy.wgEncodeDacMapabilityConsensusExcludable", 
+                                     "Wimberley.peakPass60Perc_sorted",
                                      "Wold.hg38mitoExcludable", 
-                                     "Yeo.eCLIP_Excludableregions.hg38liftover"))
+                                     "Yeo.eCLIP_Excludableregions.hg38liftover.bed"))
+# Order objects by decreasing width
+mtx_to_plot$Source <- factor(mtx_to_plot$Source, levels = mtx_to_plot %>% 
+                               group_by(Source) %>% arrange(TotalWidth) %>% pull(Source))
+
 ggplot(mtx_to_plot, aes(x = TotalWidth, y = Source, fill = Source)) + 
-  geom_bar(stat="identity") + scale_x_log10() + scale_y_discrete(label=abbreviate) +
+  geom_bar(stat="identity") + scale_x_log10() + scale_y_discrete(label=abbreviate, limits=rev) +
   xlab("log10 total width")
 # ggsave("man/figures/excluderanges_hg38_sumwidth.png", width = 6.5, height = 2)
 ```
@@ -224,17 +276,23 @@ overlap_coefficient <- function(gr_a, gr_b) {
 }
 # List and names of all excludable regions
 all_excludeGR_list <- list(excludeGR.hg38.Bernstein, 
-                        excludeGR.hg38.Kundaje.1, 
-                        excludeGR.hg38.Kundaje.2,
-                        excludeGR.hg38.Reddy,
-                        excludeGR.hg38.Wold,
-                        excludeGR.hg38.Yeo)
+                            excludeGR.hg38.Boyle,
+                            excludeGR.hg38.Kundaje.1, 
+                            excludeGR.hg38.Kundaje.2,
+                            excludeGR.hg38.Lareau,
+                            excludeGR.hg38.Reddy,
+                            excludeGR.hg38.Wimberley,
+                            excludeGR.hg38.Wold,
+                            excludeGR.hg38.Yeo)
 all_excludeGR_name <- c("Bernstein.Mint_Excludable_GRCh38", 
-                     "Kundaje.GRCh38_unified_Excludable", 
-                     "Kundaje.GRCh38.Excludable", 
-                     "Reddy.wgEncodeDacMapabilityConsensusExcludable", 
-                     "Wold.hg38mitoExcludable", 
-                     "Yeo.eCLIP_Excludableregions.hg38liftover")
+                         "Boyle.hg38-Excludable.v2",
+                         "Kundaje.GRCh38_unified_Excludable", 
+                         "Kundaje.GRCh38.Excludable", 
+                         "Lareau.hg38.full.Excludable",
+                         "Reddy.wgEncodeDacMapabilityConsensusExcludable", 
+                         "Wimberley.peakPass60Perc_sorted",
+                         "Wold.hg38mitoExcludable", 
+                         "Yeo.eCLIP_Excludableregions.hg38liftover.bed")
 # Correlation matrix, empty
 mtx_to_plot <- matrix(data = 0, nrow = length(all_excludeGR_list), ncol = length(all_excludeGR_list))
 # Fill it in
@@ -252,7 +310,7 @@ for (i in 1:length(all_excludeGR_list)) {
 rownames(mtx_to_plot) <- colnames(mtx_to_plot) <- str_trunc(all_excludeGR_name, width = 25) 
 # Save the plot
 # png("man/figures/excluderanges_hg38_jaccard.png", width = 1000, height = 900, res = 200)
-pheatmap(data.matrix(mtx_to_plot))
+pheatmap(data.matrix(mtx_to_plot), clustering_method = "ward.D")
 # dev.off()
 ```
 
@@ -287,11 +345,14 @@ One may decide to combine the excludable ranges from all labs, although from pre
 results we may decide to follow Anshul's [advice](https://twitter.com/anshulkundaje/status/1263546023151992832?s=20) about the [ENCFF356LFX exclusion list regions](https://www.encodeproject.org/files/ENCFF356LFX/) 
 and use the `excludeGR.hg38.Kundaje.1` object.
 
-```{r combinedexcluderanges}
+```{r combinedexcluderanges, warning=FALSE}
 excludeGR.hg38.all <- reduce(c(excludeGR.hg38.Bernstein, 
+                               excludeGR.hg38.Boyle,
                                excludeGR.hg38.Kundaje.1, 
                                excludeGR.hg38.Kundaje.2, 
+                               excludeGR.hg38.Lareau,
                                excludeGR.hg38.Reddy, 
+                               excludeGR.hg38.Wimberley,
                                excludeGR.hg38.Wold, 
                                excludeGR.hg38.Yeo))
 # Sort and Keep only standard chromosomes
@@ -352,9 +413,7 @@ token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 # Read the data in
-hg38.Lareau.hg38_peaks <- readr::read_tsv(fileNameOut, 
-                                          col_names = FALSE,
-                                          col_types = c("cddcdc"))
+hg38.Lareau.hg38_peaks <- read.table(fileNameOut, sep = "\t", header = FALSE)
 # Assign column names depending on the number of columns
 all_columns <- c("chr", "start", "stop", "name", "score", "strand", 
                  "signalValue", "pValue", "qValue", "peak")
@@ -407,14 +466,14 @@ ggplot(mtx_to_plot, aes(x = Number, y = Type, fill = Type)) +
 Those objects are provided as individual GRanges.
 
 Naming convention: `<genome assembly>.UCSC.<gap type>`, e.g.,
-`hg19.UCSC.gap_centromere`. We can similarly load any gap type object.
+`hg38.UCSC.gap_centromere`. We can similarly load any gap type object.
 
-```{r gapshg19}
-query_data <- query(ah, c("excluderanges", "UCSC", "Homo Sapiens", "hg19"))
+```{r gapshg38}
+query_data <- query(ah, c("excluderanges", "UCSC", "Homo Sapiens", "hg38"))
 query_data
 
-gapsGR_hg19_centromere <- query_data[["AH95927"]]
-gapsGR_hg19_centromere
+gapsGR_hg38_centromere <- query_data[["AH107354"]]
+gapsGR_hg38_centromere
 ```
 
 # Summary table
@@ -424,7 +483,7 @@ gapsGR_hg19_centromere
 ```{r echo=FALSE}
 mtx <- read.csv("man/figures/Table_S1.csv")
 mtx$BEDbase.URL <- ifelse(!is.na(mtx$BEDbase.ID), paste0("[link](http://bedbase.org/#/bedsplash/", mtx$BEDbase.ID, ")"), "NA")
-knitr::kable(mtx[, c("Name", "AnnotationHub.ID", "BEDbase.URL", "Description", "Filtered.Region.count")])
+knitr::kable(mtx[, c("Name", "Ahub.IDs.BioC.3.16.and.above", "BEDbase.URL", "Description", "Filtered.Region.count")])
 ```
 
 # Citation

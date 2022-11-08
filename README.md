@@ -2,8 +2,8 @@
 -   <a href="#excluderanges-genomic-ranges-of-problematic-genomic-regions"
     id="toc-excluderanges-genomic-ranges-of-problematic-genomic-regions">excluderanges,
     genomic ranges of problematic genomic regions</a>
--   <a href="#install-excluderanges" id="toc-install-excluderanges">Install
-    excluderanges</a>
+    -   <a href="#installation-instructions"
+        id="toc-installation-instructions">Installation instructions</a>
 -   <a href="#use-excluderanges" id="toc-use-excluderanges">Use
     excluderanges</a>
     -   <a href="#compare-the-number-of-excludable-regions"
@@ -77,20 +77,46 @@ Naming convention: `<genome assembly>.<lab>.<original file name>`, e.g.,
 See [make-data.R](inst/scripts/make-data.R) how we created excluderanges
 objects.
 
-# Install excluderanges
+<!--
+# Installation instructions
 
-``` r
+Get the latest stable `R` release from [CRAN](http://cran.r-project.org/). Then 
+install *[AnnotationHub](https://bioconductor.org/packages/3.16/AnnotationHub)* from [Bioconductor](http://bioconductor.org/) 
+using the following code:
+
+
+```r
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
-# Install the development version of Bioconductor (need 3.15 or above)
-# BiocManager::install(version = "devel")
-# Check that you have a valid Bioconductor installation
-# BiocManager::valid()
-# Install the package
-BiocManager::install("excluderanges", version = "devel")
+BiocManager::install("AnnotationHub", update = FALSE) 
+# Additional packages
+BiocManager::install("GenomicRanges", update = FALSE)
+#> 
+#> The downloaded binary packages are in
+#>  /var/folders/jq/hvjs8pl55sx0mtxlptkms_cc6y3f75/T//RtmpmrZQzq/downloaded_packages
+BiocManager::install("plyranges", update = FALSE)
+```
+-->
 
-# BiocManager::install("dozmorovlab/excluderanges")
+## Installation instructions
+
+[Install](https://www.bioconductor.org/install/#install-R) the latest
+release of R, then get the latest version of Bioconductor by starting R
+and entering the commands:
+
+``` r
+# if (!require("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# BiocManager::install(version = "3.16")
+```
+
+Then, install additional packages using the following code:
+
+``` r
+# BiocManager::install("AnnotationHub", update = FALSE) 
+# BiocManager::install("GenomicRanges", update = FALSE)
+# BiocManager::install("plyranges", update = FALSE)
 ```
 
 # Use excluderanges
@@ -99,45 +125,41 @@ Get an overview of what’s available
 
 ``` r
 suppressMessages(library(GenomicRanges))
-#> Warning: package 'IRanges' was built under R version 4.2.1
-#> Warning: package 'GenomeInfoDb' was built under R version 4.2.1
 suppressMessages(library(AnnotationHub))
 ah <- AnnotationHub()
-#> snapshotDate(): 2022-04-25
-query_data <- query(ah, "excluderanges")
+#> snapshotDate(): 2022-10-26
+query_data <- subset(ah, preparerclass == "excluderanges")
 # You can search for multiple terms
-# query_data <- query(ah, c("excluderanges", "Kundaje"))
+# query_data <- query(ah, c("excluderanges", "Kundaje", "hg38"))
 query_data
-#> AnnotationHub with 42 records
-#> # snapshotDate(): 2022-04-25
-#> # $dataprovider: UCSC, ENCODE, mitra.stanford.edu/kundaje/akundaje/release/b...
-#> # $species: Homo sapiens, Mus musculus, Drosophila melanogaster, Caenorhabdi...
+#> AnnotationHub with 82 records
+#> # snapshotDate(): 2022-10-26
+#> # $dataprovider: UCSC, GitHub, ENCODE, UCSChub, excluderanges, Stanford.edu,...
+#> # $species: Homo sapiens, Mus musculus, Drosophila melanogaster, Danio rerio...
 #> # $rdataclass: GRanges
 #> # additional mcols(): taxonomyid, genome, description,
 #> #   coordinate_1_based, maintainer, rdatadateadded, preparerclass, tags,
 #> #   rdatapath, sourceurl, sourcetype 
-#> # retrieve records with, e.g., 'object[["AH95908"]]' 
+#> # retrieve records with, e.g., 'object[["AH107304"]]' 
 #> 
-#>             title                                                    
-#>   AH95908 | ce10.Kundaje.ce10-Excludable.rds                         
-#>   AH95909 | dm3.Kundaje.dm3-Excludable.rds                           
-#>   AH95910 | hg19.Bernstein.Mint_Excludable_hg19.rds                  
-#>   AH95911 | hg19.Birney.wgEncodeDacMapabilityConsensusExcludable.rds 
-#>   AH95912 | hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable.rds
-#>   ...       ...                                                      
-#>   AH95945 | mm10.UCSC.telomere.rds                                   
-#>   AH95946 | mm9.UCSC.centromere.rds                                  
-#>   AH95947 | mm9.UCSC.contig.rds                                      
-#>   AH95948 | mm9.UCSC.fragment.rds                                    
-#>   AH95949 | mm10.UCSC.scaffold.rds
+#>              title                                 
+#>   AH107304 | T2T.excluderanges                     
+#>   AH107305 | hg38.Kundaje.GRCh38_unified_Excludable
+#>   AH107306 | hg38.Bernstein.Mint_Excludable_GRCh38 
+#>   AH107307 | hg38.Boyle.hg38-Excludable.v2         
+#>   AH107308 | hg38.Kundaje.GRCh38.Excludable        
+#>   ...        ...                                   
+#>   AH107381 | danRer10.UCSC.scaffold                
+#>   AH107382 | dm6.UCSC.other                        
+#>   AH107383 | dm3.UCSC.contig                       
+#>   AH107384 | dm3.UCSC.scaffold                     
+#>   AH107385 | TAIR10.UCSC.araTha1.gap
 ```
 
-hg38 excluderanges coordinates recommended by Anshul
+`hg38.Kundaje.GRCh38_unified_Excludable` object recommended by Anshul
 
 ``` r
-# Check titles
-# as.data.frame(mcols(query_data[1:10])["title"]) 
-excludeGR.hg38.Kundaje.1 <- query_data[["AH95917"]]
+excludeGR.hg38.Kundaje.1 <- query_data[["AH107305"]]
 #> loading from cache
 # Always a good idea to sort GRanges and keep standard chromosomes
 excludeGR.hg38.Kundaje.1 <- excludeGR.hg38.Kundaje.1 %>% 
@@ -167,43 +189,54 @@ Save the data in a BED file, if needed.
 # Note that rtracklayer::import and rtracklayer::export perform unexplained
 # start coordinate conversion, likely related to 0- and 1-based coordinate
 # system. We recommend converting GRanges to a data frame and save tab-separated
-readr::write_tsv(as.data.frame(excludeGR.hg38.Kundaje.1), 
-                 file = "hg38.Kundaje.GRCh38_unified_Excludable.bed",
-                 col_names = FALSE)
+write.table(as.data.frame(excludeGR.hg38.Kundaje.1), 
+            file = "hg38.Kundaje.GRCh38_unified_Excludable.bed",
+            sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
 ```
 
 We can load other excludable regions for the hg38 genome assembly and
 compare them.
 
 ``` r
-query_data <- query(ah, c("excluderanges", "hg38", "Exclusion regions"))
+query_data <- query(ah, c("excluderanges", "hg38"))
 query_data
-#> AnnotationHub with 6 records
-#> # snapshotDate(): 2022-04-25
-#> # $dataprovider: ENCODE
+#> AnnotationHub with 17 records
+#> # snapshotDate(): 2022-10-26
+#> # $dataprovider: UCSC, ENCODE, GitHub, UCSChub
 #> # $species: Homo sapiens
 #> # $rdataclass: GRanges
 #> # additional mcols(): taxonomyid, genome, description,
 #> #   coordinate_1_based, maintainer, rdatadateadded, preparerclass, tags,
 #> #   rdatapath, sourceurl, sourcetype 
-#> # retrieve records with, e.g., 'object[["AH95915"]]' 
+#> # retrieve records with, e.g., 'object[["AH107305"]]' 
 #> 
-#>             title                                                       
-#>   AH95915 | hg38.Bernstein.Mint_Excludable_GRCh38.rds                   
-#>   AH95916 | hg38.Kundaje.GRCh38.Excludable.rds                          
-#>   AH95917 | hg38.Kundaje.GRCh38_unified_Excludable.rds                  
-#>   AH95918 | hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.rds
-#>   AH95919 | hg38.Wold.hg38mitoExcludable.rds                            
-#>   AH95920 | hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed.rds
-excludeGR.hg38.Bernstein <- query_data[["AH95915"]]
+#>              title                                 
+#>   AH107305 | hg38.Kundaje.GRCh38_unified_Excludable
+#>   AH107306 | hg38.Bernstein.Mint_Excludable_GRCh38 
+#>   AH107307 | hg38.Boyle.hg38-Excludable.v2         
+#>   AH107308 | hg38.Kundaje.GRCh38.Excludable        
+#>   AH107309 | hg38.Lareau.hg38.full.Excludable      
+#>   ...        ...                                   
+#>   AH107355 | hg38.UCSC.telomere                    
+#>   AH107356 | hg38.UCSC.short_arm                   
+#>   AH107357 | hg38.UCSC.heterochromatin             
+#>   AH107358 | hg38.UCSC.contig                      
+#>   AH107359 | hg38.UCSC.scaffold
+excludeGR.hg38.Bernstein <- query_data[["AH107306"]]
 #> loading from cache
-excludeGR.hg38.Kundaje.2 <- query_data[["AH95916"]]
+excludeGR.hg38.Boyle     <- query_data[["AH107307"]]
 #> loading from cache
-excludeGR.hg38.Reddy     <- query_data[["AH95918"]]
+excludeGR.hg38.Kundaje.2 <- query_data[["AH107308"]]
 #> loading from cache
-excludeGR.hg38.Wold      <- query_data[["AH95919"]]
+excludeGR.hg38.Lareau    <- query_data[["AH107309"]]
 #> loading from cache
-excludeGR.hg38.Yeo       <- query_data[["AH95920"]]
+excludeGR.hg38.Reddy     <- query_data[["AH107310"]]
+#> loading from cache
+excludeGR.hg38.Wimberley <- query_data[["AH107311"]]
+#> loading from cache
+excludeGR.hg38.Wold      <- query_data[["AH107312"]]
+#> loading from cache
+excludeGR.hg38.Yeo       <- query_data[["AH107313"]]
 #> loading from cache
 ```
 
@@ -212,15 +245,21 @@ excludeGR.hg38.Yeo       <- query_data[["AH95920"]]
 ``` r
 library(ggplot2)
 mtx_to_plot <- data.frame(Count = c(length(excludeGR.hg38.Bernstein), 
+                                    length(excludeGR.hg38.Boyle),
                                     length(excludeGR.hg38.Kundaje.1), 
                                     length(excludeGR.hg38.Kundaje.2), 
+                                    length(excludeGR.hg38.Lareau),
                                     length(excludeGR.hg38.Reddy), 
+                                    length(excludeGR.hg38.Wimberley),
                                     length(excludeGR.hg38.Wold), 
                                     length(excludeGR.hg38.Yeo)),
                           Source = c("Bernstein.Mint_Excludable_GRCh38", 
+                                     "Boyle.hg38-Excludable.v2",
                                      "Kundaje.GRCh38_unified_Excludable", 
                                      "Kundaje.GRCh38.Excludable", 
+                                     "Lareau.hg38.full.Excludable",
                                      "Reddy.wgEncodeDacMapabilityConsensusExcludable", 
+                                     "Wimberley.peakPass60Perc_sorted",
                                      "Wold.hg38mitoExcludable", 
                                      "Yeo.eCLIP_Excludableregions.hg38liftover.bed"))
 # Order Source by the number of regions
@@ -244,23 +283,33 @@ log2 scale because of heavy right tail distributions.
 
 ``` r
 library(ggridges)
+library(dplyr)
 mtx_to_plot <- data.frame(Width = c(width(excludeGR.hg38.Bernstein), 
+                                    width(excludeGR.hg38.Boyle),
                                     width(excludeGR.hg38.Kundaje.1), 
                                     width(excludeGR.hg38.Kundaje.2), 
+                                    width(excludeGR.hg38.Lareau),
                                     width(excludeGR.hg38.Reddy), 
+                                    width(excludeGR.hg38.Wimberley),
                                     width(excludeGR.hg38.Wold), 
                                     width(excludeGR.hg38.Yeo)),
                           Source = c(rep("Bernstein.Mint_Excludable_GRCh38", length(excludeGR.hg38.Bernstein)),
+                                     rep("Boyle.hg38-Excludable.v2", length(excludeGR.hg38.Boyle)),
                                      rep("Kundaje.GRCh38_unified_Excludable", length(excludeGR.hg38.Kundaje.1)),
                                      rep("Kundaje.GRCh38.Excludable", length(excludeGR.hg38.Kundaje.2)),
+                                     rep("Lareau.hg38.full.Excludable", length(excludeGR.hg38.Lareau)),
                                      rep("Reddy.wgEncodeDacMapabilityConsensusExcludable", length(excludeGR.hg38.Reddy)),
+                                     rep("Wimberley.peakPass60Perc_sorted", length(excludeGR.hg38.Wimberley)),
                                      rep("Wold.hg38mitoExcludable", length(excludeGR.hg38.Wold)),
                                      rep("Yeo.eCLIP_Excludableregions.hg38liftover.bed", length(excludeGR.hg38.Yeo))))
 
+# Order objects by decreasing width
+mtx_to_plot$Source <- factor(mtx_to_plot$Source, levels = mtx_to_plot %>% 
+                               group_by(Source) %>% summarise(Mean = mean(Width)) %>% 
+                               arrange(Mean) %>% pull(Source))
 ggplot(mtx_to_plot, aes(x = log2(Width), y = Source, fill = Source)) +
   geom_density_ridges() +
   theme_bw() + theme(legend.position = "none")
-#> Picking joint bandwidth of 0.372
 ```
 
 <img src="man/figures/README-excluderanges_hg38_width-1.png" width="100%" />
@@ -273,19 +322,29 @@ We can investigate the total width of each set of excludable ranges.
 
 ``` r
 mtx_to_plot <- data.frame(TotalWidth = c(sum(width(excludeGR.hg38.Bernstein)), 
+                                         sum(width(excludeGR.hg38.Boyle)),
                                          sum(width(excludeGR.hg38.Kundaje.1)), 
                                          sum(width(excludeGR.hg38.Kundaje.2)), 
+                                         sum(width(excludeGR.hg38.Lareau)),
                                          sum(width(excludeGR.hg38.Reddy)), 
+                                         sum(width(excludeGR.hg38.Wimberley)),
                                          sum(width(excludeGR.hg38.Wold)), 
                                          sum(width(excludeGR.hg38.Yeo))), 
                           Source = c("Bernstein.Mint_Excludable_GRCh38", 
+                                     "Boyle.hg38-Excludable.v2",
                                      "Kundaje.GRCh38_unified_Excludable", 
                                      "Kundaje.GRCh38.Excludable", 
+                                     "Lareau.hg38.full.Excludable",
                                      "Reddy.wgEncodeDacMapabilityConsensusExcludable", 
+                                     "Wimberley.peakPass60Perc_sorted",
                                      "Wold.hg38mitoExcludable", 
-                                     "Yeo.eCLIP_Excludableregions.hg38liftover"))
+                                     "Yeo.eCLIP_Excludableregions.hg38liftover.bed"))
+# Order objects by decreasing width
+mtx_to_plot$Source <- factor(mtx_to_plot$Source, levels = mtx_to_plot %>% 
+                               group_by(Source) %>% arrange(TotalWidth) %>% pull(Source))
+
 ggplot(mtx_to_plot, aes(x = TotalWidth, y = Source, fill = Source)) + 
-  geom_bar(stat="identity") + scale_x_log10() + scale_y_discrete(label=abbreviate) +
+  geom_bar(stat="identity") + scale_x_log10() + scale_y_discrete(label=abbreviate, limits=rev) +
   xlab("log10 total width")
 ```
 
@@ -315,17 +374,23 @@ overlap_coefficient <- function(gr_a, gr_b) {
 }
 # List and names of all excludable regions
 all_excludeGR_list <- list(excludeGR.hg38.Bernstein, 
-                        excludeGR.hg38.Kundaje.1, 
-                        excludeGR.hg38.Kundaje.2,
-                        excludeGR.hg38.Reddy,
-                        excludeGR.hg38.Wold,
-                        excludeGR.hg38.Yeo)
+                            excludeGR.hg38.Boyle,
+                            excludeGR.hg38.Kundaje.1, 
+                            excludeGR.hg38.Kundaje.2,
+                            excludeGR.hg38.Lareau,
+                            excludeGR.hg38.Reddy,
+                            excludeGR.hg38.Wimberley,
+                            excludeGR.hg38.Wold,
+                            excludeGR.hg38.Yeo)
 all_excludeGR_name <- c("Bernstein.Mint_Excludable_GRCh38", 
-                     "Kundaje.GRCh38_unified_Excludable", 
-                     "Kundaje.GRCh38.Excludable", 
-                     "Reddy.wgEncodeDacMapabilityConsensusExcludable", 
-                     "Wold.hg38mitoExcludable", 
-                     "Yeo.eCLIP_Excludableregions.hg38liftover")
+                         "Boyle.hg38-Excludable.v2",
+                         "Kundaje.GRCh38_unified_Excludable", 
+                         "Kundaje.GRCh38.Excludable", 
+                         "Lareau.hg38.full.Excludable",
+                         "Reddy.wgEncodeDacMapabilityConsensusExcludable", 
+                         "Wimberley.peakPass60Perc_sorted",
+                         "Wold.hg38mitoExcludable", 
+                         "Yeo.eCLIP_Excludableregions.hg38liftover.bed")
 # Correlation matrix, empty
 mtx_to_plot <- matrix(data = 0, nrow = length(all_excludeGR_list), ncol = length(all_excludeGR_list))
 # Fill it in
@@ -343,7 +408,7 @@ for (i in 1:length(all_excludeGR_list)) {
 rownames(mtx_to_plot) <- colnames(mtx_to_plot) <- str_trunc(all_excludeGR_name, width = 25) 
 # Save the plot
 # png("man/figures/excluderanges_hg38_jaccard.png", width = 1000, height = 900, res = 200)
-pheatmap(data.matrix(mtx_to_plot))
+pheatmap(data.matrix(mtx_to_plot), clustering_method = "ward.D")
 ```
 
 <img src="man/figures/README-excluderanges_hg38_overlap_coefficient-1.png" width="100%" />
@@ -359,7 +424,7 @@ there may be some interesting metadata. Let’s explore one.
 
 ``` r
 mcols(excludeGR.hg38.Reddy)
-#> DataFrame with 401 rows and 2 columns
+#> DataFrame with 396 rows and 2 columns
 #>                       name     score
 #>                <character> <numeric>
 #> 1   High_Mappability_isl..      1000
@@ -368,11 +433,11 @@ mcols(excludeGR.hg38.Reddy)
 #> 4   Low_mappability_island      1000
 #> 5                 (CATTC)n      1000
 #> ...                    ...       ...
-#> 397                   TAR1      1000
-#> 398       Satellite_repeat      1000
-#> 399               (CATTC)n      1000
-#> 400               (CATTC)n      1000
-#> 401                   TAR1      1000
+#> 392       Satellite_repeat      1000
+#> 393               (CATTC)n      1000
+#> 394               (CATTC)n      1000
+#> 395                   TAR1      1000
+#> 396                   chrM      1000
 mtx_to_plot <- table(mcols(excludeGR.hg38.Reddy)[["name"]]) %>%
   as.data.frame()
 colnames(mtx_to_plot) <- c("Type", "Number")
@@ -399,26 +464,22 @@ regions](https://www.encodeproject.org/files/ENCFF356LFX/) and use the
 
 ``` r
 excludeGR.hg38.all <- reduce(c(excludeGR.hg38.Bernstein, 
+                               excludeGR.hg38.Boyle,
                                excludeGR.hg38.Kundaje.1, 
                                excludeGR.hg38.Kundaje.2, 
+                               excludeGR.hg38.Lareau,
                                excludeGR.hg38.Reddy, 
+                               excludeGR.hg38.Wimberley,
                                excludeGR.hg38.Wold, 
                                excludeGR.hg38.Yeo))
-#> Warning in valid.GenomicRanges.seqinfo(x, suggest.trim = TRUE): GRanges object contains 1 out-of-bound range located on sequence
-#>   chr4_GL000008v2_random. Note that ranges located on a sequence whose
-#>   length is unknown (NA) or on a circular sequence are not considered
-#>   out-of-bound (use seqlengths() and isCircular() to get the lengths and
-#>   circularity flags of the underlying sequences). You can use trim() to
-#>   trim these ranges. See ?`trim,GenomicRanges-method` for more
-#>   information.
 # Sort and Keep only standard chromosomes
 excludeGR.hg38.all <- excludeGR.hg38.all %>% sort %>% 
   keepStandardChromosomes(pruning.mode = "tidy")
 print(length(excludeGR.hg38.all))
-#> [1] 13239
+#> [1] 15998
 summary(width(excludeGR.hg38.all))
-#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#>       5    1778    2306    8153    2859 5407757
+#>     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+#>        5     1703     2294    17713     3001 30739401
 ```
 
 # BEDbase data download
@@ -477,15 +538,13 @@ token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 #> Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]
-#>   Date: 2022-10-18 14:07
+#>   Date: 2022-11-08 14:22
 #>   Status: 200
 #>   Content-Type: application/vnd.realvnc.bed
 #>   Size: 11.8 kB
 #> <ON DISK>  /Users/mdozmorov/Documents/Work/GitHub/excluderanges/hg38.Lareau.hg38_peak.bed.gz
 # Read the data in
-hg38.Lareau.hg38_peaks <- readr::read_tsv(fileNameOut, 
-                                          col_names = FALSE,
-                                          col_types = c("cddcdc"))
+hg38.Lareau.hg38_peaks <- read.table(fileNameOut, sep = "\t", header = FALSE)
 # Assign column names depending on the number of columns
 all_columns <- c("chr", "start", "stop", "name", "score", "strand", 
                  "signalValue", "pValue", "qValue", "peak")
@@ -496,7 +555,7 @@ hg38.Lareau.hg38_peaks <- makeGRangesFromDataFrame(hg38.Lareau.hg38_peaks,
 hg38.Lareau.hg38_peaks
 #> GRanges object with 784 ranges and 2 metadata columns:
 #>         seqnames              ranges strand |                name     score
-#>            <Rle>           <IRanges>  <Rle> |         <character> <numeric>
+#>            <Rle>           <IRanges>  <Rle> |         <character> <integer>
 #>     [1]     chr1       628903-635104      * |   peaks/hg38_peak_1   2523899
 #>     [2]     chr1     5850087-5850571      * |   peaks/hg38_peak_2     32940
 #>     [3]     chr1     8909610-8910014      * |   peaks/hg38_peak_3       123
@@ -520,7 +579,7 @@ track for Homo Sapiens is available for the GRcH37/hg19 genome assembly
 as a [UCSC ‘gap’
 table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema).
 It can be retrieved from
-*[AnnotationHub](https://bioconductor.org/packages/3.15/AnnotationHub)*,
+*[AnnotationHub](https://bioconductor.org/packages/3.16/AnnotationHub)*,
 but lacks the metadata columns needed to decide the type of gaps.
 
 ``` r
@@ -540,155 +599,142 @@ human, hg19, we have the following types and the number of gaps.
 Those objects are provided as individual GRanges.
 
 Naming convention: `<genome assembly>.UCSC.<gap type>`, e.g.,
-`hg19.UCSC.gap_centromere`. We can similarly load any gap type object.
+`hg38.UCSC.gap_centromere`. We can similarly load any gap type object.
 
 ``` r
-query_data <- query(ah, c("excluderanges", "UCSC", "Homo Sapiens", "hg19"))
+query_data <- query(ah, c("excluderanges", "UCSC", "Homo Sapiens", "hg38"))
 query_data
 #> AnnotationHub with 7 records
-#> # snapshotDate(): 2022-04-25
-#> # $dataprovider: UCSC
+#> # snapshotDate(): 2022-10-26
+#> # $dataprovider: UCSC, UCSChub
 #> # $species: Homo sapiens
 #> # $rdataclass: GRanges
 #> # additional mcols(): taxonomyid, genome, description,
 #> #   coordinate_1_based, maintainer, rdatadateadded, preparerclass, tags,
 #> #   rdatapath, sourceurl, sourcetype 
-#> # retrieve records with, e.g., 'object[["AH95927"]]' 
+#> # retrieve records with, e.g., 'object[["AH107353"]]' 
 #> 
-#>             title                        
-#>   AH95927 | hg19.UCSC.centromere.rds     
-#>   AH95928 | hg19.UCSC.clone.rds          
-#>   AH95929 | hg19.UCSC.contig.rds         
-#>   AH95930 | hg19.UCSC.heterochromatin.rds
-#>   AH95931 | hg19.UCSC.scaffold.rds       
-#>   AH95932 | hg19.UCSC.short_arm.rds      
-#>   AH95933 | hg19.UCSC.telomere.rds
+#>              title                    
+#>   AH107353 | T2T.UCSC.hgUnique.hg38   
+#>   AH107354 | hg38.UCSC.centromere     
+#>   AH107355 | hg38.UCSC.telomere       
+#>   AH107356 | hg38.UCSC.short_arm      
+#>   AH107357 | hg38.UCSC.heterochromatin
+#>   AH107358 | hg38.UCSC.contig         
+#>   AH107359 | hg38.UCSC.scaffold
 
-gapsGR_hg19_centromere <- query_data[["AH95927"]]
+gapsGR_hg38_centromere <- query_data[["AH107354"]]
 #> loading from cache
-gapsGR_hg19_centromere
-#> GRanges object with 24 ranges and 6 metadata columns:
-#>       seqnames              ranges strand |       bin        ix           n
-#>          <Rle>           <IRanges>  <Rle> | <numeric> <numeric> <character>
-#>     2     chr1 121535434-124535434      * |        23      1270           N
-#>   184    chr21   11288129-14288129      * |        10        22           N
-#>   199    chr22   13000000-16000000      * |        10         3           N
-#>   206    chr19   24681782-27681782      * |         1       410           N
-#>   224     chrY   10104553-13104553      * |        10       105           N
-#>   ...      ...                 ...    ... .       ...       ...         ...
-#>   439     chr6   58830166-61830166      * |        16       628           N
-#>   453     chr5   46405641-49405641      * |        14       452           N
-#>   460     chr4   49660117-52660117      * |         1       447           N
-#>   476     chr3   90504854-93504854      * |         2       784           N
-#>   481     chr2   92326171-95326171      * |        20       770           N
-#>            size        type      bridge
-#>       <numeric> <character> <character>
-#>     2     3e+06  centromere          no
-#>   184     3e+06  centromere          no
-#>   199     3e+06  centromere          no
-#>   206     3e+06  centromere          no
-#>   224     3e+06  centromere          no
-#>   ...       ...         ...         ...
-#>   439     3e+06  centromere          no
-#>   453     3e+06  centromere          no
-#>   460     3e+06  centromere          no
-#>   476     3e+06  centromere          no
-#>   481     3e+06  centromere          no
+gapsGR_hg38_centromere
+#> GRanges object with 109 ranges and 2 metadata columns:
+#>         seqnames              ranges strand |       bin        name
+#>            <Rle>           <IRanges>  <Rle> | <numeric> <character>
+#>     [1]     chr1 122026459-122224535      * |       189  GJ211836.1
+#>     [2]     chr1 122224635-122503147      * |       189  GJ211837.1
+#>     [3]     chr1 122503247-124785432      * |        23  GJ212202.1
+#>     [4]     chr1 124785532-124849129      * |      1537  GJ211855.1
+#>     [5]     chr1 124849229-124932724      * |       192  GJ211857.1
+#>     ...      ...                 ...    ... .       ...         ...
+#>   [105]    chr22   14419994-14420334      * |       695  GJ212209.1
+#>   [106]    chr22   14420434-14421632      * |       695  GJ212186.2
+#>   [107]    chr22   14421732-15054318      * |        10  GJ212191.2
+#>   [108]     chrX   58605579-62412542      * |         1  GJ212192.1
+#>   [109]     chrY   10316944-10544039      * |        10  GJ212193.1
 #>   -------
-#>   seqinfo: 24 sequences from hg19 genome
+#>   seqinfo: 24 sequences from hg38 genome
 ```
 
 # Summary table
 
 [Full summary table](man/figures/Table_S1.csv).
 
-| Name                                                                            | AnnotationHub.ID | BEDbase.URL                                                             | Description                                                                                                                                                                                                                                                                                                  | Filtered.Region.count |
-|:--------------------------------------------------------------------------------|:-----------------|:------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------:|
-| T2T.excluderanges                                                               | NA               | [link](http://bedbase.org/#/bedsplash/6548a002754cc1e882035293541b59a8) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                  3565 |
-| hg38.Kundaje.GRCh38_unified_Excludable                                          | AH95917          | [link](http://bedbase.org/#/bedsplash/1a561729234c2844303a051b16f66656) | Defined as a combination of hg38.Lareau.hg38_peaks, hg38.Boyle.hg38-Excludable.v2, and hg38.Wimberley.peakPass60Perc_sorted, followed by manual curation. Supersedes hg38.Kundaje.GRCh38.Excludable.                                                                                                         |                   910 |
-| hg38.Bernstein.Mint_Excludable_GRCh38                                           | AH95915          | [link](http://bedbase.org/#/bedsplash/80e335903b77b597b8245f9817fcd9cd) | Defined from Mint-ChIP (low input, multiplexed ChIP-seq) data                                                                                                                                                                                                                                                |                 12052 |
-| hg38.Boyle.hg38-Excludable.v2                                                   | NA               | [link](http://bedbase.org/#/bedsplash/ac58962c9ec98fe9258c12092a0c8832) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                   636 |
-| hg38.Kundaje.GRCh38.Excludable                                                  | AH95916          | [link](http://bedbase.org/#/bedsplash/cb701496bde7eeb18add96fdbc3b8b11) | Defined by Anshul Kundaje as a part of ENCODE and modENCODE consortia                                                                                                                                                                                                                                        |                    38 |
-| hg38.Lareau.hg38.full.Excludable                                                | NA               | [link](http://bedbase.org/#/bedsplash/5a12c1de138ace1a73a45e6faf9ba669) | ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)                                                                                                                                                                                                                     |                   820 |
-| hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38                        | AH95918          | [link](http://bedbase.org/#/bedsplash/148622e896f6798f7c4abf448bab67c4) | Defined by the ENCODE consortium, includes satellite repeats (CATTC, GAATG, GAGTG, ACRO1), RepeatMasker repeats (ALR/Alpha, BSR/Beta), centromeric repeats, chrM, High/Low mappability islands. Has extra chromosomes, use keepStandardChromosomes() filtering                                               |                   396 |
-| hg38.Wimberley.peakPass60Perc_sorted                                            | NA               | [link](http://bedbase.org/#/bedsplash/f4a9bb19ed29e993592813e970e7dd90) | Defined by the ewimberley/peakPass software                                                                                                                                                                                                                                                                  |                  5078 |
-| hg38.Wold.hg38mitoExcludable                                                    | AH95919          | [link](http://bedbase.org/#/bedsplash/a714dcba99821801b5c426fba9c80988) | Definition method unknown                                                                                                                                                                                                                                                                                    |                   299 |
-| hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed                         | AH95920          | [link](http://bedbase.org/#/bedsplash/1a02a65fafefefd65ff4a060273304ed) | Defined from eCLIP data                                                                                                                                                                                                                                                                                      |                    56 |
-| hg19.Boyle.hg19-Excludable.v2                                                   | NA               | [link](http://bedbase.org/#/bedsplash/6eb180d456f2f3b71b419e5fab107fc9) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                   834 |
-| hg19.Bernstein.Mint_Excludable_hg19                                             | AH95910          | [link](http://bedbase.org/#/bedsplash/d1a6047ed5bec84acefe9c52cf63b593) | Defined from Mint-ChIP (low input, multiplexed ChIP-seq) data                                                                                                                                                                                                                                                |                  9035 |
-| hg19.Birney.wgEncodeDacMapabilityConsensusExcludable                            | AH95911          | [link](http://bedbase.org/#/bedsplash/5b6b19dea85a8bc6007ef07a0960267b) | Defined by the ENCODE consortium, includes satellite repeats (CATTC, GAATG, GAGTG, ACRO1), RepeatMasker repeats (ALR/Alpha, BSR/Beta), centromeric repeats, chrM, High/Low mappability islands                                                                                                               |                   411 |
-| hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable                           | AH95912          | [link](http://bedbase.org/#/bedsplash/dac2eda4e8687eb039611ac6cd595821) | Defined by the ENCODE consortium, includes satellite repeats (CATTC, GAATG, GAGTG, ACRO1), RepeatMasker repeats (ALR/Alpha, BSR/Beta), human satellite repeat HSATII, chrM, ribosomal subunit consensus sequences LSU-rRNA_Hsa, SSU-rRNA_Hsa. Has extra chromosomes, use keepStandardChromosomes() filtering |                  1566 |
-| hg19.Lareau.hg19.full.Excludable                                                | NA               | [link](http://bedbase.org/#/bedsplash/d934d47e8035da9c5a1767c8153db4cc) | ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)                                                                                                                                                                                                                     |                   902 |
-| hg19.Wold.hg19mitoExcludable                                                    | AH95913          | [link](http://bedbase.org/#/bedsplash/182046a0f055b0176178241a95cbd637) | Definition method unknown                                                                                                                                                                                                                                                                                    |                   295 |
-| hg19.Yeo.eCLIP_Excludableregions.hg19                                           | AH95914          | [link](http://bedbase.org/#/bedsplash/350f49dc47e5307109e1e17d60223a31) | Defined from eCLIP data, includes skyscraper, rRNA pseudogene, unreliably mapped satellite repeat, and low complexity skyscraper peak regions                                                                                                                                                                |                    57 |
-| mm39.excluderanges                                                              | NA               | [link](http://bedbase.org/#/bedsplash/edc716833d4b5ee75c34a0692fc353d5) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                  3147 |
-| mm10.Boyle.mm10-Excludable.v2                                                   | NA               | [link](http://bedbase.org/#/bedsplash/a5311e39fe1590de66c1df6a5881a942) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                  3435 |
-| mm10.Hardison.Excludable.full                                                   | AH95921          | [link](http://bedbase.org/#/bedsplash/087541f51cf8c7d7078995d1bd95fd27) | Definition method unknown                                                                                                                                                                                                                                                                                    |                  7865 |
-| mm10.Hardison.psuExcludable.mm10                                                | AH95922          | [link](http://bedbase.org/#/bedsplash/fc6b88f936c5cd880545943708e4c2af) | Definition method unknown                                                                                                                                                                                                                                                                                    |                  5552 |
-| mm10.Kundaje.anshul.Excludable.mm10                                             | AH95923          | [link](http://bedbase.org/#/bedsplash/e6a89a8432f4a69bae41f60ed0c7e704) | Defined by Anshul Kundaje as a part of ENCODE and modENCODE consortia                                                                                                                                                                                                                                        |                  3010 |
-| mm10.Kundaje.mm10.Excludable                                                    | AH95924          | [link](http://bedbase.org/#/bedsplash/76c03b6c831f8fecdf4fee7adf2def6a) | Defined by Anshul Kundaje as a part of ENCODE and modENCODE consortia                                                                                                                                                                                                                                        |                   164 |
-| mm10.Lareau.mm10.full.Excludable                                                | NA               | [link](http://bedbase.org/#/bedsplash/1bd30517be79d4d051308c693b822798) | ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)                                                                                                                                                                                                                     |                   523 |
-| mm10.Wold.mm10mitoExcludable                                                    | AH95925          | [link](http://bedbase.org/#/bedsplash/830f1ffd31689e3e7c22ff856f0ba02c) | Definition method unknown                                                                                                                                                                                                                                                                                    |                   123 |
-| mm9.Lareau.mm9.full.Excludable                                                  | NA               | [link](http://bedbase.org/#/bedsplash/e903b285baefce8167367ce57a8c3d48) | ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)                                                                                                                                                                                                                     |                  3415 |
-| mm9.Wold.mm9mitoExcludable                                                      | AH95926          | [link](http://bedbase.org/#/bedsplash/9b4389a6a4b937df8abd62dad30fa3a3) | Definition method unknown                                                                                                                                                                                                                                                                                    |                   123 |
-| ce11.Boyle.ce11-Excludable.v2                                                   | NA               | [link](http://bedbase.org/#/bedsplash/7235114a78b1709be96f0d6a82b4ea36) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                    97 |
-| ce10.Boyle.ce10-Excludable.v2                                                   | NA               | [link](http://bedbase.org/#/bedsplash/6de11bb5f50ee015b23ac96f433f00bb) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                   100 |
-| ce10.Kundaje.ce10-Excludable                                                    | AH95908          | [link](http://bedbase.org/#/bedsplash/32b59590fa83161687cec4cabfa2bb2b) | Defined by Anshul Kundaje, superseded by ce10.Boyle.ce10-Excludable.v2                                                                                                                                                                                                                                       |                   122 |
-| danRer10.Domingues.Excludableed                                                 | NA               | [link](http://bedbase.org/#/bedsplash/a0a94af275f858d63550005627d260b7) | Defined manually using total RNA-seq.                                                                                                                                                                                                                                                                        |                    57 |
-| danRer10.Yang.Supplemental_Table_19.ChIP-seq_black_list_in_the_zebrafish_genome | NA               | [link](http://bedbase.org/#/bedsplash/78f5eb585019a4d795ef80159a597b15) | Defined via MACS2 peak calling using ChIP-seq (PMID: 33239788)                                                                                                                                                                                                                                               |                   853 |
-| dm6.Boyle.dm6-Excludable.v2                                                     | NA               | [link](http://bedbase.org/#/bedsplash/24186dc2aac492074d3de9caede730a0) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                   182 |
-| dm3.Boyle.dm3-Excludable.v2                                                     | NA               | [link](http://bedbase.org/#/bedsplash/7427399e18d9c01e423b2f4963b409ea) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                   248 |
-| dm3.Kundaje.dm3-Excludable                                                      | AH95909          | [link](http://bedbase.org/#/bedsplash/0801a522159f7ebf2f669d8cade4aa8f) | Defined by Anshul Kundaje. Contains heterochromatin chromosomes chr2LHet. Superseded by dm3.Boyle.dm3-Excludable.v2                                                                                                                                                                                          |                   306 |
-| TAIR10.Wimberley.predicted_excluded_list_sorted_0.6                             | NA               | [link](http://bedbase.org/#/bedsplash/6f3a3ae3ee878b88a92093eb8e3fe982) | Defined by the ewimberley/peakPass software                                                                                                                                                                                                                                                                  |                   887 |
-| TAIR10.Klasfeld.arabidopsis_Excludable_20inputs                                 | NA               | [link](http://bedbase.org/#/bedsplash/aa1c99c2dd2aef874486b1c0c3bf6b92) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions (DOI: 10.1101/2022.02.27.482177)                                                                                                                                                                                        |                    83 |
-| TAIR10.Klasfeld.arabidopsis_greenscreen_20inputs                                | NA               | [link](http://bedbase.org/#/bedsplash/e5d66ee787a8cb0c76438bba768c2331) | Defined by the green screen pipeline (DOI: 10.1101/2022.02.27.482177)                                                                                                                                                                                                                                        |                    36 |
-| T2T.Lareau.chm13v2.0_peaks                                                      | NA               | [link](http://bedbase.org/#/bedsplash/354dfced295f54f70ae9656ca8f9b141) | Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist                                                                                                                                                                                                                        |                   817 |
-| hg38.Lareau.hg38_peaks                                                          | NA               | [link](http://bedbase.org/#/bedsplash/9fa55701a3bd3e7a598d1d2815e3390f) | Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist                                                                                                                                                                                                                        |                   784 |
-| hg19.Lareau.hg19_peaks                                                          | NA               | [link](http://bedbase.org/#/bedsplash/79e924141251afbd4cde0c38456913fd) | Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist                                                                                                                                                                                                                        |                   779 |
-| mm10.Lareau.mm10_peaks                                                          | NA               | [link](http://bedbase.org/#/bedsplash/1b76ab775549e116da5e1a89aad7019b) | Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist                                                                                                                                                                                                                        |                   387 |
-| mm9.Lareau.mm9_peaks                                                            | NA               | [link](http://bedbase.org/#/bedsplash/5c4b1cb28175b72bc56adb0bd7384dfd) | Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist                                                                                                                                                                                                                        |                   395 |
-| hg19.UCSC.numtS                                                                 | NA               | [link](http://bedbase.org/#/bedsplash/cc4fd05fdfe015e4acd5111dac5b372f) | Human NumtS mitochondrial sequence                                                                                                                                                                                                                                                                           |                   766 |
-| mm9.UCSC.numtS                                                                  | NA               | [link](http://bedbase.org/#/bedsplash/29dc50750f0535b6b9c746ee8371c211) | Mouse NumtS mitochondrial sequence                                                                                                                                                                                                                                                                           |                   172 |
-| T2T.CHM13.chm13.draft_v2.0.cen_mask                                             | NA               | [link](http://bedbase.org/#/bedsplash/44138ebb0d3340e70164d12649a47dc8) | Centromeric satellite masking bed file (v2.0)                                                                                                                                                                                                                                                                |                    23 |
-| T2T.CHM13.chm13.draft_v1.1.telomere                                             | NA               | [link](http://bedbase.org/#/bedsplash/b72dd2fa5f8a916cc36960b93169c743) | Telomere identified by the VGP pipeline (v1.1)                                                                                                                                                                                                                                                               |                    48 |
-| T2T.UCSC.censat                                                                 | NA               | [link](http://bedbase.org/#/bedsplash/f28798df2c4d72810e7c4626b5a62106) | T2T peri/centromeric satellite annotation (v2.0, 20220329, CHM13 v2.0)                                                                                                                                                                                                                                       |                  2523 |
-| T2T.UCSC.gap                                                                    | NA               | [link](http://bedbase.org/#/bedsplash/0747aae5f4cac92367a16c3eb1c7f3f1) | Locations of assembly gaps, as determine by strings of ‘N’ characters (v1.0)                                                                                                                                                                                                                                 |                     5 |
-| T2T.UCSC.hgUnique.hg38                                                          | NA               | [link](http://bedbase.org/#/bedsplash/c3839f43c53a3c47733388528b853690) | Regions unique to the T2T-CHM13 v2.0 assembly compared to the GRCh38/hg38 and GRCh37/hg19 reference assemblies                                                                                                                                                                                               |                   615 |
-| hg38.UCSC.centromere                                                            | NA               | [link](http://bedbase.org/#/bedsplash/0b1f161675fa0f52ac6d0d4f54b1efb9) | Gaps from centromeres                                                                                                                                                                                                                                                                                        |                   109 |
-| hg38.UCSC.telomere                                                              | AH95938          | [link](http://bedbase.org/#/bedsplash/79f964e68d5daa1462c52ca54855b06a) | Gaps from telomeres                                                                                                                                                                                                                                                                                          |                    48 |
-| hg38.UCSC.short_arm                                                             | AH95937          | [link](http://bedbase.org/#/bedsplash/92fc8f64f92d525c6b92c9aab5e2c711) | Gaps on the short arm of the chromosome                                                                                                                                                                                                                                                                      |                     5 |
-| hg38.UCSC.heterochromatin                                                       | AH95935          | [link](http://bedbase.org/#/bedsplash/8af7b48ab48183229d3bc72005040dc1) | Gaps from large blocks of heterochromatin                                                                                                                                                                                                                                                                    |                    11 |
-| hg38.UCSC.contig                                                                | AH95934          | [link](http://bedbase.org/#/bedsplash/2dd1b22f2add15bc7508580d18bc9495) | Gaps between contigs in scaffolds                                                                                                                                                                                                                                                                            |                   285 |
-| hg38.UCSC.scaffold                                                              | AH95936          | [link](http://bedbase.org/#/bedsplash/de0c7f42f29fb83ac393e86a2ec28374) | Gaps between scaffolds in chromosome assemblies. Has extra chromosomes, use keepStandardChromosomes() filtering                                                                                                                                                                                              |                   254 |
-| hg19.UCSC.centromere                                                            | AH95927          | [link](http://bedbase.org/#/bedsplash/26ecf1381b6323791656f800ad39b69c) | Gaps from centromeres                                                                                                                                                                                                                                                                                        |                    24 |
-| hg19.UCSC.telomere                                                              | AH95933          | [link](http://bedbase.org/#/bedsplash/2bcad8794847411e9b3f52ff39c4f377) | Gaps from telomeres                                                                                                                                                                                                                                                                                          |                    46 |
-| hg19.UCSC.short_arm                                                             | AH95932          | [link](http://bedbase.org/#/bedsplash/e09fac8aedf1230ab77ac4194fd75784) | Gaps on the short arm of the chromosome                                                                                                                                                                                                                                                                      |                     5 |
-| hg19.UCSC.heterochromatin                                                       | AH95930          | [link](http://bedbase.org/#/bedsplash/8ea9b6cdfe68a4b4111e5b03157af371) | Gaps from large blocks of heterochromatin                                                                                                                                                                                                                                                                    |                    12 |
-| hg19.UCSC.clone                                                                 | AH95928          | [link](http://bedbase.org/#/bedsplash/4f3b1098a0f4ea5e81747f4414a8d294) | Gaps between clones in the same map contig. Has extra chromosomes, use keepStandardChromosomes() filtering                                                                                                                                                                                                   |                   107 |
-| hg19.UCSC.contig                                                                | AH95929          | [link](http://bedbase.org/#/bedsplash/a4da41916b0b213d4e3b89f5ab20e1e8) | Gaps between contigs in scaffolds                                                                                                                                                                                                                                                                            |                   163 |
-| hg19.UCSC.scaffold                                                              | AH95931          | NA                                                                      | Gaps between scaffolds in chromosome assemblies. Only non-autosomal chromosomes                                                                                                                                                                                                                              |                     0 |
-| mm39.UCSC.centromere                                                            | NA               | [link](http://bedbase.org/#/bedsplash/1aa3f73ffa8e6d498f0f3f22e0302472) | Gaps from centromeres                                                                                                                                                                                                                                                                                        |                    20 |
-| mm39.UCSC.telomere                                                              | NA               | [link](http://bedbase.org/#/bedsplash/883bdae38244c6f0e0facfbd4fcc601b) | Gaps from telomeres                                                                                                                                                                                                                                                                                          |                    42 |
-| mm39.UCSC.short_arm                                                             | NA               | [link](http://bedbase.org/#/bedsplash/f61de62eae0898943e6c9d163b0a3989) | Gaps on the short arm of the chromosome                                                                                                                                                                                                                                                                      |                    21 |
-| mm39.UCSC.contig                                                                | NA               | [link](http://bedbase.org/#/bedsplash/732437d9fcb8992b2e5c6513bfed2586) | Gaps between contigs in scaffolds                                                                                                                                                                                                                                                                            |                    60 |
-| mm39.UCSC.scaffold                                                              | NA               | [link](http://bedbase.org/#/bedsplash/97e738326c0681f5ebe94b0d28d058c5) | Gaps between scaffolds in chromosome assemblies                                                                                                                                                                                                                                                              |                   115 |
-| mm10.UCSC.centromere                                                            | AH95939          | [link](http://bedbase.org/#/bedsplash/b0f9aa3cc8a4a43f59b463891b5d12c8) | Gaps from centromeres                                                                                                                                                                                                                                                                                        |                    20 |
-| mm10.UCSC.telomere                                                              | AH95945          | [link](http://bedbase.org/#/bedsplash/051090e82c227bcc55dba3e953bc6daa) | Gaps from telomeres                                                                                                                                                                                                                                                                                          |                    42 |
-| mm10.UCSC.short_arm                                                             | AH95944          | [link](http://bedbase.org/#/bedsplash/f4d2d6fe334deca5800ca9ae39ce95ce) | Gaps on the short arm of the chromosome                                                                                                                                                                                                                                                                      |                    21 |
-| mm10.UCSC.clone                                                                 | AH95940          | [link](http://bedbase.org/#/bedsplash/9ecfce46335e4d5b3a1230b69690a25a) | Gaps between clones in the same map contig. Has extra chromosomes, use keepStandardChromosomes() filtering                                                                                                                                                                                                   |                     4 |
-| mm10.UCSC.contig                                                                | AH95941          | [link](http://bedbase.org/#/bedsplash/82d2374cf5524a2b13dcf9c3dc487d6f) | Gaps between contigs in scaffolds                                                                                                                                                                                                                                                                            |                   104 |
-| mm10.UCSC.scaffold                                                              | AH95949          | NA                                                                      | Gaps between scaffolds in chromosome assemblies                                                                                                                                                                                                                                                              |                     0 |
-| mm10.UCSC.other                                                                 | AH95943          | [link](http://bedbase.org/#/bedsplash/75662812e5eb228b25c9ae5a28fbb402) | Sequence of Ns in the assembly that were not marked as gaps in the AGP (A Golden Path) assembly definition file. Has extra chromosomes, use keepStandardChromosomes() filtering                                                                                                                              |                   383 |
-| mm10.UCSC.fragment                                                              | AH95942          | NA                                                                      | A single gap of 31 bases in chrX_GL456233_random                                                                                                                                                                                                                                                             |                     0 |
-| mm9.UCSC.centromere                                                             | AH95946          | [link](http://bedbase.org/#/bedsplash/99e4d2c9a794d321bfcf01709787caac) | Gaps from centromeres                                                                                                                                                                                                                                                                                        |                    21 |
-| mm9.UCSC.fragment                                                               | AH95948          | [link](http://bedbase.org/#/bedsplash/ecf3f802759c5dc93f1446b6942c58b3) | Gaps between the contigs of a draft clone. (In this context, a contig is a set of overlapping sequence reads). Has extra chromosomes, use keepStandardChromosomes() filtering                                                                                                                                |                   436 |
-| mm9.UCSC.contig                                                                 | AH95947          | [link](http://bedbase.org/#/bedsplash/4dd8bb54f6432144c045619337d8212e) | Gaps between contigs in scaffolds. Has extra chromosomes, use keepStandardChromosomes() filtering                                                                                                                                                                                                            |                   105 |
-| danRer10.UCSC.contig                                                            | NA               | [link](http://bedbase.org/#/bedsplash/5d41a9fa328769b63734e11e6ae4252b) | Gaps between contigs in scaffolds                                                                                                                                                                                                                                                                            |                  2338 |
-| danRer10.UCSC.scaffold                                                          | NA               | [link](http://bedbase.org/#/bedsplash/a5feefb2d573d265f1085043c208c2ed) | Gaps between scaffolds in chromosome assemblies                                                                                                                                                                                                                                                              |                 16496 |
-| dm6.UCSC.other                                                                  | NA               | [link](http://bedbase.org/#/bedsplash/11a80264dcdad6c0868ea48637a799df) | Sequence of Ns in the assembly that were not marked as gaps in the AGP (A Golden Path) assembly definition file                                                                                                                                                                                              |                   268 |
-| dm3.UCSC.contig                                                                 | NA               | [link](http://bedbase.org/#/bedsplash/f9822a0f88047e92cf92824fe025b2f2) | Gaps between contigs in scaffolds                                                                                                                                                                                                                                                                            |                     7 |
-| dm3.UCSC.scaffold                                                               | NA               | [link](http://bedbase.org/#/bedsplash/d4e31a2c488de8ff335b0cb779c9cef5) | Gaps between scaffolds in chromosome assemblies                                                                                                                                                                                                                                                              |                     1 |
-| TAIR10.UCSC.araTha1.gap                                                         | NA               | [link](http://bedbase.org/#/bedsplash/74585119b9b90d3b4ad077b10b487d39) | Gaps in the May 2011 Arabidopsis thaliana genome assembly                                                                                                                                                                                                                                                    |                   357 |
+| Name                                                                            | Ahub.IDs.BioC.3.16.and.above | BEDbase.URL                                                             | Description                                                                                                                                                                                                                                                                                                  | Filtered.Region.count |
+|:--------------------------------------------------------------------------------|:-----------------------------|:------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------:|
+| T2T.excluderanges                                                               | AH107304                     | [link](http://bedbase.org/#/bedsplash/8329d8c624880308ab51ba05149a737d) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                  3565 |
+| hg38.Kundaje.GRCh38_unified_Excludable                                          | AH107305                     | [link](http://bedbase.org/#/bedsplash/1a561729234c2844303a051b16f66656) | Defined as a combination of hg38.Lareau.hg38_peaks, hg38.Boyle.hg38-Excludable.v2, and hg38.Wimberley.peakPass60Perc_sorted, followed by manual curation. Supersedes hg38.Kundaje.GRCh38.Excludable.                                                                                                         |                   910 |
+| hg38.Bernstein.Mint_Excludable_GRCh38                                           | AH107306                     | [link](http://bedbase.org/#/bedsplash/80e335903b77b597b8245f9817fcd9cd) | Defined from Mint-ChIP (low input, multiplexed ChIP-seq) data                                                                                                                                                                                                                                                |                 12052 |
+| hg38.Boyle.hg38-Excludable.v2                                                   | AH107307                     | [link](http://bedbase.org/#/bedsplash/ac58962c9ec98fe9258c12092a0c8832) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                   636 |
+| hg38.Kundaje.GRCh38.Excludable                                                  | AH107308                     | [link](http://bedbase.org/#/bedsplash/cb701496bde7eeb18add96fdbc3b8b11) | Defined by Anshul Kundaje as a part of ENCODE and modENCODE consortia                                                                                                                                                                                                                                        |                    38 |
+| hg38.Lareau.hg38.full.Excludable                                                | AH107309                     | [link](http://bedbase.org/#/bedsplash/5a12c1de138ace1a73a45e6faf9ba669) | ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)                                                                                                                                                                                                                     |                   820 |
+| hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38                        | AH107310                     | [link](http://bedbase.org/#/bedsplash/148622e896f6798f7c4abf448bab67c4) | Defined by the ENCODE consortium, includes satellite repeats (CATTC, GAATG, GAGTG, ACRO1), RepeatMasker repeats (ALR/Alpha, BSR/Beta), centromeric repeats, chrM, High/Low mappability islands. Has extra chromosomes, use keepStandardChromosomes() filtering                                               |                   396 |
+| hg38.Wimberley.peakPass60Perc_sorted                                            | AH107311                     | [link](http://bedbase.org/#/bedsplash/f4a9bb19ed29e993592813e970e7dd90) | Defined by the ewimberley/peakPass software                                                                                                                                                                                                                                                                  |                  5078 |
+| hg38.Wold.hg38mitoExcludable                                                    | AH107312                     | [link](http://bedbase.org/#/bedsplash/a714dcba99821801b5c426fba9c80988) | Definition method unknown                                                                                                                                                                                                                                                                                    |                   299 |
+| hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed                         | AH107313                     | [link](http://bedbase.org/#/bedsplash/1a02a65fafefefd65ff4a060273304ed) | Defined from eCLIP data                                                                                                                                                                                                                                                                                      |                    56 |
+| hg19.Boyle.hg19-Excludable.v2                                                   | AH107314                     | [link](http://bedbase.org/#/bedsplash/6eb180d456f2f3b71b419e5fab107fc9) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                   834 |
+| hg19.Bernstein.Mint_Excludable_hg19                                             | AH107315                     | [link](http://bedbase.org/#/bedsplash/d1a6047ed5bec84acefe9c52cf63b593) | Defined from Mint-ChIP (low input, multiplexed ChIP-seq) data                                                                                                                                                                                                                                                |                  9035 |
+| hg19.Birney.wgEncodeDacMapabilityConsensusExcludable                            | AH107316                     | [link](http://bedbase.org/#/bedsplash/5b6b19dea85a8bc6007ef07a0960267b) | Defined by the ENCODE consortium, includes satellite repeats (CATTC, GAATG, GAGTG, ACRO1), RepeatMasker repeats (ALR/Alpha, BSR/Beta), centromeric repeats, chrM, High/Low mappability islands                                                                                                               |                   411 |
+| hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable                           | AH107317                     | [link](http://bedbase.org/#/bedsplash/dac2eda4e8687eb039611ac6cd595821) | Defined by the ENCODE consortium, includes satellite repeats (CATTC, GAATG, GAGTG, ACRO1), RepeatMasker repeats (ALR/Alpha, BSR/Beta), human satellite repeat HSATII, chrM, ribosomal subunit consensus sequences LSU-rRNA_Hsa, SSU-rRNA_Hsa. Has extra chromosomes, use keepStandardChromosomes() filtering |                  1566 |
+| hg19.Lareau.hg19.full.Excludable                                                | AH107318                     | [link](http://bedbase.org/#/bedsplash/d934d47e8035da9c5a1767c8153db4cc) | ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)                                                                                                                                                                                                                     |                   902 |
+| hg19.Wold.hg19mitoExcludable                                                    | AH107319                     | [link](http://bedbase.org/#/bedsplash/182046a0f055b0176178241a95cbd637) | Definition method unknown                                                                                                                                                                                                                                                                                    |                   295 |
+| hg19.Yeo.eCLIP_Excludableregions.hg19                                           | AH107320                     | [link](http://bedbase.org/#/bedsplash/350f49dc47e5307109e1e17d60223a31) | Defined from eCLIP data, includes skyscraper, rRNA pseudogene, unreliably mapped satellite repeat, and low complexity skyscraper peak regions                                                                                                                                                                |                    57 |
+| mm39.excluderanges                                                              | AH107321                     | [link](http://bedbase.org/#/bedsplash/edc716833d4b5ee75c34a0692fc353d5) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                  3147 |
+| mm10.Boyle.mm10-Excludable.v2                                                   | AH107322                     | [link](http://bedbase.org/#/bedsplash/a5311e39fe1590de66c1df6a5881a942) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                  3435 |
+| mm10.Hardison.Excludable.full                                                   | AH107323                     | [link](http://bedbase.org/#/bedsplash/087541f51cf8c7d7078995d1bd95fd27) | Definition method unknown                                                                                                                                                                                                                                                                                    |                  7865 |
+| mm10.Hardison.psuExcludable.mm10                                                | AH107324                     | [link](http://bedbase.org/#/bedsplash/fc6b88f936c5cd880545943708e4c2af) | Definition method unknown                                                                                                                                                                                                                                                                                    |                  5552 |
+| mm10.Kundaje.anshul.Excludable.mm10                                             | AH107325                     | [link](http://bedbase.org/#/bedsplash/e6a89a8432f4a69bae41f60ed0c7e704) | Defined by Anshul Kundaje as a part of ENCODE and modENCODE consortia                                                                                                                                                                                                                                        |                  3010 |
+| mm10.Kundaje.mm10.Excludable                                                    | AH107326                     | [link](http://bedbase.org/#/bedsplash/76c03b6c831f8fecdf4fee7adf2def6a) | Defined by Anshul Kundaje as a part of ENCODE and modENCODE consortia                                                                                                                                                                                                                                        |                   164 |
+| mm10.Lareau.mm10.full.Excludable                                                | AH107327                     | [link](http://bedbase.org/#/bedsplash/1bd30517be79d4d051308c693b822798) | ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)                                                                                                                                                                                                                     |                   523 |
+| mm10.Wold.mm10mitoExcludable                                                    | AH107328                     | [link](http://bedbase.org/#/bedsplash/830f1ffd31689e3e7c22ff856f0ba02c) | Definition method unknown                                                                                                                                                                                                                                                                                    |                   123 |
+| mm9.Lareau.mm9.full.Excludable                                                  | AH107329                     | [link](http://bedbase.org/#/bedsplash/e903b285baefce8167367ce57a8c3d48) | ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)                                                                                                                                                                                                                     |                  3415 |
+| mm9.Wold.mm9mitoExcludable                                                      | AH107330                     | [link](http://bedbase.org/#/bedsplash/9b4389a6a4b937df8abd62dad30fa3a3) | Definition method unknown                                                                                                                                                                                                                                                                                    |                   123 |
+| ce11.Boyle.ce11-Excludable.v2                                                   | AH107331                     | [link](http://bedbase.org/#/bedsplash/7235114a78b1709be96f0d6a82b4ea36) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                    97 |
+| ce10.Boyle.ce10-Excludable.v2                                                   | AH107332                     | [link](http://bedbase.org/#/bedsplash/6de11bb5f50ee015b23ac96f433f00bb) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                   100 |
+| ce10.Kundaje.ce10-Excludable                                                    | AH107333                     | [link](http://bedbase.org/#/bedsplash/32b59590fa83161687cec4cabfa2bb2b) | Defined by Anshul Kundaje, superseded by ce10.Boyle.ce10-Excludable.v2                                                                                                                                                                                                                                       |                   122 |
+| danRer10.Domingues.Excludableed                                                 | AH107334                     | [link](http://bedbase.org/#/bedsplash/a0a94af275f858d63550005627d260b7) | Defined manually using total RNA-seq.                                                                                                                                                                                                                                                                        |                    57 |
+| danRer10.Yang.Supplemental_Table_19.ChIP-seq_black_list_in_the_zebrafish_genome | AH107335                     | [link](http://bedbase.org/#/bedsplash/78f5eb585019a4d795ef80159a597b15) | Defined via MACS2 peak calling using ChIP-seq (PMID: 33239788)                                                                                                                                                                                                                                               |                   853 |
+| dm6.Boyle.dm6-Excludable.v2                                                     | AH107336                     | [link](http://bedbase.org/#/bedsplash/24186dc2aac492074d3de9caede730a0) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                   182 |
+| dm3.Boyle.dm3-Excludable.v2                                                     | AH107337                     | [link](http://bedbase.org/#/bedsplash/7427399e18d9c01e423b2f4963b409ea) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                   248 |
+| dm3.Kundaje.dm3-Excludable                                                      | AH107338                     | [link](http://bedbase.org/#/bedsplash/0801a522159f7ebf2f669d8cade4aa8f) | Defined by Anshul Kundaje. Contains heterochromatin chromosomes chr2LHet. Superseded by dm3.Boyle.dm3-Excludable.v2                                                                                                                                                                                          |                   306 |
+| TAIR10.Wimberley.predicted_excluded_list_sorted_0.6                             | AH107339                     | [link](http://bedbase.org/#/bedsplash/6f3a3ae3ee878b88a92093eb8e3fe982) | Defined by the ewimberley/peakPass software                                                                                                                                                                                                                                                                  |                   887 |
+| TAIR10.Klasfeld.arabidopsis_Excludable_20inputs                                 | AH107340                     | [link](http://bedbase.org/#/bedsplash/aa1c99c2dd2aef874486b1c0c3bf6b92) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions (DOI: 10.1101/2022.02.27.482177)                                                                                                                                                                                        |                    83 |
+| TAIR10.Klasfeld.arabidopsis_greenscreen_20inputs                                | AH107341                     | [link](http://bedbase.org/#/bedsplash/e5d66ee787a8cb0c76438bba768c2331) | Defined by the green screen pipeline (DOI: 10.1101/2022.02.27.482177)                                                                                                                                                                                                                                        |                    36 |
+| T2T.Lareau.chm13v2.0_peaks                                                      | AH107342                     | [link](http://bedbase.org/#/bedsplash/354dfced295f54f70ae9656ca8f9b141) | Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist                                                                                                                                                                                                                        |                   817 |
+| hg38.Lareau.hg38_peaks                                                          | AH107343                     | [link](http://bedbase.org/#/bedsplash/9fa55701a3bd3e7a598d1d2815e3390f) | Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist                                                                                                                                                                                                                        |                   784 |
+| hg19.Lareau.hg19_peaks                                                          | AH107344                     | [link](http://bedbase.org/#/bedsplash/79e924141251afbd4cde0c38456913fd) | Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist                                                                                                                                                                                                                        |                   779 |
+| mm10.Lareau.mm10_peaks                                                          | AH107345                     | [link](http://bedbase.org/#/bedsplash/1b76ab775549e116da5e1a89aad7019b) | Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist                                                                                                                                                                                                                        |                   387 |
+| mm9.Lareau.mm9_peaks                                                            | AH107346                     | [link](http://bedbase.org/#/bedsplash/5c4b1cb28175b72bc56adb0bd7384dfd) | Regions of high homology to mtDNA (NUMT regions) defined by caleblareau/mitoblacklist                                                                                                                                                                                                                        |                   395 |
+| hg19.UCSC.numtS                                                                 | AH107347                     | [link](http://bedbase.org/#/bedsplash/cc4fd05fdfe015e4acd5111dac5b372f) | Human NumtS mitochondrial sequence                                                                                                                                                                                                                                                                           |                   766 |
+| mm9.UCSC.numtS                                                                  | AH107348                     | [link](http://bedbase.org/#/bedsplash/29dc50750f0535b6b9c746ee8371c211) | Mouse NumtS mitochondrial sequence                                                                                                                                                                                                                                                                           |                   172 |
+| T2T.CHM13.chm13.draft_v2.0.cen_mask                                             | AH107349                     | [link](http://bedbase.org/#/bedsplash/44138ebb0d3340e70164d12649a47dc8) | Centromeric satellite masking bed file (v2.0)                                                                                                                                                                                                                                                                |                    23 |
+| T2T.CHM13.chm13.draft_v1.1.telomere                                             | AH107350                     | [link](http://bedbase.org/#/bedsplash/b72dd2fa5f8a916cc36960b93169c743) | Telomere identified by the VGP pipeline (v1.1)                                                                                                                                                                                                                                                               |                    48 |
+| T2T.UCSC.censat                                                                 | AH107351                     | [link](http://bedbase.org/#/bedsplash/f28798df2c4d72810e7c4626b5a62106) | T2T peri/centromeric satellite annotation (v2.0, 20220329, CHM13 v2.0)                                                                                                                                                                                                                                       |                  2523 |
+| T2T.UCSC.gap                                                                    | AH107352                     | [link](http://bedbase.org/#/bedsplash/0747aae5f4cac92367a16c3eb1c7f3f1) | Locations of assembly gaps, as determine by strings of ‘N’ characters (v1.0)                                                                                                                                                                                                                                 |                     5 |
+| T2T.UCSC.hgUnique.hg38                                                          | AH107353                     | [link](http://bedbase.org/#/bedsplash/c3839f43c53a3c47733388528b853690) | Regions unique to the T2T-CHM13 v2.0 assembly compared to the GRCh38/hg38 and GRCh37/hg19 reference assemblies                                                                                                                                                                                               |                   615 |
+| hg38.UCSC.centromere                                                            | AH107354                     | [link](http://bedbase.org/#/bedsplash/0b1f161675fa0f52ac6d0d4f54b1efb9) | Gaps from centromeres                                                                                                                                                                                                                                                                                        |                   109 |
+| hg38.UCSC.telomere                                                              | AH107355                     | [link](http://bedbase.org/#/bedsplash/79f964e68d5daa1462c52ca54855b06a) | Gaps from telomeres                                                                                                                                                                                                                                                                                          |                    48 |
+| hg38.UCSC.short_arm                                                             | AH107356                     | [link](http://bedbase.org/#/bedsplash/92fc8f64f92d525c6b92c9aab5e2c711) | Gaps on the short arm of the chromosome                                                                                                                                                                                                                                                                      |                     5 |
+| hg38.UCSC.heterochromatin                                                       | AH107357                     | [link](http://bedbase.org/#/bedsplash/8af7b48ab48183229d3bc72005040dc1) | Gaps from large blocks of heterochromatin                                                                                                                                                                                                                                                                    |                    11 |
+| hg38.UCSC.contig                                                                | AH107358                     | [link](http://bedbase.org/#/bedsplash/2dd1b22f2add15bc7508580d18bc9495) | Gaps between contigs in scaffolds                                                                                                                                                                                                                                                                            |                   285 |
+| hg38.UCSC.scaffold                                                              | AH107359                     | [link](http://bedbase.org/#/bedsplash/de0c7f42f29fb83ac393e86a2ec28374) | Gaps between scaffolds in chromosome assemblies. Has extra chromosomes, use keepStandardChromosomes() filtering                                                                                                                                                                                              |                   254 |
+| hg19.UCSC.centromere                                                            | AH107360                     | [link](http://bedbase.org/#/bedsplash/26ecf1381b6323791656f800ad39b69c) | Gaps from centromeres                                                                                                                                                                                                                                                                                        |                    24 |
+| hg19.UCSC.telomere                                                              | AH107361                     | [link](http://bedbase.org/#/bedsplash/2bcad8794847411e9b3f52ff39c4f377) | Gaps from telomeres                                                                                                                                                                                                                                                                                          |                    46 |
+| hg19.UCSC.short_arm                                                             | AH107362                     | [link](http://bedbase.org/#/bedsplash/e09fac8aedf1230ab77ac4194fd75784) | Gaps on the short arm of the chromosome                                                                                                                                                                                                                                                                      |                     5 |
+| hg19.UCSC.heterochromatin                                                       | AH107363                     | [link](http://bedbase.org/#/bedsplash/8ea9b6cdfe68a4b4111e5b03157af371) | Gaps from large blocks of heterochromatin                                                                                                                                                                                                                                                                    |                    12 |
+| hg19.UCSC.clone                                                                 | AH107364                     | [link](http://bedbase.org/#/bedsplash/4f3b1098a0f4ea5e81747f4414a8d294) | Gaps between clones in the same map contig. Has extra chromosomes, use keepStandardChromosomes() filtering                                                                                                                                                                                                   |                   107 |
+| hg19.UCSC.contig                                                                | AH107365                     | [link](http://bedbase.org/#/bedsplash/a4da41916b0b213d4e3b89f5ab20e1e8) | Gaps between contigs in scaffolds                                                                                                                                                                                                                                                                            |                   163 |
+| hg19.UCSC.scaffold                                                              | AH107366                     | NA                                                                      | Gaps between scaffolds in chromosome assemblies. Only non-autosomal chromosomes                                                                                                                                                                                                                              |                     0 |
+| mm39.UCSC.centromere                                                            | AH107367                     | [link](http://bedbase.org/#/bedsplash/1aa3f73ffa8e6d498f0f3f22e0302472) | Gaps from centromeres                                                                                                                                                                                                                                                                                        |                    20 |
+| mm39.UCSC.telomere                                                              | AH107368                     | [link](http://bedbase.org/#/bedsplash/883bdae38244c6f0e0facfbd4fcc601b) | Gaps from telomeres                                                                                                                                                                                                                                                                                          |                    42 |
+| mm39.UCSC.short_arm                                                             | AH107369                     | [link](http://bedbase.org/#/bedsplash/f61de62eae0898943e6c9d163b0a3989) | Gaps on the short arm of the chromosome                                                                                                                                                                                                                                                                      |                    21 |
+| mm39.UCSC.contig                                                                | AH107370                     | [link](http://bedbase.org/#/bedsplash/732437d9fcb8992b2e5c6513bfed2586) | Gaps between contigs in scaffolds                                                                                                                                                                                                                                                                            |                    60 |
+| mm39.UCSC.scaffold                                                              | AH107371                     | [link](http://bedbase.org/#/bedsplash/97e738326c0681f5ebe94b0d28d058c5) | Gaps between scaffolds in chromosome assemblies                                                                                                                                                                                                                                                              |                   115 |
+| mm10.UCSC.centromere                                                            | AH107372                     | [link](http://bedbase.org/#/bedsplash/b0f9aa3cc8a4a43f59b463891b5d12c8) | Gaps from centromeres                                                                                                                                                                                                                                                                                        |                    20 |
+| mm10.UCSC.telomere                                                              | AH107373                     | [link](http://bedbase.org/#/bedsplash/051090e82c227bcc55dba3e953bc6daa) | Gaps from telomeres                                                                                                                                                                                                                                                                                          |                    42 |
+| mm10.UCSC.short_arm                                                             | AH107374                     | [link](http://bedbase.org/#/bedsplash/f4d2d6fe334deca5800ca9ae39ce95ce) | Gaps on the short arm of the chromosome                                                                                                                                                                                                                                                                      |                    21 |
+| mm10.UCSC.clone                                                                 | AH107375                     | [link](http://bedbase.org/#/bedsplash/9ecfce46335e4d5b3a1230b69690a25a) | Gaps between clones in the same map contig. Has extra chromosomes, use keepStandardChromosomes() filtering                                                                                                                                                                                                   |                     4 |
+| mm10.UCSC.contig                                                                | AH107376                     | [link](http://bedbase.org/#/bedsplash/82d2374cf5524a2b13dcf9c3dc487d6f) | Gaps between contigs in scaffolds                                                                                                                                                                                                                                                                            |                   104 |
+| mm10.UCSC.scaffold                                                              | AH107377                     | NA                                                                      | Gaps between scaffolds in chromosome assemblies                                                                                                                                                                                                                                                              |                     0 |
+| mm10.UCSC.other                                                                 | AH107378                     | [link](http://bedbase.org/#/bedsplash/75662812e5eb228b25c9ae5a28fbb402) | Sequence of Ns in the assembly that were not marked as gaps in the AGP (A Golden Path) assembly definition file. Has extra chromosomes, use keepStandardChromosomes() filtering                                                                                                                              |                   383 |
+| mm10.UCSC.fragment                                                              | AH107379                     | NA                                                                      | A single gap of 31 bases in chrX_GL456233_random                                                                                                                                                                                                                                                             |                     0 |
+| mm9.UCSC.centromere                                                             | AH107380                     | [link](http://bedbase.org/#/bedsplash/99e4d2c9a794d321bfcf01709787caac) | Gaps from centromeres                                                                                                                                                                                                                                                                                        |                    21 |
+| mm9.UCSC.fragment                                                               | AH107381                     | [link](http://bedbase.org/#/bedsplash/ecf3f802759c5dc93f1446b6942c58b3) | Gaps between the contigs of a draft clone. (In this context, a contig is a set of overlapping sequence reads). Has extra chromosomes, use keepStandardChromosomes() filtering                                                                                                                                |                   436 |
+| mm9.UCSC.contig                                                                 | AH107382                     | [link](http://bedbase.org/#/bedsplash/4dd8bb54f6432144c045619337d8212e) | Gaps between contigs in scaffolds. Has extra chromosomes, use keepStandardChromosomes() filtering                                                                                                                                                                                                            |                   105 |
+| danRer10.UCSC.contig                                                            | AH107383                     | [link](http://bedbase.org/#/bedsplash/5d41a9fa328769b63734e11e6ae4252b) | Gaps between contigs in scaffolds                                                                                                                                                                                                                                                                            |                  2338 |
+| danRer10.UCSC.scaffold                                                          | AH107384                     | [link](http://bedbase.org/#/bedsplash/a5feefb2d573d265f1085043c208c2ed) | Gaps between scaffolds in chromosome assemblies                                                                                                                                                                                                                                                              |                 16496 |
+| dm6.UCSC.other                                                                  | AH107385                     | [link](http://bedbase.org/#/bedsplash/11a80264dcdad6c0868ea48637a799df) | Sequence of Ns in the assembly that were not marked as gaps in the AGP (A Golden Path) assembly definition file                                                                                                                                                                                              |                   268 |
+| dm3.UCSC.contig                                                                 | NA                           | [link](http://bedbase.org/#/bedsplash/f9822a0f88047e92cf92824fe025b2f2) | Gaps between contigs in scaffolds                                                                                                                                                                                                                                                                            |                     7 |
+| dm3.UCSC.scaffold                                                               | NA                           | [link](http://bedbase.org/#/bedsplash/d4e31a2c488de8ff335b0cb779c9cef5) | Gaps between scaffolds in chromosome assemblies                                                                                                                                                                                                                                                              |                     1 |
+| TAIR10.UCSC.araTha1.gap                                                         | NA                           | [link](http://bedbase.org/#/bedsplash/74585119b9b90d3b4ad077b10b487d39) | Gaps in the May 2011 Arabidopsis thaliana genome assembly                                                                                                                                                                                                                                                    |                   357 |
 
 # Citation
 
@@ -708,7 +754,7 @@ Conduct](https://bioconductor.github.io/bioc_coc_multilingual/). By
 contributing to this project, you agree to abide by its terms.
 
 This package was developed using
-*[biocthis](https://bioconductor.org/packages/3.15/biocthis)*.
+*[biocthis](https://bioconductor.org/packages/3.16/biocthis)*.
 
 # References
 
