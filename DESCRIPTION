@@ -1,6 +1,6 @@
 Package: excluderanges
 Title: Genomic coordinates of problematic genomic regions
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: c(
     person(given = "Mikhail",
            family = "Dozmorov",
