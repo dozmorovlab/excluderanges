@@ -99,6 +99,7 @@
 <li><a href="#bedbase-data-download" id="toc-bedbase-data-download">BEDbase data download</a></li>
 <li><a href="#mitochondrial-dna-sequences-numts" id="toc-mitochondrial-dna-sequences-numts">Mitochondrial DNA sequences, NUMTs</a></li>
 <li><a href="#centromeres-telomeres-etc" id="toc-centromeres-telomeres-etc">Centromeres, telomeres, etc.</a></li>
+<li><a href="#cutrun-excludable-sets" id="toc-cutrun-excludable-sets">CUT&amp;RUN excludable sets</a></li>
 <li><a href="#summary-table" id="toc-summary-table">Summary table</a></li>
 <li><a href="#citation" id="toc-citation">Citation</a></li>
 <li><a href="#code-of-conduct" id="toc-code-of-conduct">Code of Conduct</a></li>
@@ -132,9 +133,6 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("AnnotationHub", update = FALSE) 
 # Additional packages
 BiocManager::install("GenomicRanges", update = FALSE)
-#> 
-#> The downloaded binary packages are in
-#>  /var/folders/jq/hvjs8pl55sx0mtxlptkms_cc6y3f75/T//RtmpmrZQzq/downloaded_packages
 BiocManager::install("plyranges", update = FALSE)
 ```
 -->
@@ -191,10 +189,12 @@ BiocManager::install("plyranges", update = FALSE)
 <p><code>hg38.Kundaje.GRCh38_unified_Excludable</code> object recommended by Anshul</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107305"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; downloading 1 resources</span></span>
+<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="co"># Always a good idea to sort GRanges and keep standard chromosomes</span></span>
-<span><span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op">&lt;-</span> <span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqlevels-wrappers.html" class="external-link">keepStandardChromosomes</a></span><span class="op">(</span>pruning.mode <span class="op">=</span> <span class="st">"tidy"</span><span class="op">)</span></span>
+<span><span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op">&lt;-</span> <span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqlevels-wrappers.html" class="external-link">keepStandardChromosomes</a></span><span class="op">(</span>pruning.mode <span class="op">=</span> <span class="st">"tidy"</span><span class="op">)</span></span>
 <span><span class="va">excludeGR.hg38.Kundaje.1</span></span>
 <span><span class="co">#&gt; GRanges object with 910 ranges and 0 metadata columns:</span></span>
 <span><span class="co">#&gt;         seqnames            ranges strand</span></span>
@@ -249,18 +249,32 @@ BiocManager::install("plyranges", update = FALSE)
 <span><span class="va">excludeGR.hg38.Bernstein</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107306"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Boyle</span>     <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107307"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; downloading 1 resources</span></span>
+<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Kundaje.2</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107308"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; downloading 1 resources</span></span>
+<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Lareau</span>    <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107309"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; downloading 1 resources</span></span>
+<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Reddy</span>     <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107310"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; downloading 1 resources</span></span>
+<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Wimberley</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107311"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; downloading 1 resources</span></span>
+<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Wold</span>      <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107312"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; downloading 1 resources</span></span>
+<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Yeo</span>       <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107313"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; downloading 1 resources</span></span>
+<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="compare-the-number-of-excludable-regions">Compare the number of excludable regions<a class="anchor" aria-label="anchor" href="#compare-the-number-of-excludable-regions"></a>
@@ -500,7 +514,7 @@ BiocManager::install("plyranges", update = FALSE)
 <span><span class="co"># Download file</span></span>
 <span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">token2</span>, <span class="fu"><a href="https://httr.r-lib.org/reference/write_disk.html" class="external-link">write_disk</a></span><span class="op">(</span><span class="va">fileNameOut</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="co"># , verbose()</span></span>
 <span><span class="co">#&gt; Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]</span></span>
-<span><span class="co">#&gt;   Date: 2022-11-08 14:22</span></span>
+<span><span class="co">#&gt;   Date: 2022-11-20 18:43</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/vnd.realvnc.bed</span></span>
 <span><span class="co">#&gt;   Size: 11.8 kB</span></span>
@@ -568,6 +582,8 @@ BiocManager::install("plyranges", update = FALSE)
 <span><span class="co">#&gt;   AH107359 | hg38.UCSC.scaffold</span></span>
 <span></span>
 <span><span class="va">gapsGR_hg38_centromere</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107354"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; downloading 1 resources</span></span>
+<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">gapsGR_hg38_centromere</span></span>
 <span><span class="co">#&gt; GRanges object with 109 ranges and 2 metadata columns:</span></span>
@@ -586,6 +602,27 @@ BiocManager::install("plyranges", update = FALSE)
 <span><span class="co">#&gt;   [109]     chrY   10316944-10544039      * |        10  GJ212193.1</span></span>
 <span><span class="co">#&gt;   -------</span></span>
 <span><span class="co">#&gt;   seqinfo: 24 sequences from hg38 genome</span></span></code></pre></div>
+</div>
+<div class="section level1">
+<h1 id="cutrun-excludable-sets">CUT&amp;RUN excludable sets<a class="anchor" aria-label="anchor" href="#cutrun-excludable-sets"></a>
+</h1>
+<p>Nordin et al. 2022 (Nordin et al. 2022) generated excludable regions for the CUT&amp;RUN technology. They are available as <a href="https://www.biorxiv.org/content/10.1101/2022.11.11.516118v1.supplementary-material" class="external-link">Supplementary Material</a>. We uniformly processed them and made available on Google Drive</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># hg38 CUT&amp;RUN exclusion set, BED</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="st">"https://drive.google.com/uc?export=download&amp;id=1rKIu7kdiEySTi-cq3nYxXJP4VQX1IPcS"</span>,</span>
+<span>              destfile <span class="op">=</span> <span class="st">"hg38.Nordin.CandRblacklist_hg38.bed"</span><span class="op">)</span></span>
+<span><span class="co"># hg38 CUT&amp;RUN exclusion set, RDS</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="st">"https://drive.google.com/uc?export=download&amp;id=1JuB1h-QQUw1mddBavI7CIuH7R-lwwczU"</span>,</span>
+<span>              destfile <span class="op">=</span> <span class="st">"hg38.Nordin.CandRblacklist_hg38.rds"</span><span class="op">)</span></span>
+<span><span class="co"># And then load the GRanges object</span></span>
+<span><span class="va">mtx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">"hg38.Nordin.CandRblacklist_hg38.rds"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># mm10 CUT&amp;RUN exclusion set, BED</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="st">"https://drive.google.com/uc?export=download&amp;id=1CRAojdphMbAzd3MnW_UmO1WtsDrHsrU1"</span>,</span>
+<span>              destfile <span class="op">=</span> <span class="st">"mm10.Nordin.CandRblacklist_mm10.bed"</span><span class="op">)</span></span>
+<span><span class="co"># mm10 CUT&amp;RUN exclusion set, RDS</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="st">"https://drive.google.com/uc?export=download&amp;id=1orPXLWUZ4-C4n_Jt2gH-WERLpY9Kn0t_"</span>,</span>
+<span>              destfile <span class="op">=</span> <span class="st">"mm10.Nordin.CandRblacklist_mm10.rds"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="summary-table">Summary table<a class="anchor" aria-label="anchor" href="#summary-table"></a>
@@ -678,109 +715,123 @@ BiocManager::install("plyranges", update = FALSE)
 <td align="right">56</td>
 </tr>
 <tr class="odd">
+<td align="left">hg38.Nordin.CandRblacklist_hg38</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Defined from CUT&amp;RUN negative controls as 0.1% top significant SEACR peaks in over 30% of samples</td>
+<td align="right">885</td>
+</tr>
+<tr class="even">
 <td align="left">hg19.Boyle.hg19-Excludable.v2</td>
 <td align="left">AH107314</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/6eb180d456f2f3b71b419e5fab107fc9" class="external-link">link</a></td>
 <td align="left">Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions</td>
 <td align="right">834</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">hg19.Bernstein.Mint_Excludable_hg19</td>
 <td align="left">AH107315</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/d1a6047ed5bec84acefe9c52cf63b593" class="external-link">link</a></td>
 <td align="left">Defined from Mint-ChIP (low input, multiplexed ChIP-seq) data</td>
 <td align="right">9035</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">hg19.Birney.wgEncodeDacMapabilityConsensusExcludable</td>
 <td align="left">AH107316</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/5b6b19dea85a8bc6007ef07a0960267b" class="external-link">link</a></td>
 <td align="left">Defined by the ENCODE consortium, includes satellite repeats (CATTC, GAATG, GAGTG, ACRO1), RepeatMasker repeats (ALR/Alpha, BSR/Beta), centromeric repeats, chrM, High/Low mappability islands</td>
 <td align="right">411</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable</td>
 <td align="left">AH107317</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/dac2eda4e8687eb039611ac6cd595821" class="external-link">link</a></td>
 <td align="left">Defined by the ENCODE consortium, includes satellite repeats (CATTC, GAATG, GAGTG, ACRO1), RepeatMasker repeats (ALR/Alpha, BSR/Beta), human satellite repeat HSATII, chrM, ribosomal subunit consensus sequences LSU-rRNA_Hsa, SSU-rRNA_Hsa. Has extra chromosomes, use keepStandardChromosomes() filtering</td>
 <td align="right">1566</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">hg19.Lareau.hg19.full.Excludable</td>
 <td align="left">AH107318</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/d934d47e8035da9c5a1767c8153db4cc" class="external-link">link</a></td>
 <td align="left">ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)</td>
 <td align="right">902</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">hg19.Wold.hg19mitoExcludable</td>
 <td align="left">AH107319</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/182046a0f055b0176178241a95cbd637" class="external-link">link</a></td>
 <td align="left">Definition method unknown</td>
 <td align="right">295</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">hg19.Yeo.eCLIP_Excludableregions.hg19</td>
 <td align="left">AH107320</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/350f49dc47e5307109e1e17d60223a31" class="external-link">link</a></td>
 <td align="left">Defined from eCLIP data, includes skyscraper, rRNA pseudogene, unreliably mapped satellite repeat, and low complexity skyscraper peak regions</td>
 <td align="right">57</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">mm39.excluderanges</td>
 <td align="left">AH107321</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/edc716833d4b5ee75c34a0692fc353d5" class="external-link">link</a></td>
 <td align="left">Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions</td>
 <td align="right">3147</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">mm10.Boyle.mm10-Excludable.v2</td>
 <td align="left">AH107322</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/a5311e39fe1590de66c1df6a5881a942" class="external-link">link</a></td>
 <td align="left">Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions</td>
 <td align="right">3435</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">mm10.Hardison.Excludable.full</td>
 <td align="left">AH107323</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/087541f51cf8c7d7078995d1bd95fd27" class="external-link">link</a></td>
 <td align="left">Definition method unknown</td>
 <td align="right">7865</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">mm10.Hardison.psuExcludable.mm10</td>
 <td align="left">AH107324</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/fc6b88f936c5cd880545943708e4c2af" class="external-link">link</a></td>
 <td align="left">Definition method unknown</td>
 <td align="right">5552</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">mm10.Kundaje.anshul.Excludable.mm10</td>
 <td align="left">AH107325</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/e6a89a8432f4a69bae41f60ed0c7e704" class="external-link">link</a></td>
 <td align="left">Defined by Anshul Kundaje as a part of ENCODE and modENCODE consortia</td>
 <td align="right">3010</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">mm10.Kundaje.mm10.Excludable</td>
 <td align="left">AH107326</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/76c03b6c831f8fecdf4fee7adf2def6a" class="external-link">link</a></td>
 <td align="left">Defined by Anshul Kundaje as a part of ENCODE and modENCODE consortia</td>
 <td align="right">164</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">mm10.Lareau.mm10.full.Excludable</td>
 <td align="left">AH107327</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/1bd30517be79d4d051308c693b822798" class="external-link">link</a></td>
 <td align="left">ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)</td>
 <td align="right">523</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">mm10.Wold.mm10mitoExcludable</td>
 <td align="left">AH107328</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/830f1ffd31689e3e7c22ff856f0ba02c" class="external-link">link</a></td>
 <td align="left">Definition method unknown</td>
 <td align="right">123</td>
+</tr>
+<tr class="odd">
+<td align="left">mm10.Nordin.CandRblacklist_mm10</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Defined from CUT&amp;RUN negative controls as 0.1% top significant SEACR peaks in over 30% of samples</td>
+<td align="right">559</td>
 </tr>
 <tr class="even">
 <td align="left">mm9.Lareau.mm9.full.Excludable</td>
@@ -1209,8 +1260,25 @@ BiocManager::install("plyranges", update = FALSE)
 <h1 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h1>
 <p>Below is the citation output from using <code>citation('excluderanges')</code> in R. Please run this yourself to check for any updates on how to cite <strong>excluderanges</strong>.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"excluderanges"</span><span class="op">)</span>, bibtex <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"excluderanges"</span><span class="op">)</span>, bibtex <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; To cite package 'excluderanges' in publications use:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   Dozmorov MG, Davis E, Mu W, Lee S, Triche T, Phanstiel D, Love M</span></span>
+<span><span class="co">#&gt;   (2022). _excluderanges_.</span></span>
+<span><span class="co">#&gt;   https://github.com/mdozmorov/excluderanges/excluderanges - R package</span></span>
+<span><span class="co">#&gt;   version 0.99.6, &lt;https://github.com/mdozmorov/excluderanges&gt;.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   @Manual{,</span></span>
+<span><span class="co">#&gt;     title = {excluderanges},</span></span>
+<span><span class="co">#&gt;     author = {Mikhail G. Dozmorov and Eric Davis and Wancen Mu and Stuart Lee and Tim Triche and Douglas Phanstiel and Michael Love},</span></span>
+<span><span class="co">#&gt;     year = {2022},</span></span>
+<span><span class="co">#&gt;     url = {https://github.com/mdozmorov/excluderanges},</span></span>
+<span><span class="co">#&gt;     note = {https://github.com/mdozmorov/excluderanges/excluderanges - R package version 0.99.6},</span></span>
+<span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
@@ -1227,6 +1295,9 @@ Amemiya, Haley M, Anshul Kundaje, and Alan P Boyle. 2019. “The ENCODE Blacklis
 </div>
 <div id="ref-Klasfeld2022-nn" class="csl-entry">
 Klasfeld, Sammy, and Doris Wagner. 2022. “Greenscreen Decreases Type I Errors and Increases True Peak Detection in Genomic Datasets Including <span class="nocase">ChIP-seq</span>.” <em>bioRxiv</em>.
+</div>
+<div id="ref-nordin2022cut" class="csl-entry">
+Nordin, Anna, Gianluca Zambanini, Pierfrancesco Pagella, and Claudio Cantu. 2022. “The CUT&amp;RUN Blacklist of Problematic Regions of the Genome.” <em>bioRxiv</em>.
 </div>
 <div id="ref-Wimberley:2019ub" class="csl-entry">
 Wimberley, Charles E, and Steffen Heber. 2019. “PeakPass: Automating ChIP-Seq Blacklist Creation.” <em>J Comput Biol</em>, December. <a href="https://doi.org/10.1089/cmb.2019.0295" class="external-link uri">https://doi.org/10.1089/cmb.2019.0295</a>.

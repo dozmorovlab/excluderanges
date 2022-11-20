@@ -84,7 +84,7 @@ Dozmorov</h4>
 University<br><a class="author_email" href="mailto:#"></a><a href="mailto:mikhail.dozmorov@gmail.com" class="email">mikhail.dozmorov@gmail.com</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2022-11-08</h4>
+            <h4 data-toc-skip class="date">2022-11-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dozmorovlab/excluderanges/blob/HEAD/vignettes/excluderanges.Rmd" class="external-link"><code>vignettes/excluderanges.Rmd</code></a></small>
       <div class="hidden name"><code>excluderanges.Rmd</code></div>
@@ -518,11 +518,11 @@ sets.</p>
 <span><span class="co"># Download file</span></span>
 <span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">token2</span>, <span class="fu"><a href="https://httr.r-lib.org/reference/write_disk.html" class="external-link">write_disk</a></span><span class="op">(</span><span class="va">fileNameOut</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="co"># , verbose()</span></span>
 <span><span class="co">#&gt; Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]</span></span>
-<span><span class="co">#&gt;   Date: 2022-11-08 15:56</span></span>
+<span><span class="co">#&gt;   Date: 2022-11-20 19:20</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/vnd.realvnc.bed</span></span>
 <span><span class="co">#&gt;   Size: 11.8 kB</span></span>
-<span><span class="co">#&gt; &lt;ON DISK&gt;  hg38.Lareau.hg38_peak.bed.gz</span></span>
+<span><span class="co">#&gt; &lt;ON DISK&gt;  /Users/mdozmorov/Documents/Work/GitHub/excluderanges/vignettes/hg38.Lareau.hg38_peak.bed.gz</span></span>
 <span><span class="co"># Read the data in</span></span>
 <span><span class="va">hg38.Lareau.hg38_peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="va">fileNameOut</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, header <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co"># Assign column names depending on the number of columns</span></span>
@@ -615,6 +615,31 @@ type object.</p>
 <span><span class="co">#&gt;   [109]     chrY   10316944-10544039      * |        10  GJ212193.1</span></span>
 <span><span class="co">#&gt;   -------</span></span>
 <span><span class="co">#&gt;   seqinfo: 24 sequences from hg38 genome</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="cutrun-excludable-sets">CUT&amp;RUN excludable sets<a class="anchor" aria-label="anchor" href="#cutrun-excludable-sets"></a>
+</h2>
+<p>Nordin et al. 2022 <span class="citation">(Nordin et al. 2022)</span>
+generated excludable regions for the CUT&amp;RUN technology. They are
+available as <a href="https://www.biorxiv.org/content/10.1101/2022.11.11.516118v1.supplementary-material" class="external-link">Supplementary
+Material</a>. We uniformly processed them and made available on Google
+Drive</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># hg38 CUT&amp;RUN exclusion set, BED</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="st">"https://drive.google.com/uc?export=download&amp;id=1rKIu7kdiEySTi-cq3nYxXJP4VQX1IPcS"</span>,</span>
+<span>              destfile <span class="op">=</span> <span class="st">"hg38.Nordin.CandRblacklist_hg38.bed"</span><span class="op">)</span></span>
+<span><span class="co"># hg38 CUT&amp;RUN exclusion set, RDS</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="st">"https://drive.google.com/uc?export=download&amp;id=1JuB1h-QQUw1mddBavI7CIuH7R-lwwczU"</span>,</span>
+<span>              destfile <span class="op">=</span> <span class="st">"hg38.Nordin.CandRblacklist_hg38.rds"</span><span class="op">)</span></span>
+<span><span class="co"># And then load the GRanges object</span></span>
+<span><span class="va">mtx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">"hg38.Nordin.CandRblacklist_hg38.rds"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># mm10 CUT&amp;RUN exclusion set, BED</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="st">"https://drive.google.com/uc?export=download&amp;id=1CRAojdphMbAzd3MnW_UmO1WtsDrHsrU1"</span>,</span>
+<span>              destfile <span class="op">=</span> <span class="st">"mm10.Nordin.CandRblacklist_mm10.bed"</span><span class="op">)</span></span>
+<span><span class="co"># mm10 CUT&amp;RUN exclusion set, RDS</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="st">"https://drive.google.com/uc?export=download&amp;id=1orPXLWUZ4-C4n_Jt2gH-WERLpY9Kn0t_"</span>,</span>
+<span>              destfile <span class="op">=</span> <span class="st">"mm10.Nordin.CandRblacklist_mm10.rds"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="summary-table">Summary table<a class="anchor" aria-label="anchor" href="#summary-table"></a>
@@ -718,6 +743,14 @@ extra chromosomes, use keepStandardChromosomes() filtering</td>
 <td align="right">56</td>
 </tr>
 <tr class="odd">
+<td align="left">hg38.Nordin.CandRblacklist_hg38</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Defined from CUT&amp;RUN negative controls as 0.1% top
+significant SEACR peaks in over 30% of samples</td>
+<td align="right">885</td>
+</tr>
+<tr class="even">
 <td align="left">hg19.Boyle.hg19-Excludable.v2</td>
 <td align="left">AH107314</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/6eb180d456f2f3b71b419e5fab107fc9" class="external-link">link</a></td>
@@ -725,7 +758,7 @@ extra chromosomes, use keepStandardChromosomes() filtering</td>
 Signal and Low Mappability regions</td>
 <td align="right">834</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">hg19.Bernstein.Mint_Excludable_hg19</td>
 <td align="left">AH107315</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/d1a6047ed5bec84acefe9c52cf63b593" class="external-link">link</a></td>
@@ -733,7 +766,7 @@ Signal and Low Mappability regions</td>
 ChIP-seq) data</td>
 <td align="right">9035</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">hg19.Birney.wgEncodeDacMapabilityConsensusExcludable</td>
 <td align="left">AH107316</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/5b6b19dea85a8bc6007ef07a0960267b" class="external-link">link</a></td>
@@ -742,7 +775,7 @@ repeats (CATTC, GAATG, GAGTG, ACRO1), RepeatMasker repeats (ALR/Alpha,
 BSR/Beta), centromeric repeats, chrM, High/Low mappability islands</td>
 <td align="right">411</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable</td>
 <td align="left">AH107317</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/dac2eda4e8687eb039611ac6cd595821" class="external-link">link</a></td>
@@ -753,7 +786,7 @@ consensus sequences LSU-rRNA_Hsa, SSU-rRNA_Hsa. Has extra chromosomes,
 use keepStandardChromosomes() filtering</td>
 <td align="right">1566</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">hg19.Lareau.hg19.full.Excludable</td>
 <td align="left">AH107318</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/d934d47e8035da9c5a1767c8153db4cc" class="external-link">link</a></td>
@@ -761,14 +794,14 @@ use keepStandardChromosomes() filtering</td>
 homology to mtDNA (NUMT regions)</td>
 <td align="right">902</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">hg19.Wold.hg19mitoExcludable</td>
 <td align="left">AH107319</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/182046a0f055b0176178241a95cbd637" class="external-link">link</a></td>
 <td align="left">Definition method unknown</td>
 <td align="right">295</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">hg19.Yeo.eCLIP_Excludableregions.hg19</td>
 <td align="left">AH107320</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/350f49dc47e5307109e1e17d60223a31" class="external-link">link</a></td>
@@ -777,7 +810,7 @@ pseudogene, unreliably mapped satellite repeat, and low complexity
 skyscraper peak regions</td>
 <td align="right">57</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">mm39.excluderanges</td>
 <td align="left">AH107321</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/edc716833d4b5ee75c34a0692fc353d5" class="external-link">link</a></td>
@@ -785,7 +818,7 @@ skyscraper peak regions</td>
 Signal and Low Mappability regions</td>
 <td align="right">3147</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">mm10.Boyle.mm10-Excludable.v2</td>
 <td align="left">AH107322</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/a5311e39fe1590de66c1df6a5881a942" class="external-link">link</a></td>
@@ -793,21 +826,21 @@ Signal and Low Mappability regions</td>
 Signal and Low Mappability regions</td>
 <td align="right">3435</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">mm10.Hardison.Excludable.full</td>
 <td align="left">AH107323</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/087541f51cf8c7d7078995d1bd95fd27" class="external-link">link</a></td>
 <td align="left">Definition method unknown</td>
 <td align="right">7865</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">mm10.Hardison.psuExcludable.mm10</td>
 <td align="left">AH107324</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/fc6b88f936c5cd880545943708e4c2af" class="external-link">link</a></td>
 <td align="left">Definition method unknown</td>
 <td align="right">5552</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">mm10.Kundaje.anshul.Excludable.mm10</td>
 <td align="left">AH107325</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/e6a89a8432f4a69bae41f60ed0c7e704" class="external-link">link</a></td>
@@ -815,7 +848,7 @@ Signal and Low Mappability regions</td>
 modENCODE consortia</td>
 <td align="right">3010</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">mm10.Kundaje.mm10.Excludable</td>
 <td align="left">AH107326</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/76c03b6c831f8fecdf4fee7adf2def6a" class="external-link">link</a></td>
@@ -823,7 +856,7 @@ modENCODE consortia</td>
 modENCODE consortia</td>
 <td align="right">164</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">mm10.Lareau.mm10.full.Excludable</td>
 <td align="left">AH107327</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/1bd30517be79d4d051308c693b822798" class="external-link">link</a></td>
@@ -831,12 +864,20 @@ modENCODE consortia</td>
 homology to mtDNA (NUMT regions)</td>
 <td align="right">523</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">mm10.Wold.mm10mitoExcludable</td>
 <td align="left">AH107328</td>
 <td align="left"><a href="http://bedbase.org/#/bedsplash/830f1ffd31689e3e7c22ff856f0ba02c" class="external-link">link</a></td>
 <td align="left">Definition method unknown</td>
 <td align="right">123</td>
+</tr>
+<tr class="odd">
+<td align="left">mm10.Nordin.CandRblacklist_mm10</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Defined from CUT&amp;RUN negative controls as 0.1% top
+significant SEACR peaks in over 30% of samples</td>
+<td align="right">559</td>
 </tr>
 <tr class="even">
 <td align="left">mm9.Lareau.mm9.full.Excludable</td>
@@ -1296,16 +1337,15 @@ assembly</td>
 <p>Below is the citation output from using
 <code>citation('excluderanges')</code> in R. Please run this yourself to
 check for any updates on how to cite <strong>excluderanges</strong>.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"excluderanges"</span><span class="op">)</span>, bibtex <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; To cite package 'excluderanges' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   Dozmorov MG, Davis E, Mu W, Lee S, Triche T, Phanstiel D, Love M</span></span>
 <span><span class="co">#&gt;   (2022). _excluderanges_.</span></span>
-<span><span class="co">#&gt;   https://github.com/dozmorovlab/excluderanges/excluderanges - R</span></span>
-<span><span class="co">#&gt;   package version 0.99.7,</span></span>
-<span><span class="co">#&gt;   &lt;https://github.com/dozmorovlab/excluderanges&gt;.</span></span>
+<span><span class="co">#&gt;   https://github.com/mdozmorov/excluderanges/excluderanges - R package</span></span>
+<span><span class="co">#&gt;   version 0.99.6, &lt;https://github.com/mdozmorov/excluderanges&gt;.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1313,8 +1353,8 @@ check for any updates on how to cite <strong>excluderanges</strong>.</p>
 <span><span class="co">#&gt;     title = {excluderanges},</span></span>
 <span><span class="co">#&gt;     author = {Mikhail G. Dozmorov and Eric Davis and Wancen Mu and Stuart Lee and Tim Triche and Douglas Phanstiel and Michael Love},</span></span>
 <span><span class="co">#&gt;     year = {2022},</span></span>
-<span><span class="co">#&gt;     url = {https://github.com/dozmorovlab/excluderanges},</span></span>
-<span><span class="co">#&gt;     note = {https://github.com/dozmorovlab/excluderanges/excluderanges - R package version 0.99.7},</span></span>
+<span><span class="co">#&gt;     url = {https://github.com/mdozmorov/excluderanges},</span></span>
+<span><span class="co">#&gt;     note = {https://github.com/mdozmorov/excluderanges/excluderanges - R package version 0.99.6},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -1329,11 +1369,11 @@ by its terms.</p>
 <div class="section level2">
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.2.0 (2022-04-22)</span></span>
+<span><span class="co">#&gt; R version 4.2.2 (2022-10-31)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-apple-darwin17.0 (64-bit)</span></span>
-<span><span class="co">#&gt; Running under: macOS Big Sur/Monterey 10.16</span></span>
+<span><span class="co">#&gt; Running under: macOS Big Sur ... 10.16</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRblas.0.dylib</span></span>
@@ -1350,7 +1390,7 @@ by its terms.</p>
 <span><span class="co">#&gt;  [1] rtracklayer_1.58.0   httr_1.4.4           stringr_1.4.1       </span></span>
 <span><span class="co">#&gt;  [4] pheatmap_1.0.12      dplyr_1.0.10         ggridges_0.5.4      </span></span>
 <span><span class="co">#&gt;  [7] ggplot2_3.4.0        AnnotationHub_3.6.0  BiocFileCache_2.6.0 </span></span>
-<span><span class="co">#&gt; [10] dbplyr_2.2.1         GenomicRanges_1.50.1 GenomeInfoDb_1.34.1 </span></span>
+<span><span class="co">#&gt; [10] dbplyr_2.2.1         GenomicRanges_1.50.1 GenomeInfoDb_1.34.3 </span></span>
 <span><span class="co">#&gt; [13] IRanges_2.32.0       S4Vectors_0.36.0     BiocGenerics_0.44.0 </span></span>
 <span><span class="co">#&gt; [16] BiocStyle_2.26.0    </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1358,20 +1398,20 @@ by its terms.</p>
 <span><span class="co">#&gt;  [1] matrixStats_0.62.0            bitops_1.0-7                 </span></span>
 <span><span class="co">#&gt;  [3] fs_1.5.2                      bit64_4.0.5                  </span></span>
 <span><span class="co">#&gt;  [5] RColorBrewer_1.1-3            filelock_1.0.2               </span></span>
-<span><span class="co">#&gt;  [7] rprojroot_2.0.3               tools_4.2.0                  </span></span>
+<span><span class="co">#&gt;  [7] rprojroot_2.0.3               tools_4.2.2                  </span></span>
 <span><span class="co">#&gt;  [9] bslib_0.4.1                   utf8_1.2.2                   </span></span>
 <span><span class="co">#&gt; [11] R6_2.5.1                      DBI_1.1.3                    </span></span>
 <span><span class="co">#&gt; [13] colorspace_2.0-3              withr_2.5.0                  </span></span>
 <span><span class="co">#&gt; [15] tidyselect_1.2.0              bit_4.0.4                    </span></span>
-<span><span class="co">#&gt; [17] curl_4.3.3                    compiler_4.2.0               </span></span>
+<span><span class="co">#&gt; [17] curl_4.3.3                    compiler_4.2.2               </span></span>
 <span><span class="co">#&gt; [19] textshaping_0.3.6             cli_3.4.1                    </span></span>
 <span><span class="co">#&gt; [21] Biobase_2.58.0                DelayedArray_0.24.0          </span></span>
 <span><span class="co">#&gt; [23] desc_1.4.2                    labeling_0.4.2               </span></span>
-<span><span class="co">#&gt; [25] bookdown_0.29                 sass_0.4.2                   </span></span>
+<span><span class="co">#&gt; [25] bookdown_0.30                 sass_0.4.2                   </span></span>
 <span><span class="co">#&gt; [27] scales_1.2.1                  rappdirs_0.3.3               </span></span>
 <span><span class="co">#&gt; [29] pkgdown_2.0.6                 Rsamtools_2.14.0             </span></span>
 <span><span class="co">#&gt; [31] systemfonts_1.0.4             digest_0.6.30                </span></span>
-<span><span class="co">#&gt; [33] rmarkdown_2.17                XVector_0.38.0               </span></span>
+<span><span class="co">#&gt; [33] rmarkdown_2.18                XVector_0.38.0               </span></span>
 <span><span class="co">#&gt; [35] pkgconfig_2.0.3               htmltools_0.5.3              </span></span>
 <span><span class="co">#&gt; [37] MatrixGenerics_1.10.0         fastmap_1.1.0                </span></span>
 <span><span class="co">#&gt; [39] highr_0.9                     rlang_1.0.6                  </span></span>
@@ -1379,21 +1419,21 @@ by its terms.</p>
 <span><span class="co">#&gt; [43] shiny_1.7.3                   BiocIO_1.8.0                 </span></span>
 <span><span class="co">#&gt; [45] jquerylib_0.1.4               generics_0.1.3               </span></span>
 <span><span class="co">#&gt; [47] farver_2.1.1                  jsonlite_1.8.3               </span></span>
-<span><span class="co">#&gt; [49] BiocParallel_1.32.0           RCurl_1.98-1.9               </span></span>
+<span><span class="co">#&gt; [49] BiocParallel_1.32.1           RCurl_1.98-1.9               </span></span>
 <span><span class="co">#&gt; [51] magrittr_2.0.3                GenomeInfoDbData_1.2.9       </span></span>
 <span><span class="co">#&gt; [53] Matrix_1.5-1                  Rcpp_1.0.9                   </span></span>
 <span><span class="co">#&gt; [55] munsell_0.5.0                 fansi_1.0.3                  </span></span>
 <span><span class="co">#&gt; [57] lifecycle_1.0.3               stringi_1.7.8                </span></span>
 <span><span class="co">#&gt; [59] yaml_2.3.6                    SummarizedExperiment_1.28.0  </span></span>
-<span><span class="co">#&gt; [61] zlibbioc_1.44.0               grid_4.2.0                   </span></span>
-<span><span class="co">#&gt; [63] blob_1.2.3                    parallel_4.2.0               </span></span>
+<span><span class="co">#&gt; [61] zlibbioc_1.44.0               grid_4.2.2                   </span></span>
+<span><span class="co">#&gt; [63] blob_1.2.3                    parallel_4.2.2               </span></span>
 <span><span class="co">#&gt; [65] promises_1.2.0.1              crayon_1.5.2                 </span></span>
 <span><span class="co">#&gt; [67] lattice_0.20-45               Biostrings_2.66.0            </span></span>
-<span><span class="co">#&gt; [69] excluderanges_0.99.7          KEGGREST_1.38.0              </span></span>
+<span><span class="co">#&gt; [69] excluderanges_0.99.6          KEGGREST_1.38.0              </span></span>
 <span><span class="co">#&gt; [71] knitr_1.40                    pillar_1.8.1                 </span></span>
 <span><span class="co">#&gt; [73] rjson_0.2.21                  codetools_0.2-18             </span></span>
 <span><span class="co">#&gt; [75] XML_3.99-0.12                 glue_1.6.2                   </span></span>
-<span><span class="co">#&gt; [77] BiocVersion_3.16.0            evaluate_0.17                </span></span>
+<span><span class="co">#&gt; [77] BiocVersion_3.16.0            evaluate_0.18                </span></span>
 <span><span class="co">#&gt; [79] BiocManager_1.30.19           png_0.1-7                    </span></span>
 <span><span class="co">#&gt; [81] vctrs_0.5.0                   httpuv_1.6.6                 </span></span>
 <span><span class="co">#&gt; [83] gtable_0.3.1                  purrr_0.3.5                  </span></span>
@@ -1419,6 +1459,11 @@ Klasfeld, Sammy, and Doris Wagner. 2022. <span>“Greenscreen Decreases
 Type <span>I</span> Errors and Increases True Peak Detection in Genomic
 Datasets Including <span class="nocase">ChIP-seq</span>.”</span>
 <em>bioRxiv</em>.
+</div>
+<div id="ref-nordin2022cut" class="csl-entry">
+Nordin, Anna, Gianluca Zambanini, Pierfrancesco Pagella, and Claudio
+Cantu. 2022. <span>“The CUT&amp;RUN Blacklist of Problematic Regions of
+the Genome.”</span> <em>bioRxiv</em>.
 </div>
 <div id="ref-Wimberley:2019ub" class="csl-entry">
 Wimberley, Charles E, and Steffen Heber. 2019. <span>“PeakPass:
