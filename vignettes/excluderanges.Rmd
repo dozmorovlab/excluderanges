@@ -471,6 +471,33 @@ gapsGR_hg38_centromere <- query_data[["AH107354"]]
 gapsGR_hg38_centromere
 ```
 
+# CUT&RUN excludable sets
+
+Nordin et al. 2022 [@nordin2022cut] generated excludable regions for the CUT&RUN 
+technology. They are available as 
+[Supplementary Material](https://www.biorxiv.org/content/10.1101/2022.11.11.516118v1.supplementary-material).
+We uniformly processed them and made available on Google Drive
+
+```{r eval=FALSE}
+# hg38 CUT&RUN exclusion set, BED
+download.file("https://drive.google.com/uc?export=download&id=1rKIu7kdiEySTi-cq3nYxXJP4VQX1IPcS",
+              destfile = "hg38.Nordin.CandRblacklist_hg38.bed")
+# hg38 CUT&RUN exclusion set, RDS
+download.file("https://drive.google.com/uc?export=download&id=1JuB1h-QQUw1mddBavI7CIuH7R-lwwczU",
+              destfile = "hg38.Nordin.CandRblacklist_hg38.rds")
+# And then load the GRanges object
+mtx <- readRDS("hg38.Nordin.CandRblacklist_hg38.rds")
+```
+
+```{r eval=FALSE}
+# mm10 CUT&RUN exclusion set, BED
+download.file("https://drive.google.com/uc?export=download&id=1CRAojdphMbAzd3MnW_UmO1WtsDrHsrU1",
+              destfile = "mm10.Nordin.CandRblacklist_mm10.bed")
+# mm10 CUT&RUN exclusion set, RDS
+download.file("https://drive.google.com/uc?export=download&id=1orPXLWUZ4-C4n_Jt2gH-WERLpY9Kn0t_",
+              destfile = "mm10.Nordin.CandRblacklist_mm10.rds")
+```
+
 # Summary table
 
 [Full summary table](../man/figures/Table_S1.csv). 

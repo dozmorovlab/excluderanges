@@ -1,32 +1,34 @@
 
--   <a href="#excluderanges-genomic-ranges-of-problematic-genomic-regions"
-    id="toc-excluderanges-genomic-ranges-of-problematic-genomic-regions">excluderanges,
-    genomic ranges of problematic genomic regions</a>
-    -   <a href="#installation-instructions"
-        id="toc-installation-instructions">Installation instructions</a>
--   <a href="#use-excluderanges" id="toc-use-excluderanges">Use
-    excluderanges</a>
-    -   <a href="#compare-the-number-of-excludable-regions"
-        id="toc-compare-the-number-of-excludable-regions">Compare the number of
-        excludable regions</a>
-    -   <a href="#compare-the-width-of-excludable-regions"
-        id="toc-compare-the-width-of-excludable-regions">Compare the width of
-        excludable regions</a>
-    -   <a href="#compare-overlaps-among-sets"
-        id="toc-compare-overlaps-among-sets">Compare overlaps among sets</a>
-    -   <a href="#metadata-analysis" id="toc-metadata-analysis">Metadata
-        analysis</a>
--   <a href="#bedbase-data-download" id="toc-bedbase-data-download">BEDbase
-    data download</a>
--   <a href="#mitochondrial-dna-sequences-numts"
-    id="toc-mitochondrial-dna-sequences-numts">Mitochondrial DNA sequences,
-    NUMTs</a>
--   <a href="#centromeres-telomeres-etc"
-    id="toc-centromeres-telomeres-etc">Centromeres, telomeres, etc.</a>
--   <a href="#summary-table" id="toc-summary-table">Summary table</a>
--   <a href="#citation" id="toc-citation">Citation</a>
--   <a href="#code-of-conduct" id="toc-code-of-conduct">Code of Conduct</a>
--   <a href="#references" id="toc-references">References</a>
+- <a href="#excluderanges-genomic-ranges-of-problematic-genomic-regions"
+  id="toc-excluderanges-genomic-ranges-of-problematic-genomic-regions">excluderanges,
+  genomic ranges of problematic genomic regions</a>
+  - <a href="#installation-instructions"
+    id="toc-installation-instructions">Installation instructions</a>
+- <a href="#use-excluderanges" id="toc-use-excluderanges">Use
+  excluderanges</a>
+  - <a href="#compare-the-number-of-excludable-regions"
+    id="toc-compare-the-number-of-excludable-regions">Compare the number of
+    excludable regions</a>
+  - <a href="#compare-the-width-of-excludable-regions"
+    id="toc-compare-the-width-of-excludable-regions">Compare the width of
+    excludable regions</a>
+  - <a href="#compare-overlaps-among-sets"
+    id="toc-compare-overlaps-among-sets">Compare overlaps among sets</a>
+  - <a href="#metadata-analysis" id="toc-metadata-analysis">Metadata
+    analysis</a>
+- <a href="#bedbase-data-download" id="toc-bedbase-data-download">BEDbase
+  data download</a>
+- <a href="#mitochondrial-dna-sequences-numts"
+  id="toc-mitochondrial-dna-sequences-numts">Mitochondrial DNA sequences,
+  NUMTs</a>
+- <a href="#centromeres-telomeres-etc"
+  id="toc-centromeres-telomeres-etc">Centromeres, telomeres, etc.</a>
+- <a href="#cutrun-excludable-sets"
+  id="toc-cutrun-excludable-sets">CUT&amp;RUN excludable sets</a>
+- <a href="#summary-table" id="toc-summary-table">Summary table</a>
+- <a href="#citation" id="toc-citation">Citation</a>
+- <a href="#code-of-conduct" id="toc-code-of-conduct">Code of Conduct</a>
+- <a href="#references" id="toc-references">References</a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -92,9 +94,6 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("AnnotationHub", update = FALSE) 
 # Additional packages
 BiocManager::install("GenomicRanges", update = FALSE)
-#> 
-#> The downloaded binary packages are in
-#>  /var/folders/jq/hvjs8pl55sx0mtxlptkms_cc6y3f75/T//RtmpmrZQzq/downloaded_packages
 BiocManager::install("plyranges", update = FALSE)
 ```
 -->
@@ -160,6 +159,8 @@ query_data
 
 ``` r
 excludeGR.hg38.Kundaje.1 <- query_data[["AH107305"]]
+#> downloading 1 resources
+#> retrieving 1 resource
 #> loading from cache
 # Always a good idea to sort GRanges and keep standard chromosomes
 excludeGR.hg38.Kundaje.1 <- excludeGR.hg38.Kundaje.1 %>% 
@@ -225,18 +226,32 @@ query_data
 excludeGR.hg38.Bernstein <- query_data[["AH107306"]]
 #> loading from cache
 excludeGR.hg38.Boyle     <- query_data[["AH107307"]]
+#> downloading 1 resources
+#> retrieving 1 resource
 #> loading from cache
 excludeGR.hg38.Kundaje.2 <- query_data[["AH107308"]]
+#> downloading 1 resources
+#> retrieving 1 resource
 #> loading from cache
 excludeGR.hg38.Lareau    <- query_data[["AH107309"]]
+#> downloading 1 resources
+#> retrieving 1 resource
 #> loading from cache
 excludeGR.hg38.Reddy     <- query_data[["AH107310"]]
+#> downloading 1 resources
+#> retrieving 1 resource
 #> loading from cache
 excludeGR.hg38.Wimberley <- query_data[["AH107311"]]
+#> downloading 1 resources
+#> retrieving 1 resource
 #> loading from cache
 excludeGR.hg38.Wold      <- query_data[["AH107312"]]
+#> downloading 1 resources
+#> retrieving 1 resource
 #> loading from cache
 excludeGR.hg38.Yeo       <- query_data[["AH107313"]]
+#> downloading 1 resources
+#> retrieving 1 resource
 #> loading from cache
 ```
 
@@ -538,7 +553,7 @@ token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 #> Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]
-#>   Date: 2022-11-08 14:22
+#>   Date: 2022-11-20 18:43
 #>   Status: 200
 #>   Content-Type: application/vnd.realvnc.bed
 #>   Size: 11.8 kB
@@ -624,6 +639,8 @@ query_data
 #>   AH107359 | hg38.UCSC.scaffold
 
 gapsGR_hg38_centromere <- query_data[["AH107354"]]
+#> downloading 1 resources
+#> retrieving 1 resource
 #> loading from cache
 gapsGR_hg38_centromere
 #> GRanges object with 109 ranges and 2 metadata columns:
@@ -644,6 +661,33 @@ gapsGR_hg38_centromere
 #>   seqinfo: 24 sequences from hg38 genome
 ```
 
+# CUT&RUN excludable sets
+
+Nordin et al. 2022 (Nordin et al. 2022) generated excludable regions for
+the CUT&RUN technology. They are available as [Supplementary
+Material](https://www.biorxiv.org/content/10.1101/2022.11.11.516118v1.supplementary-material).
+We uniformly processed them and made available on Google Drive
+
+``` r
+# hg38 CUT&RUN exclusion set, BED
+download.file("https://drive.google.com/uc?export=download&id=1rKIu7kdiEySTi-cq3nYxXJP4VQX1IPcS",
+              destfile = "hg38.Nordin.CandRblacklist_hg38.bed")
+# hg38 CUT&RUN exclusion set, RDS
+download.file("https://drive.google.com/uc?export=download&id=1JuB1h-QQUw1mddBavI7CIuH7R-lwwczU",
+              destfile = "hg38.Nordin.CandRblacklist_hg38.rds")
+# And then load the GRanges object
+mtx <- readRDS("hg38.Nordin.CandRblacklist_hg38.rds")
+```
+
+``` r
+# mm10 CUT&RUN exclusion set, BED
+download.file("https://drive.google.com/uc?export=download&id=1CRAojdphMbAzd3MnW_UmO1WtsDrHsrU1",
+              destfile = "mm10.Nordin.CandRblacklist_mm10.bed")
+# mm10 CUT&RUN exclusion set, RDS
+download.file("https://drive.google.com/uc?export=download&id=1orPXLWUZ4-C4n_Jt2gH-WERLpY9Kn0t_",
+              destfile = "mm10.Nordin.CandRblacklist_mm10.rds")
+```
+
 # Summary table
 
 [Full summary table](man/figures/Table_S1.csv).
@@ -660,6 +704,7 @@ gapsGR_hg38_centromere
 | hg38.Wimberley.peakPass60Perc_sorted                                            | AH107311                     | [link](http://bedbase.org/#/bedsplash/f4a9bb19ed29e993592813e970e7dd90) | Defined by the ewimberley/peakPass software                                                                                                                                                                                                                                                                  |                  5078 |
 | hg38.Wold.hg38mitoExcludable                                                    | AH107312                     | [link](http://bedbase.org/#/bedsplash/a714dcba99821801b5c426fba9c80988) | Definition method unknown                                                                                                                                                                                                                                                                                    |                   299 |
 | hg38.Yeo.eCLIP_Excludableregions.hg38liftover.bed.fixed                         | AH107313                     | [link](http://bedbase.org/#/bedsplash/1a02a65fafefefd65ff4a060273304ed) | Defined from eCLIP data                                                                                                                                                                                                                                                                                      |                    56 |
+| hg38.Nordin.CandRblacklist_hg38                                                 | NA                           | NA                                                                      | Defined from CUT&RUN negative controls as 0.1% top significant SEACR peaks in over 30% of samples                                                                                                                                                                                                            |                   885 |
 | hg19.Boyle.hg19-Excludable.v2                                                   | AH107314                     | [link](http://bedbase.org/#/bedsplash/6eb180d456f2f3b71b419e5fab107fc9) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                   834 |
 | hg19.Bernstein.Mint_Excludable_hg19                                             | AH107315                     | [link](http://bedbase.org/#/bedsplash/d1a6047ed5bec84acefe9c52cf63b593) | Defined from Mint-ChIP (low input, multiplexed ChIP-seq) data                                                                                                                                                                                                                                                |                  9035 |
 | hg19.Birney.wgEncodeDacMapabilityConsensusExcludable                            | AH107316                     | [link](http://bedbase.org/#/bedsplash/5b6b19dea85a8bc6007ef07a0960267b) | Defined by the ENCODE consortium, includes satellite repeats (CATTC, GAATG, GAGTG, ACRO1), RepeatMasker repeats (ALR/Alpha, BSR/Beta), centromeric repeats, chrM, High/Low mappability islands                                                                                                               |                   411 |
@@ -675,6 +720,7 @@ gapsGR_hg38_centromere
 | mm10.Kundaje.mm10.Excludable                                                    | AH107326                     | [link](http://bedbase.org/#/bedsplash/76c03b6c831f8fecdf4fee7adf2def6a) | Defined by Anshul Kundaje as a part of ENCODE and modENCODE consortia                                                                                                                                                                                                                                        |                   164 |
 | mm10.Lareau.mm10.full.Excludable                                                | AH107327                     | [link](http://bedbase.org/#/bedsplash/1bd30517be79d4d051308c693b822798) | ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)                                                                                                                                                                                                                     |                   523 |
 | mm10.Wold.mm10mitoExcludable                                                    | AH107328                     | [link](http://bedbase.org/#/bedsplash/830f1ffd31689e3e7c22ff856f0ba02c) | Definition method unknown                                                                                                                                                                                                                                                                                    |                   123 |
+| mm10.Nordin.CandRblacklist_mm10                                                 | NA                           | NA                                                                      | Defined from CUT&RUN negative controls as 0.1% top significant SEACR peaks in over 30% of samples                                                                                                                                                                                                            |                   559 |
 | mm9.Lareau.mm9.full.Excludable                                                  | AH107329                     | [link](http://bedbase.org/#/bedsplash/e903b285baefce8167367ce57a8c3d48) | ENCODE excludable regions combined with regions of high homology to mtDNA (NUMT regions)                                                                                                                                                                                                                     |                  3415 |
 | mm9.Wold.mm9mitoExcludable                                                      | AH107330                     | [link](http://bedbase.org/#/bedsplash/9b4389a6a4b937df8abd62dad30fa3a3) | Definition method unknown                                                                                                                                                                                                                                                                                    |                   123 |
 | ce11.Boyle.ce11-Excludable.v2                                                   | AH107331                     | [link](http://bedbase.org/#/bedsplash/7235114a78b1709be96f0d6a82b4ea36) | Defined by the Boyle-Lab/Blacklist software, High Signal and Low Mappability regions                                                                                                                                                                                                                         |                    97 |
@@ -744,6 +790,23 @@ R. Please run this yourself to check for any updates on how to cite
 
 ``` r
 print(citation("excluderanges"), bibtex = TRUE)
+#> 
+#> To cite package 'excluderanges' in publications use:
+#> 
+#>   Dozmorov MG, Davis E, Mu W, Lee S, Triche T, Phanstiel D, Love M
+#>   (2022). _excluderanges_.
+#>   https://github.com/mdozmorov/excluderanges/excluderanges - R package
+#>   version 0.99.6, <https://github.com/mdozmorov/excluderanges>.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Manual{,
+#>     title = {excluderanges},
+#>     author = {Mikhail G. Dozmorov and Eric Davis and Wancen Mu and Stuart Lee and Tim Triche and Douglas Phanstiel and Michael Love},
+#>     year = {2022},
+#>     url = {https://github.com/mdozmorov/excluderanges},
+#>     note = {https://github.com/mdozmorov/excluderanges/excluderanges - R package version 0.99.6},
+#>   }
 ```
 
 # Code of Conduct
@@ -773,6 +836,14 @@ Rep* 9 (1): 9354. <https://doi.org/10.1038/s41598-019-45839-z>.
 Klasfeld, Sammy, and Doris Wagner. 2022. “Greenscreen Decreases Type I
 Errors and Increases True Peak Detection in Genomic Datasets Including
 <span class="nocase">ChIP-seq</span>.” *bioRxiv*.
+
+</div>
+
+<div id="ref-nordin2022cut" class="csl-entry">
+
+Nordin, Anna, Gianluca Zambanini, Pierfrancesco Pagella, and Claudio
+Cantu. 2022. “The CUT&RUN Blacklist of Problematic Regions of the
+Genome.” *bioRxiv*.
 
 </div>
 
