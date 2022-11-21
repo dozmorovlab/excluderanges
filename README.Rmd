@@ -27,6 +27,7 @@ library(BiocStyle)
 
 Coordinates of problematic genomic regions that should be avoided when 
 working with genomic data. For human, mouse, and selected model organisms.
+Package on Bioconductor: `r BiocStyle::Biocpkg("excluderanges")`.
 
 <!-- badges: start
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)

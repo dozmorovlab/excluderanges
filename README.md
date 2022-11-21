@@ -38,7 +38,8 @@
 
 Coordinates of problematic genomic regions that should be avoided when
 working with genomic data. For human, mouse, and selected model
-organisms.
+organisms. Package on Bioconductor:
+*[excluderanges](https://bioconductor.org/packages/3.16/excluderanges)*.
 
 <!-- badges: start
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -159,8 +160,6 @@ query_data
 
 ``` r
 excludeGR.hg38.Kundaje.1 <- query_data[["AH107305"]]
-#> downloading 1 resources
-#> retrieving 1 resource
 #> loading from cache
 # Always a good idea to sort GRanges and keep standard chromosomes
 excludeGR.hg38.Kundaje.1 <- excludeGR.hg38.Kundaje.1 %>% 
@@ -226,32 +225,18 @@ query_data
 excludeGR.hg38.Bernstein <- query_data[["AH107306"]]
 #> loading from cache
 excludeGR.hg38.Boyle     <- query_data[["AH107307"]]
-#> downloading 1 resources
-#> retrieving 1 resource
 #> loading from cache
 excludeGR.hg38.Kundaje.2 <- query_data[["AH107308"]]
-#> downloading 1 resources
-#> retrieving 1 resource
 #> loading from cache
 excludeGR.hg38.Lareau    <- query_data[["AH107309"]]
-#> downloading 1 resources
-#> retrieving 1 resource
 #> loading from cache
 excludeGR.hg38.Reddy     <- query_data[["AH107310"]]
-#> downloading 1 resources
-#> retrieving 1 resource
 #> loading from cache
 excludeGR.hg38.Wimberley <- query_data[["AH107311"]]
-#> downloading 1 resources
-#> retrieving 1 resource
 #> loading from cache
 excludeGR.hg38.Wold      <- query_data[["AH107312"]]
-#> downloading 1 resources
-#> retrieving 1 resource
 #> loading from cache
 excludeGR.hg38.Yeo       <- query_data[["AH107313"]]
-#> downloading 1 resources
-#> retrieving 1 resource
 #> loading from cache
 ```
 
@@ -553,7 +538,7 @@ token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 #> Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]
-#>   Date: 2022-11-20 18:43
+#>   Date: 2022-11-21 00:34
 #>   Status: 200
 #>   Content-Type: application/vnd.realvnc.bed
 #>   Size: 11.8 kB
@@ -639,8 +624,6 @@ query_data
 #>   AH107359 | hg38.UCSC.scaffold
 
 gapsGR_hg38_centromere <- query_data[["AH107354"]]
-#> downloading 1 resources
-#> retrieving 1 resource
 #> loading from cache
 gapsGR_hg38_centromere
 #> GRanges object with 109 ranges and 2 metadata columns:
