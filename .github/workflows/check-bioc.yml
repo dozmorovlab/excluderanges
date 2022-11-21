@@ -82,7 +82,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: work around permission issue
-        run: git config --global --add safe.directory /__w/ecxluderanges/ecxluderanges
+        run: git config --global --add safe.directory /__w/excluderanges/excluderanges
       
       ## R is already included in the Bioconductor docker images
       - name: Setup R from r-lib
@@ -281,7 +281,7 @@ jobs:
       - name: Build and deploy pkgdown site
         if: github.ref == 'refs/heads/master' && env.run_pkgdown == 'true' && runner.os == 'Linux'
         run: |
-          git config --global --add safe.directory /__w/ecxluderanges/ecxluderanges
+          git config --global --add safe.directory /__w/excluderanges/excluderanges
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
           Rscript -e "pkgdown::deploy_to_branch(new_process = FALSE)"
