@@ -109,7 +109,7 @@
 <div class="page-header"><h1 id="excluderanges-genomic-ranges-of-problematic-genomic-regions">excluderanges, genomic ranges of problematic genomic regions<a class="anchor" aria-label="anchor" href="#excluderanges-genomic-ranges-of-problematic-genomic-regions"></a>
 </h1></div>
 <p><img id="excluderanges_logo_by_Mike_Love" src="reference/figures/logo.png" align="right" width="125"></p>
-<p>Coordinates of problematic genomic regions that should be avoided when working with genomic data. For human, mouse, and selected model organisms.</p>
+<p>Coordinates of problematic genomic regions that should be avoided when working with genomic data. For human, mouse, and selected model organisms. Package on Bioconductor: <em><a href="https://bioconductor.org/packages/3.16/excluderanges" class="external-link">excluderanges</a></em>.</p>
 <!-- badges: start
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 badges: end -->
@@ -189,12 +189,10 @@ BiocManager::install("plyranges", update = FALSE)
 <p><code>hg38.Kundaje.GRCh38_unified_Excludable</code> object recommended by Anshul</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107305"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="co">#&gt; downloading 1 resources</span></span>
-<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="co"># Always a good idea to sort GRanges and keep standard chromosomes</span></span>
-<span><span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op">&lt;-</span> <span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op">%&gt;%</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqlevels-wrappers.html" class="external-link">keepStandardChromosomes</a></span><span class="op">(</span>pruning.mode <span class="op">=</span> <span class="st">"tidy"</span><span class="op">)</span></span>
+<span><span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op">&lt;-</span> <span class="va">excludeGR.hg38.Kundaje.1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqlevels-wrappers.html" class="external-link">keepStandardChromosomes</a></span><span class="op">(</span>pruning.mode <span class="op">=</span> <span class="st">"tidy"</span><span class="op">)</span></span>
 <span><span class="va">excludeGR.hg38.Kundaje.1</span></span>
 <span><span class="co">#&gt; GRanges object with 910 ranges and 0 metadata columns:</span></span>
 <span><span class="co">#&gt;         seqnames            ranges strand</span></span>
@@ -249,32 +247,18 @@ BiocManager::install("plyranges", update = FALSE)
 <span><span class="va">excludeGR.hg38.Bernstein</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107306"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Boyle</span>     <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107307"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="co">#&gt; downloading 1 resources</span></span>
-<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Kundaje.2</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107308"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="co">#&gt; downloading 1 resources</span></span>
-<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Lareau</span>    <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107309"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="co">#&gt; downloading 1 resources</span></span>
-<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Reddy</span>     <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107310"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="co">#&gt; downloading 1 resources</span></span>
-<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Wimberley</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107311"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="co">#&gt; downloading 1 resources</span></span>
-<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Wold</span>      <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107312"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="co">#&gt; downloading 1 resources</span></span>
-<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">excludeGR.hg38.Yeo</span>       <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107313"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="co">#&gt; downloading 1 resources</span></span>
-<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="compare-the-number-of-excludable-regions">Compare the number of excludable regions<a class="anchor" aria-label="anchor" href="#compare-the-number-of-excludable-regions"></a>
@@ -514,7 +498,7 @@ BiocManager::install("plyranges", update = FALSE)
 <span><span class="co"># Download file</span></span>
 <span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">token2</span>, <span class="fu"><a href="https://httr.r-lib.org/reference/write_disk.html" class="external-link">write_disk</a></span><span class="op">(</span><span class="va">fileNameOut</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="co"># , verbose()</span></span>
 <span><span class="co">#&gt; Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]</span></span>
-<span><span class="co">#&gt;   Date: 2022-11-20 18:43</span></span>
+<span><span class="co">#&gt;   Date: 2022-11-21 00:34</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/vnd.realvnc.bed</span></span>
 <span><span class="co">#&gt;   Size: 11.8 kB</span></span>
@@ -582,8 +566,6 @@ BiocManager::install("plyranges", update = FALSE)
 <span><span class="co">#&gt;   AH107359 | hg38.UCSC.scaffold</span></span>
 <span></span>
 <span><span class="va">gapsGR_hg38_centromere</span> <span class="op">&lt;-</span> <span class="va">query_data</span><span class="op">[[</span><span class="st">"AH107354"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="co">#&gt; downloading 1 resources</span></span>
-<span><span class="co">#&gt; retrieving 1 resource</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">gapsGR_hg38_centromere</span></span>
 <span><span class="co">#&gt; GRanges object with 109 ranges and 2 metadata columns:</span></span>
