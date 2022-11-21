@@ -75,15 +75,15 @@ jobs:
           mkdir /__w/_temp/Library
           echo ".libPaths('/__w/_temp/Library')" > ~/.Rprofile
 
-      - name: work around permission issue
-        run: git config --global --add safe.directory /__w/ecxluderanges/ecxluderanges
-      
       ## Most of these steps are the same as the ones in
       ## https://github.com/r-lib/actions/blob/master/examples/check-standard.yaml
       ## If they update their steps, we will also need to update ours.
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: work around permission issue
+        run: git config --global --add safe.directory /__w/ecxluderanges/ecxluderanges
+      
       ## R is already included in the Bioconductor docker images
       - name: Setup R from r-lib
         if: runner.os != 'Linux'
