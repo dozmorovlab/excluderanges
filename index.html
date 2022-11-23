@@ -109,7 +109,7 @@
 <div class="page-header"><h1 id="excluderanges-genomic-ranges-of-problematic-genomic-regions">excluderanges, genomic ranges of problematic genomic regions<a class="anchor" aria-label="anchor" href="#excluderanges-genomic-ranges-of-problematic-genomic-regions"></a>
 </h1></div>
 <p><img id="excluderanges_logo_by_Mike_Love" src="reference/figures/logo.png" align="right" width="125"></p>
-<p>Coordinates of problematic genomic regions that should be avoided when working with genomic data. For human, mouse, and selected model organisms. Package on Bioconductor: <em><a href="https://bioconductor.org/packages/3.16/excluderanges" class="external-link">excluderanges</a></em>.</p>
+<p>Coordinates of problematic genomic regions that should be avoided when working with genomic data. For human, mouse, and selected model organisms. Please, open an <a href="https://github.com/dozmorovlab/excluderanges/issues" class="external-link">issue</a> to suggest other resources. Package on Bioconductor: <em><a href="https://bioconductor.org/packages/3.16/excluderanges" class="external-link">excluderanges</a></em>.</p>
 <!-- badges: start
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 badges: end -->
@@ -498,11 +498,11 @@ BiocManager::install("plyranges", update = FALSE)
 <span><span class="co"># Download file</span></span>
 <span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">token2</span>, <span class="fu"><a href="https://httr.r-lib.org/reference/write_disk.html" class="external-link">write_disk</a></span><span class="op">(</span><span class="va">fileNameOut</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="co"># , verbose()</span></span>
 <span><span class="co">#&gt; Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]</span></span>
-<span><span class="co">#&gt;   Date: 2022-11-21 17:33</span></span>
+<span><span class="co">#&gt;   Date: 2022-11-23 09:50</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/vnd.realvnc.bed</span></span>
 <span><span class="co">#&gt;   Size: 11.8 kB</span></span>
-<span><span class="co">#&gt; &lt;ON DISK&gt;  /Users/mdozmorov/Documents/Work/GitHub/excluderanges/hg38.Lareau.hg38_peak.bed.gz</span></span>
+<span><span class="co">#&gt; &lt;ON DISK&gt;  hg38.Lareau.hg38_peak.bed.gz</span></span>
 <span><span class="co"># Read the data in</span></span>
 <span><span class="va">hg38.Lareau.hg38_peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="va">fileNameOut</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, header <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co"># Assign column names depending on the number of columns</span></span>
@@ -699,7 +699,7 @@ BiocManager::install("plyranges", update = FALSE)
 <tr class="odd">
 <td align="left">hg38.Nordin.CandRblacklist_hg38</td>
 <td align="left">NA</td>
-<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/b410448ba193fc3f0e99ca367e10b3b6" class="external-link">link</a></td>
 <td align="left">Defined from CUT&amp;RUN negative controls as 0.1% top significant SEACR peaks in over 30% of samples</td>
 <td align="right">885</td>
 </tr>
@@ -811,7 +811,7 @@ BiocManager::install("plyranges", update = FALSE)
 <tr class="odd">
 <td align="left">mm10.Nordin.CandRblacklist_mm10</td>
 <td align="left">NA</td>
-<td align="left">NA</td>
+<td align="left"><a href="http://bedbase.org/#/bedsplash/cf3f5440b73fbbdc5b591a4bc6611a0e" class="external-link">link</a></td>
 <td align="left">Defined from CUT&amp;RUN negative controls as 0.1% top significant SEACR peaks in over 30% of samples</td>
 <td align="right">559</td>
 </tr>
