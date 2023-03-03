@@ -84,7 +84,7 @@ Dozmorov</h4>
 University<br><a class="author_email" href="mailto:#"></a><a href="mailto:mikhail.dozmorov@gmail.com" class="email">mikhail.dozmorov@gmail.com</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2022-11-28</h4>
+            <h4 data-toc-skip class="date">2023-03-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dozmorovlab/excluderanges/blob/HEAD/vignettes/excluderanges.Rmd" class="external-link"><code>vignettes/excluderanges.Rmd</code></a></small>
       <div class="hidden name"><code>excluderanges.Rmd</code></div>
@@ -153,13 +153,13 @@ starting R and entering the commands:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges" class="external-link">GenomicRanges</a></span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; snapshotDate(): 2022-10-26</span></span>
+<span><span class="co">#&gt; snapshotDate(): 2022-10-31</span></span>
 <span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ah</span>, <span class="va">preparerclass</span> <span class="op">==</span> <span class="st">"excluderanges"</span><span class="op">)</span></span>
 <span><span class="co"># You can search for multiple terms</span></span>
 <span><span class="co"># query_data &lt;- query(ah, c("excluderanges", "Kundaje", "hg38"))</span></span>
 <span><span class="va">query_data</span></span>
 <span><span class="co">#&gt; AnnotationHub with 82 records</span></span>
-<span><span class="co">#&gt; # snapshotDate(): 2022-10-26</span></span>
+<span><span class="co">#&gt; # snapshotDate(): 2022-10-31</span></span>
 <span><span class="co">#&gt; # $dataprovider: UCSC, GitHub, ENCODE, UCSChub, excluderanges, Stanford.edu,...</span></span>
 <span><span class="co">#&gt; # $species: Homo sapiens, Mus musculus, Drosophila melanogaster, Danio rerio...</span></span>
 <span><span class="co">#&gt; # $rdataclass: GRanges</span></span>
@@ -219,7 +219,7 @@ compare them.</p>
 <code class="sourceCode R"><span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"excluderanges"</span>, <span class="st">"hg38"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">query_data</span></span>
 <span><span class="co">#&gt; AnnotationHub with 17 records</span></span>
-<span><span class="co">#&gt; # snapshotDate(): 2022-10-26</span></span>
+<span><span class="co">#&gt; # snapshotDate(): 2022-10-31</span></span>
 <span><span class="co">#&gt; # $dataprovider: UCSC, ENCODE, GitHub, UCSChub</span></span>
 <span><span class="co">#&gt; # $species: Homo sapiens</span></span>
 <span><span class="co">#&gt; # $rdataclass: GRanges</span></span>
@@ -518,7 +518,7 @@ sets.</p>
 <span><span class="co"># Download file</span></span>
 <span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">token2</span>, <span class="fu"><a href="https://httr.r-lib.org/reference/write_disk.html" class="external-link">write_disk</a></span><span class="op">(</span><span class="va">fileNameOut</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="co"># , verbose()</span></span>
 <span><span class="co">#&gt; Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]</span></span>
-<span><span class="co">#&gt;   Date: 2022-11-28 12:14</span></span>
+<span><span class="co">#&gt;   Date: 2023-03-03 19:29</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/vnd.realvnc.bed</span></span>
 <span><span class="co">#&gt;   Size: 11.8 kB</span></span>
@@ -578,7 +578,7 @@ type object.</p>
 <code class="sourceCode R"><span><span class="va">query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"excluderanges"</span>, <span class="st">"UCSC"</span>, <span class="st">"Homo Sapiens"</span>, <span class="st">"hg38"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">query_data</span></span>
 <span><span class="co">#&gt; AnnotationHub with 7 records</span></span>
-<span><span class="co">#&gt; # snapshotDate(): 2022-10-26</span></span>
+<span><span class="co">#&gt; # snapshotDate(): 2022-10-31</span></span>
 <span><span class="co">#&gt; # $dataprovider: UCSC, UCSChub</span></span>
 <span><span class="co">#&gt; # $species: Homo sapiens</span></span>
 <span><span class="co">#&gt; # $rdataclass: GRanges</span></span>
@@ -1343,7 +1343,7 @@ check for any updates on how to cite <strong>excluderanges</strong>.</p>
 <span><span class="co">#&gt; To cite package 'excluderanges' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   Dozmorov MG, Davis E, Mu W, Lee S, Triche T, Phanstiel D, Love M</span></span>
-<span><span class="co">#&gt;   (2022). _excluderanges_.</span></span>
+<span><span class="co">#&gt;   (2023). _excluderanges_.</span></span>
 <span><span class="co">#&gt;   https://github.com/dozmorovlab/excluderanges/excluderanges - R</span></span>
 <span><span class="co">#&gt;   package version 0.99.8,</span></span>
 <span><span class="co">#&gt;   &lt;https://github.com/dozmorovlab/excluderanges&gt;.</span></span>
@@ -1353,7 +1353,7 @@ check for any updates on how to cite <strong>excluderanges</strong>.</p>
 <span><span class="co">#&gt;   @Manual{,</span></span>
 <span><span class="co">#&gt;     title = {excluderanges},</span></span>
 <span><span class="co">#&gt;     author = {Mikhail G. Dozmorov and Eric Davis and Wancen Mu and Stuart Lee and Tim Triche and Douglas Phanstiel and Michael Love},</span></span>
-<span><span class="co">#&gt;     year = {2022},</span></span>
+<span><span class="co">#&gt;     year = {2023},</span></span>
 <span><span class="co">#&gt;     url = {https://github.com/dozmorovlab/excluderanges},</span></span>
 <span><span class="co">#&gt;     note = {https://github.com/dozmorovlab/excluderanges/excluderanges - R package version 0.99.8},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
@@ -1393,63 +1393,62 @@ by its terms.</p>
 <span><span class="co">#&gt; [8] base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt;  [1] rtracklayer_1.58.0   httr_1.4.4           stringr_1.4.1       </span></span>
-<span><span class="co">#&gt;  [4] pheatmap_1.0.12      dplyr_1.0.10         ggridges_0.5.4      </span></span>
-<span><span class="co">#&gt;  [7] ggplot2_3.4.0        AnnotationHub_3.6.0  BiocFileCache_2.6.0 </span></span>
-<span><span class="co">#&gt; [10] dbplyr_2.2.1         GenomicRanges_1.50.1 GenomeInfoDb_1.34.3 </span></span>
-<span><span class="co">#&gt; [13] IRanges_2.32.0       S4Vectors_0.36.0     BiocGenerics_0.44.0 </span></span>
+<span><span class="co">#&gt;  [1] rtracklayer_1.58.0   httr_1.4.5           stringr_1.5.0       </span></span>
+<span><span class="co">#&gt;  [4] pheatmap_1.0.12      dplyr_1.1.0          ggridges_0.5.4      </span></span>
+<span><span class="co">#&gt;  [7] ggplot2_3.4.1        AnnotationHub_3.6.0  BiocFileCache_2.6.1 </span></span>
+<span><span class="co">#&gt; [10] dbplyr_2.3.1         GenomicRanges_1.50.2 GenomeInfoDb_1.34.9 </span></span>
+<span><span class="co">#&gt; [13] IRanges_2.32.0       S4Vectors_0.36.2     BiocGenerics_0.44.0 </span></span>
 <span><span class="co">#&gt; [16] BiocStyle_2.26.0    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] matrixStats_0.63.0            bitops_1.0-7                 </span></span>
-<span><span class="co">#&gt;  [3] fs_1.5.2                      bit64_4.0.5                  </span></span>
+<span><span class="co">#&gt;  [3] fs_1.6.1                      bit64_4.0.5                  </span></span>
 <span><span class="co">#&gt;  [5] filelock_1.0.2                RColorBrewer_1.1-3           </span></span>
 <span><span class="co">#&gt;  [7] rprojroot_2.0.3               tools_4.2.2                  </span></span>
-<span><span class="co">#&gt;  [9] bslib_0.4.1                   utf8_1.2.2                   </span></span>
+<span><span class="co">#&gt;  [9] bslib_0.4.2                   utf8_1.2.3                   </span></span>
 <span><span class="co">#&gt; [11] R6_2.5.1                      DBI_1.1.3                    </span></span>
-<span><span class="co">#&gt; [13] colorspace_2.0-3              withr_2.5.0                  </span></span>
+<span><span class="co">#&gt; [13] colorspace_2.1-0              withr_2.5.0                  </span></span>
 <span><span class="co">#&gt; [15] tidyselect_1.2.0              bit_4.0.5                    </span></span>
-<span><span class="co">#&gt; [17] curl_4.3.3                    compiler_4.2.2               </span></span>
-<span><span class="co">#&gt; [19] textshaping_0.3.6             cli_3.4.1                    </span></span>
+<span><span class="co">#&gt; [17] curl_5.0.0                    compiler_4.2.2               </span></span>
+<span><span class="co">#&gt; [19] textshaping_0.3.6             cli_3.6.0                    </span></span>
 <span><span class="co">#&gt; [21] Biobase_2.58.0                DelayedArray_0.24.0          </span></span>
 <span><span class="co">#&gt; [23] desc_1.4.2                    labeling_0.4.2               </span></span>
-<span><span class="co">#&gt; [25] bookdown_0.30                 sass_0.4.4                   </span></span>
+<span><span class="co">#&gt; [25] bookdown_0.32                 sass_0.4.5                   </span></span>
 <span><span class="co">#&gt; [27] scales_1.2.1                  rappdirs_0.3.3               </span></span>
-<span><span class="co">#&gt; [29] pkgdown_2.0.6                 Rsamtools_2.14.0             </span></span>
-<span><span class="co">#&gt; [31] systemfonts_1.0.4             digest_0.6.30                </span></span>
-<span><span class="co">#&gt; [33] rmarkdown_2.18                XVector_0.38.0               </span></span>
-<span><span class="co">#&gt; [35] pkgconfig_2.0.3               htmltools_0.5.3              </span></span>
-<span><span class="co">#&gt; [37] MatrixGenerics_1.10.0         fastmap_1.1.0                </span></span>
-<span><span class="co">#&gt; [39] highr_0.9                     rlang_1.0.6                  </span></span>
-<span><span class="co">#&gt; [41] RSQLite_2.2.19                shiny_1.7.3                  </span></span>
+<span><span class="co">#&gt; [29] pkgdown_2.0.7                 Rsamtools_2.14.0             </span></span>
+<span><span class="co">#&gt; [31] systemfonts_1.0.4             digest_0.6.31                </span></span>
+<span><span class="co">#&gt; [33] rmarkdown_2.20                XVector_0.38.0               </span></span>
+<span><span class="co">#&gt; [35] pkgconfig_2.0.3               htmltools_0.5.4              </span></span>
+<span><span class="co">#&gt; [37] MatrixGenerics_1.10.0         fastmap_1.1.1                </span></span>
+<span><span class="co">#&gt; [39] highr_0.10                    rlang_1.0.6                  </span></span>
+<span><span class="co">#&gt; [41] RSQLite_2.3.0                 shiny_1.7.4                  </span></span>
 <span><span class="co">#&gt; [43] BiocIO_1.8.0                  jquerylib_0.1.4              </span></span>
 <span><span class="co">#&gt; [45] generics_0.1.3                farver_2.1.1                 </span></span>
-<span><span class="co">#&gt; [47] jsonlite_1.8.3                BiocParallel_1.32.3          </span></span>
-<span><span class="co">#&gt; [49] RCurl_1.98-1.9                magrittr_2.0.3               </span></span>
+<span><span class="co">#&gt; [47] jsonlite_1.8.4                BiocParallel_1.32.5          </span></span>
+<span><span class="co">#&gt; [49] RCurl_1.98-1.10               magrittr_2.0.3               </span></span>
 <span><span class="co">#&gt; [51] GenomeInfoDbData_1.2.9        Matrix_1.5-3                 </span></span>
-<span><span class="co">#&gt; [53] Rcpp_1.0.9                    munsell_0.5.0                </span></span>
-<span><span class="co">#&gt; [55] fansi_1.0.3                   lifecycle_1.0.3              </span></span>
-<span><span class="co">#&gt; [57] stringi_1.7.8                 yaml_2.3.6                   </span></span>
+<span><span class="co">#&gt; [53] Rcpp_1.0.10                   munsell_0.5.0                </span></span>
+<span><span class="co">#&gt; [55] fansi_1.0.4                   lifecycle_1.0.3              </span></span>
+<span><span class="co">#&gt; [57] stringi_1.7.12                yaml_2.3.7                   </span></span>
 <span><span class="co">#&gt; [59] SummarizedExperiment_1.28.0   zlibbioc_1.44.0              </span></span>
 <span><span class="co">#&gt; [61] grid_4.2.2                    blob_1.2.3                   </span></span>
 <span><span class="co">#&gt; [63] parallel_4.2.2                promises_1.2.0.1             </span></span>
 <span><span class="co">#&gt; [65] crayon_1.5.2                  lattice_0.20-45              </span></span>
 <span><span class="co">#&gt; [67] Biostrings_2.66.0             excluderanges_0.99.8         </span></span>
-<span><span class="co">#&gt; [69] KEGGREST_1.38.0               knitr_1.41                   </span></span>
+<span><span class="co">#&gt; [69] KEGGREST_1.38.0               knitr_1.42                   </span></span>
 <span><span class="co">#&gt; [71] pillar_1.8.1                  rjson_0.2.21                 </span></span>
-<span><span class="co">#&gt; [73] codetools_0.2-18              XML_3.99-0.12                </span></span>
+<span><span class="co">#&gt; [73] codetools_0.2-19              XML_3.99-0.13                </span></span>
 <span><span class="co">#&gt; [75] glue_1.6.2                    BiocVersion_3.16.0           </span></span>
-<span><span class="co">#&gt; [77] evaluate_0.18                 BiocManager_1.30.19          </span></span>
-<span><span class="co">#&gt; [79] png_0.1-7                     vctrs_0.5.1                  </span></span>
-<span><span class="co">#&gt; [81] httpuv_1.6.6                  gtable_0.3.1                 </span></span>
-<span><span class="co">#&gt; [83] purrr_0.3.5                   assertthat_0.2.1             </span></span>
-<span><span class="co">#&gt; [85] cachem_1.0.6                  xfun_0.35                    </span></span>
-<span><span class="co">#&gt; [87] mime_0.12                     xtable_1.8-4                 </span></span>
-<span><span class="co">#&gt; [89] restfulr_0.0.15               later_1.3.0                  </span></span>
-<span><span class="co">#&gt; [91] ragg_1.2.4                    tibble_3.1.8                 </span></span>
-<span><span class="co">#&gt; [93] GenomicAlignments_1.34.0      AnnotationDbi_1.60.0         </span></span>
-<span><span class="co">#&gt; [95] memoise_2.0.1                 ellipsis_0.3.2               </span></span>
-<span><span class="co">#&gt; [97] interactiveDisplayBase_1.36.0</span></span></code></pre></div>
+<span><span class="co">#&gt; [77] evaluate_0.20                 BiocManager_1.30.20          </span></span>
+<span><span class="co">#&gt; [79] png_0.1-8                     vctrs_0.5.2                  </span></span>
+<span><span class="co">#&gt; [81] httpuv_1.6.9                  gtable_0.3.1                 </span></span>
+<span><span class="co">#&gt; [83] purrr_1.0.1                   cachem_1.0.7                 </span></span>
+<span><span class="co">#&gt; [85] xfun_0.37                     mime_0.12                    </span></span>
+<span><span class="co">#&gt; [87] xtable_1.8-4                  restfulr_0.0.15              </span></span>
+<span><span class="co">#&gt; [89] later_1.3.0                   ragg_1.2.5                   </span></span>
+<span><span class="co">#&gt; [91] tibble_3.1.8                  GenomicAlignments_1.34.0     </span></span>
+<span><span class="co">#&gt; [93] AnnotationDbi_1.60.0          memoise_2.0.1                </span></span>
+<span><span class="co">#&gt; [95] ellipsis_0.3.2                interactiveDisplayBase_1.36.0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -1497,7 +1496,7 @@ December. <a href="https://doi.org/10.1089/cmb.2019.0295" class="external-link">
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
