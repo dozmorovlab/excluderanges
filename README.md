@@ -59,7 +59,7 @@ Drive](https://drive.google.com/drive/folders/1sF9m8Y3eZouTZ3IEEywjs2kfHOWFBSJT?
 and we recommend [ENCFF356LFX exclusion list
 regions](https://www.encodeproject.org/files/ENCFF356LFX/). Also
 available as `hg38.Kundaje.GRCh38_unified_Excludable` excluderanges
-object (AnnotationHub ID: AH95917) and
+object (AnnotationHub ID: AH107305) and
 [BEDbase.org](http://bedbase.org/#/bedsplash/1a561729234c2844303a051b16f66656).
 
 BED files of exclusion regions are available on the [ENCODE
@@ -129,13 +129,13 @@ Get an overview of what’s available
 suppressMessages(library(GenomicRanges))
 suppressMessages(library(AnnotationHub))
 ah <- AnnotationHub()
-#> snapshotDate(): 2022-10-26
+#> snapshotDate(): 2022-10-31
 query_data <- subset(ah, preparerclass == "excluderanges")
 # You can search for multiple terms
 # query_data <- query(ah, c("excluderanges", "Kundaje", "hg38"))
 query_data
 #> AnnotationHub with 82 records
-#> # snapshotDate(): 2022-10-26
+#> # snapshotDate(): 2022-10-31
 #> # $dataprovider: UCSC, GitHub, ENCODE, UCSChub, excluderanges, Stanford.edu,...
 #> # $species: Homo sapiens, Mus musculus, Drosophila melanogaster, Danio rerio...
 #> # $rdataclass: GRanges
@@ -203,7 +203,7 @@ compare them.
 query_data <- query(ah, c("excluderanges", "hg38"))
 query_data
 #> AnnotationHub with 17 records
-#> # snapshotDate(): 2022-10-26
+#> # snapshotDate(): 2022-10-31
 #> # $dataprovider: UCSC, ENCODE, GitHub, UCSChub
 #> # $species: Homo sapiens
 #> # $rdataclass: GRanges
@@ -540,7 +540,7 @@ token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 #> Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]
-#>   Date: 2022-11-23 09:50
+#>   Date: 2023-03-03 19:18
 #>   Status: 200
 #>   Content-Type: application/vnd.realvnc.bed
 #>   Size: 11.8 kB
@@ -607,7 +607,7 @@ Naming convention: `<genome assembly>.UCSC.<gap type>`, e.g.,
 query_data <- query(ah, c("excluderanges", "UCSC", "Homo Sapiens", "hg38"))
 query_data
 #> AnnotationHub with 7 records
-#> # snapshotDate(): 2022-10-26
+#> # snapshotDate(): 2022-10-31
 #> # $dataprovider: UCSC, UCSChub
 #> # $species: Homo sapiens
 #> # $rdataclass: GRanges
@@ -779,18 +779,19 @@ print(citation("excluderanges"), bibtex = TRUE)
 #> To cite package 'excluderanges' in publications use:
 #> 
 #>   Dozmorov MG, Davis E, Mu W, Lee S, Triche T, Phanstiel D, Love M
-#>   (2022). _excluderanges_.
-#>   https://github.com/mdozmorov/excluderanges/excluderanges - R package
-#>   version 0.99.6, <https://github.com/mdozmorov/excluderanges>.
+#>   (2023). _excluderanges_.
+#>   https://github.com/dozmorovlab/excluderanges/excluderanges - R
+#>   package version 0.99.8,
+#>   <https://github.com/dozmorovlab/excluderanges>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
 #>     title = {excluderanges},
 #>     author = {Mikhail G. Dozmorov and Eric Davis and Wancen Mu and Stuart Lee and Tim Triche and Douglas Phanstiel and Michael Love},
-#>     year = {2022},
-#>     url = {https://github.com/mdozmorov/excluderanges},
-#>     note = {https://github.com/mdozmorov/excluderanges/excluderanges - R package version 0.99.6},
+#>     year = {2023},
+#>     url = {https://github.com/dozmorovlab/excluderanges},
+#>     note = {https://github.com/dozmorovlab/excluderanges/excluderanges - R package version 0.99.8},
 #>   }
 ```
 

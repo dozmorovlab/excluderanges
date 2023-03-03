@@ -41,7 +41,7 @@ genome assemblies are available. Download all data from [Google Drive](https://d
 **TL;DR** - For human hg38 genome assembly, [Anshul](https://twitter.com/anshulkundaje/status/1263546023151992832?s=20) 
 and we recommend [ENCFF356LFX exclusion list regions](https://www.encodeproject.org/files/ENCFF356LFX/).
 Also available as `hg38.Kundaje.GRCh38_unified_Excludable` excluderanges object
-(AnnotationHub ID: AH95917)
+(AnnotationHub ID: AH107305)
 and [BEDbase.org](http://bedbase.org/#/bedsplash/1a561729234c2844303a051b16f66656).
 
 BED files of exclusion regions are available on the [ENCODE project](https://www.encodeproject.org/search/?searchTerm=exclusion+list)
