@@ -34,11 +34,18 @@
 
 # excluderanges, genomic ranges of problematic genomic regions
 
+Ogata, Jonathan D, Wancen Mu, Eric S Davis, Bingjie Xue, J Chuck
+Harrell, Nathan C Sheffield, Douglas H Phanstiel, Michael I Love, and
+Mikhail G Dozmorov. “Excluderanges: Exclusion Sets for T2T-CHM13,
+GRCm39, and Other Genome Assemblies.” *Bioinformatics*, April 3, 2023,
+PMID: [37067481](https://pubmed.ncbi.nlm.nih.gov/37067481/), DOI:
+[10.1093/bioinformatics/btad198](https://doi.org/10.1093/bioinformatics/btad198)
+
 <img id="excluderanges_logo_by_Mike_Love" src="man/figures/logo.png" align="right" width="125"/>
 
 Coordinates of problematic genomic regions that should be avoided when
-working with genomic data. For human, mouse, and selected model
-organisms. Please, open an
+working with genomic data (Ogata et al. 2023). For human, mouse, and
+selected model organisms. Please, open an
 [issue](https://github.com/dozmorovlab/excluderanges/issues) to suggest
 other resources. Package on Bioconductor:
 *[excluderanges](https://bioconductor.org/packages/3.16/excluderanges)*.
@@ -540,11 +547,11 @@ token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 #> Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]
-#>   Date: 2023-03-03 19:18
+#>   Date: 2023-07-06 01:34
 #>   Status: 200
 #>   Content-Type: application/vnd.realvnc.bed
 #>   Size: 11.8 kB
-#> <ON DISK>  hg38.Lareau.hg38_peak.bed.gz
+#> <ON DISK>  /Users/mdozmorov/Documents/Work/GitHub/excluderanges/hg38.Lareau.hg38_peak.bed.gz
 # Read the data in
 hg38.Lareau.hg38_peaks <- read.table(fileNameOut, sep = "\t", header = FALSE)
 # Assign column names depending on the number of columns
@@ -830,6 +837,16 @@ Errors and Increases True Peak Detection in Genomic Datasets Including
 Nordin, Anna, Gianluca Zambanini, Pierfrancesco Pagella, and Claudio
 Cantu. 2022. “The CUT&RUN Blacklist of Problematic Regions of the
 Genome.” *bioRxiv*.
+
+</div>
+
+<div id="ref-Ogata:2023aa" class="csl-entry">
+
+Ogata, Jonathan D, Wancen Mu, Eric S Davis, Bingjie Xue, J Chuck
+Harrell, Nathan C Sheffield, Douglas H Phanstiel, Michael I Love, and
+Mikhail G Dozmorov. 2023. “Excluderanges: Exclusion Sets for T2T-CHM13,
+GRCm39, and Other Genome Assemblies.” *Bioinformatics* 39 (4).
+<https://doi.org/10.1093/bioinformatics/btad198>.
 
 </div>
 
