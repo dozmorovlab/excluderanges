@@ -1,34 +1,24 @@
 
-- <a href="#excluderanges-genomic-ranges-of-problematic-genomic-regions"
-  id="toc-excluderanges-genomic-ranges-of-problematic-genomic-regions">excluderanges,
-  genomic ranges of problematic genomic regions</a>
-  - <a href="#installation-instructions"
-    id="toc-installation-instructions">Installation instructions</a>
-- <a href="#use-excluderanges" id="toc-use-excluderanges">Use
-  excluderanges</a>
-  - <a href="#compare-the-number-of-excludable-regions"
-    id="toc-compare-the-number-of-excludable-regions">Compare the number of
-    excludable regions</a>
-  - <a href="#compare-the-width-of-excludable-regions"
-    id="toc-compare-the-width-of-excludable-regions">Compare the width of
-    excludable regions</a>
-  - <a href="#compare-overlaps-among-sets"
-    id="toc-compare-overlaps-among-sets">Compare overlaps among sets</a>
-  - <a href="#metadata-analysis" id="toc-metadata-analysis">Metadata
-    analysis</a>
-- <a href="#bedbase-data-download" id="toc-bedbase-data-download">BEDbase
-  data download</a>
-- <a href="#mitochondrial-dna-sequences-numts"
-  id="toc-mitochondrial-dna-sequences-numts">Mitochondrial DNA sequences,
-  NUMTs</a>
-- <a href="#centromeres-telomeres-etc"
-  id="toc-centromeres-telomeres-etc">Centromeres, telomeres, etc.</a>
-- <a href="#cutrun-excludable-sets"
-  id="toc-cutrun-excludable-sets">CUT&amp;RUN excludable sets</a>
-- <a href="#summary-table" id="toc-summary-table">Summary table</a>
-- <a href="#citation" id="toc-citation">Citation</a>
-- <a href="#code-of-conduct" id="toc-code-of-conduct">Code of Conduct</a>
-- <a href="#references" id="toc-references">References</a>
+- [excluderanges, genomic ranges of problematic genomic
+  regions](#excluderanges-genomic-ranges-of-problematic-genomic-regions)
+  - [Installation instructions](#installation-instructions)
+- [Use excluderanges](#use-excluderanges)
+  - [Compare the number of excludable
+    regions](#compare-the-number-of-excludable-regions)
+  - [Compare the width of excludable
+    regions](#compare-the-width-of-excludable-regions)
+  - [Compare overlaps among sets](#compare-overlaps-among-sets)
+  - [Metadata analysis](#metadata-analysis)
+- [BEDbase data download](#bedbase-data-download)
+- [Mitochondrial DNA sequences,
+  NUMTs](#mitochondrial-dna-sequences-numts)
+- [Centromeres, telomeres, etc.](#centromeres-telomeres-etc)
+  - [Gaps in mouse genome](#gaps-in-mouse-genome)
+- [CUT&RUN excludable sets](#cutrun-excludable-sets)
+- [Summary table](#summary-table)
+- [Citation](#citation)
+- [Code of Conduct](#code-of-conduct)
+- [References](#references)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -48,7 +38,7 @@ working with genomic data (Ogata et al. 2023). For human, mouse, and
 selected model organisms. Please, open an
 [issue](https://github.com/dozmorovlab/excluderanges/issues) to suggest
 other resources. Package on Bioconductor:
-*[excluderanges](https://bioconductor.org/packages/3.16/excluderanges)*.
+*[excluderanges](https://bioconductor.org/packages/3.18/excluderanges)*.
 
 <!-- badges: start
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -91,12 +81,10 @@ objects.
 
 <!--
 # Installation instructions
-
-Get the latest stable `R` release from [CRAN](http://cran.r-project.org/). Then 
-install *[AnnotationHub](https://bioconductor.org/packages/3.16/AnnotationHub)* from [Bioconductor](http://bioconductor.org/) 
+&#10;Get the latest stable `R` release from [CRAN](http://cran.r-project.org/). Then 
+install *[AnnotationHub](https://bioconductor.org/packages/3.18/AnnotationHub)* from [Bioconductor](http://bioconductor.org/) 
 using the following code:
-
-
+&#10;
 ```r
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
@@ -117,7 +105,7 @@ and entering the commands:
 ``` r
 # if (!require("BiocManager", quietly = TRUE))
 #     install.packages("BiocManager")
-# BiocManager::install(version = "3.16")
+# BiocManager::install(version = "3.18")
 ```
 
 Then, install additional packages using the following code:
@@ -136,13 +124,12 @@ Get an overview of what’s available
 suppressMessages(library(GenomicRanges))
 suppressMessages(library(AnnotationHub))
 ah <- AnnotationHub()
-#> snapshotDate(): 2022-10-31
 query_data <- subset(ah, preparerclass == "excluderanges")
 # You can search for multiple terms
 # query_data <- query(ah, c("excluderanges", "Kundaje", "hg38"))
 query_data
 #> AnnotationHub with 82 records
-#> # snapshotDate(): 2022-10-31
+#> # snapshotDate(): 2023-10-20
 #> # $dataprovider: UCSC, GitHub, ENCODE, UCSChub, excluderanges, Stanford.edu,...
 #> # $species: Homo sapiens, Mus musculus, Drosophila melanogaster, Danio rerio...
 #> # $rdataclass: GRanges
@@ -210,7 +197,7 @@ compare them.
 query_data <- query(ah, c("excluderanges", "hg38"))
 query_data
 #> AnnotationHub with 17 records
-#> # snapshotDate(): 2022-10-31
+#> # snapshotDate(): 2023-10-20
 #> # $dataprovider: UCSC, ENCODE, GitHub, UCSChub
 #> # $species: Homo sapiens
 #> # $rdataclass: GRanges
@@ -547,7 +534,7 @@ token2 <- paste0("http://bedbase.org/api/bed/", bedbase_id, "/file/bed")
 # Download file
 GET(url = token2, write_disk(fileNameOut, overwrite = TRUE)) # , verbose()
 #> Response [http://data.bedbase.org/bed_files/hg38.Lareau.hg38_peaks.bed.gz]
-#>   Date: 2023-07-06 01:34
+#>   Date: 2023-12-04 18:53
 #>   Status: 200
 #>   Content-Type: application/vnd.realvnc.bed
 #>   Size: 11.8 kB
@@ -588,7 +575,7 @@ track for Homo Sapiens is available for the GRcH37/hg19 genome assembly
 as a [UCSC ‘gap’
 table](http://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=map&hgta_track=gap&hgta_table=gap&hgta_doSchema=describe+table+schema).
 It can be retrieved from
-*[AnnotationHub](https://bioconductor.org/packages/3.16/AnnotationHub)*,
+*[AnnotationHub](https://bioconductor.org/packages/3.18/AnnotationHub)*,
 but lacks the metadata columns needed to decide the type of gaps.
 
 ``` r
@@ -614,7 +601,7 @@ Naming convention: `<genome assembly>.UCSC.<gap type>`, e.g.,
 query_data <- query(ah, c("excluderanges", "UCSC", "Homo Sapiens", "hg38"))
 query_data
 #> AnnotationHub with 7 records
-#> # snapshotDate(): 2022-10-31
+#> # snapshotDate(): 2023-10-20
 #> # $dataprovider: UCSC, UCSChub
 #> # $species: Homo sapiens
 #> # $rdataclass: GRanges
@@ -651,6 +638,38 @@ gapsGR_hg38_centromere
 #>   [109]     chrY   10316944-10544039      * |        10  GJ212193.1
 #>   -------
 #>   seqinfo: 24 sequences from hg38 genome
+```
+
+## Gaps in mouse genome
+
+Note that Mouse chromosomes have centromeres close to one end and have
+essentially no short arm. Although available, we do not recommend using
+them as they are essentially placeholders.
+
+``` r
+query_data <- query(ah, c("excluderanges", "Mus musculus", "UCSC"))
+mm39.UCSC.centromere <- query_data[["AH107366"]]
+#> loading from cache
+head(mm39.UCSC.centromere)
+#> GRanges object with 6 ranges and 6 metadata columns:
+#>       seqnames         ranges strand |       bin        ix           n
+#>          <Rle>      <IRanges>  <Rle> | <numeric> <numeric> <character>
+#>     1     chr1 110000-3000000      * |         9         3           N
+#>   314     chr2 110000-3000000      * |         9         3           N
+#>   254     chr3 110000-3000000      * |         9         3           N
+#>   219     chr4 110000-3000000      * |         9         3           N
+#>   211     chr5 110000-3000000      * |         9         3           N
+#>   204     chr6 110000-3000000      * |         9         3           N
+#>            size        type      bridge
+#>       <numeric> <character> <character>
+#>     1   2890000  centromere          no
+#>   314   2890000  centromere          no
+#>   254   2890000  centromere          no
+#>   219   2890000  centromere          no
+#>   211   2890000  centromere          no
+#>   204   2890000  centromere          no
+#>   -------
+#>   seqinfo: 20 sequences from mm39 genome
 ```
 
 # CUT&RUN excludable sets
@@ -782,24 +801,6 @@ R. Please run this yourself to check for any updates on how to cite
 
 ``` r
 print(citation("excluderanges"), bibtex = TRUE)
-#> 
-#> To cite package 'excluderanges' in publications use:
-#> 
-#>   Dozmorov MG, Davis E, Mu W, Lee S, Triche T, Phanstiel D, Love M
-#>   (2023). _excluderanges_.
-#>   https://github.com/dozmorovlab/excluderanges/excluderanges - R
-#>   package version 0.99.8,
-#>   <https://github.com/dozmorovlab/excluderanges>.
-#> 
-#> A BibTeX entry for LaTeX users is
-#> 
-#>   @Manual{,
-#>     title = {excluderanges},
-#>     author = {Mikhail G. Dozmorov and Eric Davis and Wancen Mu and Stuart Lee and Tim Triche and Douglas Phanstiel and Michael Love},
-#>     year = {2023},
-#>     url = {https://github.com/dozmorovlab/excluderanges},
-#>     note = {https://github.com/dozmorovlab/excluderanges/excluderanges - R package version 0.99.8},
-#>   }
 ```
 
 # Code of Conduct
@@ -810,7 +811,7 @@ Conduct](https://bioconductor.github.io/bioc_coc_multilingual/). By
 contributing to this project, you agree to abide by its terms.
 
 This package was developed using
-*[biocthis](https://bioconductor.org/packages/3.16/biocthis)*.
+*[biocthis](https://bioconductor.org/packages/3.18/biocthis)*.
 
 # References
 

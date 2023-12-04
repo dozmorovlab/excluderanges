@@ -88,7 +88,7 @@ entering the commands:
 ```{r 'install1', eval = TRUE, message=FALSE, warning=FALSE}
 # if (!require("BiocManager", quietly = TRUE))
 #     install.packages("BiocManager")
-# BiocManager::install(version = "3.16")
+# BiocManager::install(version = "3.18")
 ```
 
 Then, install additional packages using the following code:
@@ -478,6 +478,18 @@ query_data
 
 gapsGR_hg38_centromere <- query_data[["AH107354"]]
 gapsGR_hg38_centromere
+```
+
+## Gaps in mouse genome
+
+Note that Mouse chromosomes have centromeres close to one end and have essentially 
+no short arm. Although available, we do not recommend using them as they
+are essentially placeholders.
+
+```{r}
+query_data <- query(ah, c("excluderanges", "Mus musculus", "UCSC"))
+mm39.UCSC.centromere <- query_data[["AH107366"]]
+head(mm39.UCSC.centromere)
 ```
 
 # CUT&RUN excludable sets
