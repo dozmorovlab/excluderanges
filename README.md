@@ -45,9 +45,9 @@ other resources. Package on Bioconductor:
 badges: end -->
 
 **New (2022-09-20)** - Exclusion sets for human
-[T2T-CHM13](https://bedbase.org/bed/)
+[T2T-CHM13](https://dev.bedbase.org/bedset/excluderanges)
 and mouse
-[GRCm39/mm39](https://bedbase.org/bed/)
+[GRCm39/mm39](https://dev.bedbase.org/bedset/excluderanges)
 genome assemblies are available. Download all data from [Google
 Drive](https://drive.google.com/drive/folders/1sF9m8Y3eZouTZ3IEEywjs2kfHOWFBSJT?usp=sharing).
 
@@ -57,7 +57,7 @@ and we recommend [ENCFF356LFX exclusion list
 regions](https://www.encodeproject.org/files/ENCFF356LFX/). Also
 available as `hg38.Kundaje.GRCh38_unified_Excludable` excluderanges
 object (AnnotationHub ID: AH107305) and
-[BEDbase.org](https://bedbase.org/bed/).
+[BEDbase.org](https://bedbase.org/bed/001997a821e4295f70fd03effcb94a6b).
 
 BED files of exclusion regions are available on the [ENCODE
 project](https://www.encodeproject.org/search/?searchTerm=exclusion+list)
