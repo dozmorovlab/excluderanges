@@ -108,6 +108,7 @@ query_data
 `hg38.Kundaje.GRCh38_unified_Excludable` object recommended by Anshul
 
 ```{r hg38excluderanges}
+library(GenomeInfoDb)  # for keepStandardChromosomes()
 excludeGR.hg38.Kundaje.1 <- query_data[["AH107305"]]
 # Always a good idea to sort GRanges and keep standard chromosomes
 excludeGR.hg38.Kundaje.1 <- excludeGR.hg38.Kundaje.1 %>% 
