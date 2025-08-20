@@ -1,6 +1,6 @@
 Package: excluderanges
 Title: Genomic coordinates of problematic genomic regions
-Version: 0.99.8
+Version: 0.99.10
 Authors@R: c(
     person(given = "Mikhail",
            family = "Dozmorov",
@@ -48,6 +48,7 @@ Suggests:
     httr,
     readr,
     pheatmap,
+    GenomeInfoDb,
     rtracklayer,
     AnnotationHub
 VignetteBuilder: knitr
