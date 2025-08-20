@@ -36,6 +36,8 @@ library(BiocStyle)
 
 # excluderanges, genomic ranges of problematic genomic regions
 
+Ogata, Jonathan D, Wancen Mu, Eric S Davis, Bingjie Xue, J Chuck Harrell, Nathan C Sheffield, Douglas H Phanstiel, Michael I Love, and Mikhail G Dozmorov. “Excluderanges: Exclusion Sets for T2T-CHM13, GRCm39, and Other Genome Assemblies.” _Bioinformatics_, April 3, 2023, PMID: [37067481](https://pubmed.ncbi.nlm.nih.gov/37067481/), DOI: [10.1093/bioinformatics/btad198](https://doi.org/10.1093/bioinformatics/btad198)
+
 <img id="excluderanges_logo_by_Mike_Love" src="../man/figures/logo.png" align="right" width="125"/>
 
 Coordinates of problematic genomic regions that should be avoided when 
