@@ -1073,6 +1073,38 @@ genome(gapsGR)     <- genome_id
   write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
 
 
+### Add GreyListChip lists
+# Project folder path
+dir_data <- "/Users/mynguyen/Documents/GitHub/excluderanges.dev/Jasmine"
+# Results folder, create if not exist
+dir_results <- file.path(dir_data, "excludableSets_bed")
+if (!dir.exists(dir_results)) dir.create(dir_results)
+# Create subdirs for specific results
+if (!dir.exists(file.path(dir_results, "bed"))) dir.create(file.path(dir_results, "bed"))
+if (!dir.exists(file.path(dir_results, "rds"))) dir.create(file.path(dir_results, "rds"))
+# Increase download file timeout 
+# https://stackoverflow.com/questions/35282928/how-do-i-set-a-timeout-for-utilsdownload-file-in-r
+options(timeout=100)
+
+
+
+# Name - .rds data
+data_name_bed <- list.files(file.path(dir_results, "bed"))
+data_name <- gsub("\\.bed$", "", data_name_bed)
+data_name_rds <- paste0(data_name, '.rds')
+
+
+# Save to .rds
+data_bed_path <- list.files(file.path(dir_results, "bed"), full.names = T)
+data_rds_path <- paste0(file.path(dir_results, "rds", data_name), '.rds')
+
+for(i in 1:length(data_name)){
+  data = read.table(data_bed_path[i], header = FALSE, sep = "\t", stringsAsFactors = FALSE)
+  saveRDS(object = data, file = data_rds_path[i])
+}
+
+  
+  
 
 # FIRST VERSION: MANUAL DOWNLOAD, LIMITED OBJECTS, HUMAN AND MOUSE ORGANISMS.
 # INCLUDED NON-PRIMARY ASSEMBLY CHROMOSOMES. SUPERSEDED BY THE SECOND VERSION. 
