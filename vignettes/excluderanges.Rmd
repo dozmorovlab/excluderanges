@@ -448,23 +448,23 @@ about the types of gaps available. E.g., for human, hg19, we have the following
 types and the number of gaps.
 
 ```{r gapcounts, echo=FALSE, out.height="70%", out.width="70%"}
-suppressMessages(library(rtracklayer))
+#suppressMessages(library(rtracklayer))
 # knitr::include_graphics('../man/figures/excluderanges_hg19_gaps_number.png')
 # Get genome-specific gaps table
-mySession <- browserSession()
-genome(mySession) <- "hg19"
-query <- ucscTableQuery(mySession, table = "gap")
-gaps <- getTable(query)
+#mySession <- browserSession()
+#genome(mySession) <- "hg19"
+#query <- ucscTableQuery(mySession, table = "gap")
+#gaps <- getTable(query)
 # Number of regions per gap type
-mtx_to_plot <- as.data.frame(table(gaps$type))
-colnames(mtx_to_plot) <- c("Type", "Number")
-mtx_to_plot <- mtx_to_plot[order(mtx_to_plot$Number), ]
-mtx_to_plot$Type <- factor(mtx_to_plot$Type, levels = mtx_to_plot$Type)
+#mtx_to_plot <- as.data.frame(table(gaps$type))
+#colnames(mtx_to_plot) <- c("Type", "Number")
+#mtx_to_plot <- mtx_to_plot[order(mtx_to_plot$Number), ]
+#mtx_to_plot$Type <- factor(mtx_to_plot$Type, levels = mtx_to_plot$Type)
 ggplot(mtx_to_plot, aes(x = Number, y = Type, fill = Type)) +
-  geom_bar(stat="identity") +
-  theme_bw() + theme(legend.position = "none")
+  #geom_bar(stat="identity") +
+ # theme_bw() + theme(legend.position = "none")
 # ggsave("../man/figures/excluderanges_hg19_gaps_number.png", width = 5, height = 2.5)
-```
+#```
 
 Those objects are provided as individual GRanges.
 
