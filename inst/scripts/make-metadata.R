@@ -1990,5 +1990,6 @@ meta <- data.frame(
             "Combined files: 175, merging regions within 1,000bp",
             "Combined files: 106, merging regions within 1,000bp",
             "Combined files: 176, merging regions within 1,000bp"))
-
+meta$Location_Prefix <- "https://zenodo.org/records/21480958/files/"
+meta$RDataPath <- paste0("21480958/", basename(meta$RDataPath))
 write.csv(meta, file="inst/extdata/metadata.csv", row.names=FALSE)
