@@ -1,4 +1,3 @@
-###
 ### =========================================================================
 ### excluderanges is an AnnotationHub package that stores genomic coordinates of
 ### problematic genomic regions as GRanges.
@@ -129,7 +128,7 @@ for (i in 1:nrow(mtx)) {
   } else {
     URL <- mtx$`ID/URL`[i]
   }
-
+  
   # Process only non-publication data. Publication data requires manual processing
   if (!(mtx$Source[i] %in% c("Publication", "excluderanges"))) {
     # Download output file name
@@ -292,70 +291,70 @@ for (i in 1:nrow(mtx)) {
 
 # Custom processing 
 ## danRer10.Yang.Supplemental_Table_19.ChIP-seq_black_list_in_the_zebrafish_genome
-i <- which(mtx$Name == "danRer10.Yang.Supplemental_Table_19.ChIP-seq_black_list_in_the_zebrafish_genome")
-# Download URL
-URL <- mtx$`ID/URL`[i]
-# Directly downloadable files have their own extension
-fileNameOut1 <- file.path(dir_results, paste0(mtx$Name[i], ".", tools::file_ext(mtx$`ID/URL`[i])))
-# BED output file name
-fileNameOut2 <- file.path(dir_results, "bed", paste0(mtx$Name[i], ".bed"))
-# RDS output file name
-fileNameOut3 <- file.path(dir_results, "rds", paste0(mtx$Name[i], ".rds"))
-
-# Download file, if doesn't exist
-if (!file.exists(fileNameOut1)) {
-  download.file(URL, fileNameOut1)
-  # Unzip
-  unzip(fileNameOut1, files = c("Supplemental_Tables/Supplemental Table 19. ChIP-seq black list in the zebrafish genome.xlsx"), junkpaths = TRUE, exdir = dir_results)
-}
-# Have a look inside
-excludeBED <- read_xlsx(file.path(dir_results, "Supplemental Table 19. ChIP-seq black list in the zebrafish genome.xlsx"), col_names = FALSE)
-# Save as tab-separated for rtracklayer
-fileNameOut1 <- file.path(dir_results, paste0(mtx$Name[i], ".bed"))
-write_tsv(excludeBED, fileNameOut1, col_names = FALSE)
-# Have a look at the original data
-excludeBED <- read_tsv(fileNameOut1, col_names = FALSE)
-# Assign column names depending on the number of columns
-all_columns <- c("chr", "start", "stop", "name", "score", "strand", "signalValue", "pValue", "qValue", "peak")
-colnames(excludeBED) <- all_columns[1:ncol(excludeBED)]
-# Convert to GRanges object
-denyGR <- make_granges_from_source(excludeBED)
-
-# Genome abbreviation
-genome_id <- mtx$Assembly[i]
-# Get chromosome info
-chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome = genome_id, assembled.molecules.only = TRUE)
-# Keep standard chromosomes
-chromosomes_standard <- chrom_data$chrom
-# Subset and match to chromosomes in the denyGR object
-# Common chromosomes
-chromosomes_common <- intersect(chrom_data$chrom, seqlevels(denyGR))
-# Subset denyGR
-denyGR <- keepSeqlevels(denyGR, chromosomes_common, pruning.mode = "tidy")      
-# Subset chrom_data
-chrom_data <- chrom_data[chrom_data$chrom %in% chromosomes_common, ]
-# Match objects
-chrom_data <- chrom_data[match(seqlevels(denyGR), chrom_data$chrom), ]
-# Check if chromosome order is the same
-if (!all.equal(seqlevels(denyGR), chrom_data$chrom)) {
-  print(paste("Chromosome order does not match for", genome_id, "genome."))
-  break
-}
-# Assign seqinfo data
-seqlengths(denyGR) <- chrom_data$size
-isCircular(denyGR) <- chrom_data$circular
-genome(denyGR)     <- genome_id
-
-# Keep autosomes/sex/M chromosomes
-denyGR <- keepStandardChromosomes(x = denyGR, pruning.mode = "tidy")
-# Sort the object
-denyGR <- sort(denyGR)
-# Process with saving objects
-# Save BED file
-write_tsv(as.data.frame(denyGR), file = fileNameOut2, col_names = FALSE)
-# Save as Rds object
-saveRDS(object = denyGR, file = fileNameOut3)
-# excludeGR <- readRDS(file = fileNameOut3)
+# i <- which(mtx$Name == "danRer10.Yang.Supplemental_Table_19.ChIP-seq_black_list_in_the_zebrafish_genome")
+# # Download URL
+# URL <- mtx$`ID/URL`[i]
+# # Directly downloadable files have their own extension
+# fileNameOut1 <- file.path(dir_results, paste0(mtx$Name[i], ".", tools::file_ext(mtx$`ID/URL`[i])))
+# # BED output file name
+# fileNameOut2 <- file.path(dir_results, "bed", paste0(mtx$Name[i], ".bed"))
+# # RDS output file name
+# fileNameOut3 <- file.path(dir_results, "rds", paste0(mtx$Name[i], ".rds"))
+# 
+# # Download file, if doesn't exist
+# if (!file.exists(fileNameOut1)) {
+#   download.file(URL, fileNameOut1)
+#   # Unzip
+#   unzip(fileNameOut1, files = c("Supplemental_Tables/Supplemental Table 19. ChIP-seq black list in the zebrafish genome.xlsx"), junkpaths = TRUE, exdir = dir_results)
+# }
+# # Have a look inside
+# excludeBED <- read_xlsx(file.path(dir_results, "Supplemental Table 19. ChIP-seq black list in the zebrafish genome.xlsx"), col_names = FALSE)
+# # Save as tab-separated for rtracklayer
+# fileNameOut1 <- file.path(dir_results, paste0(mtx$Name[i], ".bed"))
+# write_tsv(excludeBED, fileNameOut1, col_names = FALSE)
+# # Have a look at the original data
+# excludeBED <- read_tsv(fileNameOut1, col_names = FALSE)
+# # Assign column names depending on the number of columns
+# all_columns <- c("chr", "start", "stop", "name", "score", "strand", "signalValue", "pValue", "qValue", "peak")
+# colnames(excludeBED) <- all_columns[1:ncol(excludeBED)]
+# # Convert to GRanges object
+# denyGR <- make_granges_from_source(excludeBED)
+# 
+# # Genome abbreviation
+# genome_id <- mtx$Assembly[i]
+# # Get chromosome info
+# chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome = genome_id, assembled.molecules.only = TRUE)
+# # Keep standard chromosomes
+# chromosomes_standard <- chrom_data$chrom
+# # Subset and match to chromosomes in the denyGR object
+# # Common chromosomes
+# chromosomes_common <- intersect(chrom_data$chrom, seqlevels(denyGR))
+# # Subset denyGR
+# denyGR <- keepSeqlevels(denyGR, chromosomes_common, pruning.mode = "tidy")      
+# # Subset chrom_data
+# chrom_data <- chrom_data[chrom_data$chrom %in% chromosomes_common, ]
+# # Match objects
+# chrom_data <- chrom_data[match(seqlevels(denyGR), chrom_data$chrom), ]
+# # Check if chromosome order is the same
+# if (!all.equal(seqlevels(denyGR), chrom_data$chrom)) {
+#   print(paste("Chromosome order does not match for", genome_id, "genome."))
+#   break
+# }
+# # Assign seqinfo data
+# seqlengths(denyGR) <- chrom_data$size
+# isCircular(denyGR) <- chrom_data$circular
+# genome(denyGR)     <- genome_id
+# 
+# # Keep autosomes/sex/M chromosomes
+# denyGR <- keepStandardChromosomes(x = denyGR, pruning.mode = "tidy")
+# # Sort the object
+# denyGR <- sort(denyGR)
+# # Process with saving objects
+# # Save BED file
+# write_tsv(as.data.frame(denyGR), file = fileNameOut2, col_names = FALSE)
+# # Save as Rds object
+# saveRDS(object = denyGR, file = fileNameOut3)
+# # excludeGR <- readRDS(file = fileNameOut3)
 
 ## T2T.excluderanges 
 i <- which(mtx$Name == "T2T.excluderanges")
@@ -367,7 +366,7 @@ fileNameOut2 <- file.path(dir_results, "bed", paste0(mtx$Name[i], ".bed"))
 # RDS output file name
 fileNameOut3 <- file.path(dir_results, "rds", paste0(mtx$Name[i], ".rds"))
 # Have a look at the original data
-excludeBED <- read_tsv(fileNameOut1, col_names = FALSE, show_col_types = FALSE``)
+excludeBED <- read_tsv(fileNameOut1, col_names = FALSE, show_col_types = FALSE)
 # Assign column names depending on the number of columns
 all_columns <- c("chr", "start", "stop", "name", "score", "strand", "signalValue", "pValue", "qValue", "peak")
 colnames(excludeBED) <- all_columns[1:ncol(excludeBED)]
@@ -480,6 +479,7 @@ if (!file.exists(file.path(dir_results, 'bigBedtoBed'))) {
   # download bigBedtoBed converter for mac -- this needs to be adjusted to work with other OS'.
   # location of macOS bigBedtoBed
   bigBedtoBed.URL <- 'http://hgdownload.cse.ucsc.edu/admin/exe/macOSX.x86_64/bigBedToBed'
+  bigBedtoBed.URL <- 'https://hgdownload.soe.ucsc.edu/admin/exe/macOSX.arm64/bigBedToBed'
   # out file name
   bigBedtoBed.out <- file.path(dir_results, 'bigBedtoBed')
   # download bigBedtoBed
@@ -607,13 +607,13 @@ for (genome_id in unique(mtx$Assembly) ) {
     seqlengths(gapsGR) <- chrom_data_subset$size
     isCircular(gapsGR) <- chrom_data_subset$circular
     genome(gapsGR)     <- genome_id
-        # Construct file name, e.g., hg19.UCSC.gap_centromere.bed
-        fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
-        # Save as Rds object
-        saveRDS(object = gapsGR, file = file.path(dir_results, "rds", fileNameOut))
-        # Save as bed file
-        fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".bed")
-        write_tsv(as.data.frame(gapsGR), file = file.path(dir_results, "bed", fileNameOut), col_names = FALSE)
+    # Construct file name, e.g., hg19.UCSC.gap_centromere.bed
+    fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
+    # Save as Rds object
+    saveRDS(object = gapsGR, file = file.path(dir_results, "rds", fileNameOut))
+    # Save as bed file
+    fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".bed")
+    write_tsv(as.data.frame(gapsGR), file = file.path(dir_results, "bed", fileNameOut), col_names = FALSE)
   }
 }
 
@@ -658,13 +658,13 @@ for (genome_id in c("hg19", "mm9")) {
   seqlengths(gapsGR) <- chrom_data_subset$size
   isCircular(gapsGR) <- chrom_data_subset$circular
   genome(gapsGR)     <- genome_id
-    # Construct file name, e.g., hg19.UCSC.gap_centromere.rds
-    fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
-    # Save as Rds object
-    saveRDS(object = gapsGR, file = file.path(dir_results, "rds", fileNameOut))
-    # save as bed file
-    fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".bed")
-    write_tsv(as.data.frame(gapsGR), file = file.path(dir_results, "bed", fileNameOut), col_names = FALSE)
+  # Construct file name, e.g., hg19.UCSC.gap_centromere.rds
+  fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
+  # Save as Rds object
+  saveRDS(object = gapsGR, file = file.path(dir_results, "rds", fileNameOut))
+  # save as bed file
+  fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".bed")
+  write_tsv(as.data.frame(gapsGR), file = file.path(dir_results, "bed", fileNameOut), col_names = FALSE)
 }
 
 ## Centromeres for hg38
@@ -705,13 +705,13 @@ if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
 seqlengths(gapsGR) <- chrom_data_subset$size
 isCircular(gapsGR) <- chrom_data_subset$circular
 genome(gapsGR)     <- genome_id
-  # Construct file name, e.g., hg19.UCSC.gap_centromere.rds
-  fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
-  # Save as Rds object
-  saveRDS(object = gapsGR, file = file.path(dir_results, "rds", fileNameOut))
-  # save as bed file
-  fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".bed")
-  write_tsv(as.data.frame(gapsGR), file = file.path(dir_results, "bed", fileNameOut), col_names = FALSE)
+# Construct file name, e.g., hg19.UCSC.gap_centromere.rds
+fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
+# Save as Rds object
+saveRDS(object = gapsGR, file = file.path(dir_results, "rds", fileNameOut))
+# save as bed file
+fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".bed")
+write_tsv(as.data.frame(gapsGR), file = file.path(dir_results, "bed", fileNameOut), col_names = FALSE)
 
 # T2T centromere
 ### Get T2T-unique track
@@ -770,10 +770,10 @@ if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
 seqlengths(gapsGR) <- chrom_data_subset$size
 isCircular(gapsGR) <- ifelse(is.na(chrom_data_subset$circular), FALSE, TRUE)
 genome(gapsGR)     <- genome_id
-  # save as .rds
-  saveRDS(object = gapsGR, file = fileNameOut3)
-  # save as .bed
-  write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
+# save as .rds
+saveRDS(object = gapsGR, file = fileNameOut3)
+# save as .bed
+write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
 
 # T2T telomere
 ### Get T2T-unique track
@@ -835,10 +835,10 @@ if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
 seqlengths(gapsGR) <- chrom_data_subset$size
 isCircular(gapsGR) <- ifelse(is.na(chrom_data_subset$circular), FALSE, TRUE)
 genome(gapsGR)     <- genome_id
-  # save as .rds
-  saveRDS(object = gapsGR, file = fileNameOut3)
-  # save as .bed
-  write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
+# save as .rds
+saveRDS(object = gapsGR, file = fileNameOut3)
+# save as .bed
+write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
 
 # T2T censat
 ### Get T2T-unique track
@@ -899,10 +899,10 @@ if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
 seqlengths(gapsGR) <- chrom_data_subset$size
 isCircular(gapsGR) <- ifelse(is.na(chrom_data_subset$circular), FALSE, TRUE)
 genome(gapsGR)     <- genome_id
-  # save as .rds
-  saveRDS(object = gapsGR, file = fileNameOut3)
-  # save as .bed
-  write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
+# save as .rds
+saveRDS(object = gapsGR, file = fileNameOut3)
+# save as .bed
+write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
 
 # T2T gap
 ### Get T2T-unique track
@@ -961,10 +961,10 @@ if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
 seqlengths(gapsGR) <- chrom_data_subset$size
 isCircular(gapsGR) <- ifelse(is.na(chrom_data_subset$circular), FALSE, TRUE)
 genome(gapsGR)     <- genome_id
-  # save as .rds
-  saveRDS(object = gapsGR, file = fileNameOut3)
-  # save as .bed
-  write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
+# save as .rds
+saveRDS(object = gapsGR, file = fileNameOut3)
+# save as .bed
+write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
 
 # T2T hgUniqueHg38
 ### Get T2T-unique track
@@ -1023,10 +1023,10 @@ if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
 seqlengths(gapsGR) <- chrom_data_subset$size
 isCircular(gapsGR) <- ifelse(is.na(chrom_data_subset$circular), FALSE, TRUE)
 genome(gapsGR)     <- genome_id
-  # save as .rds
-  saveRDS(object = gapsGR, file = fileNameOut3)
-  # save as .bed
-  write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
+# save as .rds
+saveRDS(object = gapsGR, file = fileNameOut3)
+# save as .bed
+write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
 
 # TAIR10
 ### Get T2T-unique track
@@ -1082,260 +1082,130 @@ if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
 seqlengths(gapsGR) <- chrom_data_subset$size
 isCircular(gapsGR) <- ifelse(is.na(chrom_data_subset$circular), FALSE, TRUE)
 genome(gapsGR)     <- genome_id
-  # save as .rds
-  saveRDS(object = gapsGR, file = fileNameOut3)
-  # save as .bed
-  write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
+# save as .rds
+saveRDS(object = gapsGR, file = fileNameOut3)
+# save as .bed
+write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
 
 
 ### Add GreyListChip lists
-# Project folder path
-dir_data <- "/Users/mynguyen/Documents/GitHub/excluderanges.dev/Jasmine"
-# Results folder, create if not exist
-dir_results <- file.path(dir_data, "excludableSets_bed")
-if (!dir.exists(dir_results)) dir.create(dir_results)
-# Create subdirs for specific results
-if (!dir.exists(file.path(dir_results, "bed"))) dir.create(file.path(dir_results, "bed"))
-if (!dir.exists(file.path(dir_results, "rds"))) dir.create(file.path(dir_results, "rds"))
-# Increase download file timeout 
-# https://stackoverflow.com/questions/35282928/how-do-i-set-a-timeout-for-utilsdownload-file-in-r
-options(timeout=100)
+library(googledrive)
 
+# Subfolder for raw downloads
+dir_downloads <- file.path(dir_data, "downloads")
+if (!dir.exists(dir_downloads)) dir.create(dir_downloads, recursive = TRUE)
 
-
-# Name - .rds data
-data_name_bed <- list.files(file.path(dir_results, "bed"))
-data_name <- gsub("\\.bed$", "", data_name_bed)
-data_name_rds <- paste0(data_name, '.rds')
-
-
-# Save to .rds
-data_bed_path <- list.files(file.path(dir_results, "bed"), full.names = T)
-data_rds_path <- paste0(file.path(dir_results, "rds", data_name), '.rds')
-
-for(i in 1:length(data_name)){
-  data = read.table(data_bed_path[i], header = FALSE, sep = "\t", stringsAsFactors = FALSE)
-  saveRDS(object = data, file = data_rds_path[i])
+# Helper function to map filename to NCBI assembly string
+get_genome_id <- function(fname) {
+  if (grepl("T2T", fname, ignore.case = TRUE)) {
+    return("T2T-CHM13v2.0")
+  } else if (grepl("^hg38", fname, ignore.case = TRUE)) {
+    return("GRCh38.p14")
+  } else if (grepl("^mm10", fname, ignore.case = TRUE)) {
+    return("GRCm38.p6")
+  } else if (grepl("^mm39", fname, ignore.case = TRUE)) {
+    return("GRCm39")
+  } else {
+    stop(paste("Unable to map genome ID for file:", fname))
+  }
 }
 
+# De-authenticate to download public files without login prompt
+drive_deauth()
+
+folder_id <- "171xy6RypzjdrSfltbbEmDUKR6X7A-_NR"
+
+target_files <- c(
+  "T2T.GreyListChIP.STAR_36bp_1000merge.rds",
+  "hg38.GreyListChIP.STAR_101bp_1000merge.rds",
+  "hg38.GreyListChIP.STAR_36bp_1000merge.rds",
+  "mm10.GreyListChIP.STAR_36bp_1000merge.rds",
+  "mm10.GreyListChIP.STAR_50bp_1000merge.rds",
+  "mm39.GreyListChIP.STAR_36bp_1000merge.rds",
+  "mm39.GreyListChIP.STAR_50bp_1000merge.rds",
+  "star_k101_1000_grey_T2T.rds"
+)
+
+# Download target files from public Google Drive folder
+folder_contents <- drive_ls(as_id(folder_id))
+files_to_download <- folder_contents[folder_contents$name %in% target_files, ]
+
+for (i in seq_len(nrow(files_to_download))) {
+  file_item <- files_to_download[i, ]
+  dest_path <- file.path(dir_downloads, file_item$name)
   
+  # Avoid re-downloading if the file exists under either the old or renamed name
+  renamed_path <- file.path(dir_downloads, "T2T.GreyListChIP.STAR_101bp_1000merge.rds")
+  already_exists <- file.exists(dest_path) || (file_item$name == "star_k101_1000_grey_T2T.rds" && file.exists(renamed_path))
   
+  if (!already_exists) {
+    message("Downloading: ", file_item$name)
+    drive_download(file_item, path = dest_path, overwrite = TRUE)
+  }
+}
 
-# FIRST VERSION: MANUAL DOWNLOAD, LIMITED OBJECTS, HUMAN AND MOUSE ORGANISMS.
-# INCLUDED NON-PRIMARY ASSEMBLY CHROMOSOMES. SUPERSEDED BY THE SECOND VERSION. 
-# 
-# excluderanges package currently contains 19 Rds objects. The original and 
-# processed data are available at 
-# https://drive.google.com/drive/folders/124DZtsU0YVWqkb7dgu8Nk6b3N8-ShVSC?usp=sharing
+# -----------------------------------------------------------------------------
+# RENAME ON DISK & UPDATE VECTOR
+# -----------------------------------------------------------------------------
+old_path <- file.path(dir_downloads, "star_k101_1000_grey_T2T.rds")
+new_path <- file.path(dir_downloads, "T2T.GreyListChIP.STAR_101bp_1000merge.rds")
 
-# The object names are structured as "<genome assembly>.<lab>.<original file name>", 
-# e.g., "hg19.Birney.wgEncodeDacMapabilityConsensusExcludable".
+if (file.exists(old_path)) {
+  file.rename(old_path, new_path)
+}
 
-# # ENCODE
-# ## hg19
-# 
-# # Mint_Blacklist_hg19.bed.gz
-# # https://www.encodeproject.org/files/ENCFF200UUD/, Bradley Bernstein, Broad
-# wget https://www.encodeproject.org/files/ENCFF200UUD/@@download/ENCFF200UUD.bed.gz
-# gzip --decompress --stdout ENCFF200UUD.bed.gz | bedtools sort -i - > hg19.Bernstein.Mint_Blacklist_hg19.bed
-# 
-# # wgEncodeDacMapabilityConsensusExcludable.bed.gz, Ewan Birney, EBI
-# # https://www.encodeproject.org/files/ENCFF001TDO/, Ewan Birney, EBI
-# wget https://www.encodeproject.org/files/ENCFF001TDO/@@download/ENCFF001TDO.bed.gz
-# gzip --decompress --stdout ENCFF001TDO.bed.gz | bedtools sort -i - > hg19.Birney.wgEncodeDacMapabilityConsensusExcludable.bed
-# 
-# # wgEncodeDukeMapabilityRegionsExcludable.bed.gz
-# # https://www.encodeproject.org/files/ENCFF001THR/, Gregory Crawford, Duke
-# wget https://www.encodeproject.org/files/ENCFF001THR/@@download/ENCFF001THR.bed.gz
-# gzip --decompress --stdout ENCFF001THR.bed.gz | bedtools sort -i - > hg19.Crawford.wgEncodeDukeMapabilityRegionsExcludable.bed
-# 
-# # hg19mitoblack.bed.gz
-# # https://www.encodeproject.org/files/ENCFF055QTV/, Barbara Wold, Caltech
-# wget https://www.encodeproject.org/files/ENCFF055QTV/@@download/ENCFF055QTV.bed.gz
-# gzip --decompress --stdout ENCFF055QTV.bed.gz | bedtools sort -i - > hg19.Wold.hg19mitoblack.bed
-# 
-# # eCLIP_blacklistregions.hg19.bed.gz
-# # https://www.encodeproject.org/files/ENCFF039QTN/, Gene Yeo, UCSD
-# wget https://www.encodeproject.org/files/ENCFF039QTN/@@download/ENCFF039QTN.bed.gz
-# gzip --decompress --stdout ENCFF039QTN.bed.gz | bedtools sort -i - > hg19.Yeo.eCLIP_blacklistregions.hg19.bed
-# 
-# ## hg38
-# 
-# # Mint_Blacklist_GRCh38.bed.gz
-# # https://www.encodeproject.org/files/ENCFF023CZC/, Bradley Bernstein, Broad
-# wget https://www.encodeproject.org/files/ENCFF023CZC/@@download/ENCFF023CZC.bed.gz
-# gzip --decompress --stdout ENCFF023CZC.bed.gz | bedtools sort -i - > hg38.Bernstein.Mint_Blacklist_GRCh38.bed
-# 
-# # GRCh38_unified_blacklist.bed.gz
-# # https://www.encodeproject.org/files/ENCFF356LFX/, Anshul Kundaje, Stanford
-# wget https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz
-# gzip --decompress --stdout ENCFF356LFX.bed.gz | bedtools sort -i - > hg38.Kundaje.GRCh38_unified_blacklist.bed
-# 
-# # GRCh38.blacklist.bed.gz
-# # https://www.encodeproject.org/files/ENCFF419RSJ/, Anshul Kundaje, Stanford
-# wget https://www.encodeproject.org/files/ENCFF419RSJ/@@download/ENCFF419RSJ.bed.gz
-# gzip --decompress --stdout ENCFF419RSJ.bed.gz | bedtools sort -i - > hg38.Kundaje.GRCh38.blacklist.bed
-# 
-# # wgEncodeDacMapabilityConsensusExcludable.hg38.bed.gz
-# # https://www.encodeproject.org/files/ENCFF220FIN/, Tim Reddy, Duke
-# wget https://www.encodeproject.org/files/ENCFF220FIN/@@download/ENCFF220FIN.bed.gz
-# gzip --decompress --stdout ENCFF220FIN.bed.gz | bedtools sort -i - > hg38.Reddy.wgEncodeDacMapabilityConsensusExcludable.hg38.bed
-# 
-# # hg38mitoblack.bed.gz
-# # https://www.encodeproject.org/files/ENCFF940NTE/, Barbara Wold, Caltech
-# wget https://www.encodeproject.org/files/ENCFF940NTE/@@download/ENCFF940NTE.bed.gz
-# gzip --decompress --stdout ENCFF940NTE.bed.gz | bedtools sort -i - > hg38.Wold.hg38mitoblack.bed
-# 
-# # eCLIP_blacklistregions.hg38liftover.bed.fixed.bed.gz
-# # https://www.encodeproject.org/files/ENCFF269URO/, Gene Yeo, UCSD
-# wget https://www.encodeproject.org/files/ENCFF269URO/@@download/ENCFF269URO.bed.gz
-# gzip --decompress --stdout ENCFF269URO.bed.gz | bedtools sort -i - > hg38.Yeo.eCLIP_blacklistregions.hg38liftover.bed.fixed.bed
-# 
-# ## mm10
-# 
-# # blacklist.full.bed.gz
-# # https://www.encodeproject.org/files/ENCFF790DJT/, Ross Hardison, PennState
-# wget https://www.encodeproject.org/files/ENCFF790DJT/@@download/ENCFF790DJT.bed.gz
-# gzip --decompress --stdout ENCFF790DJT.bed.gz | bedtools sort -i - > mm10.Hardison.blacklist.full.bed
-# 
-# # psublacklist.mm10.bed.gz
-# # https://www.encodeproject.org/files/ENCFF226BDM/, Ross Hardison, PennState
-# wget https://www.encodeproject.org/files/ENCFF226BDM/@@download/ENCFF226BDM.bed.gz
-# gzip --decompress --stdout ENCFF226BDM.bed.gz | bedtools sort -i - > mm10.Hardison.psublacklist.mm10.bed
-# 
-# # anshul.blacklist.mm10.bed.gz
-# # https://www.encodeproject.org/files/ENCFF999QPV/, Anshul Kundaje, Stanford
-# wget https://www.encodeproject.org/files/ENCFF999QPV/@@download/ENCFF999QPV.bed.gz
-# gzip --decompress --stdout ENCFF999QPV.bed.gz | bedtools sort -i - > mm10.Kundaje.anshul.blacklist.mm10.bed
-# 
-# # mm10.blacklist.bed.gz
-# # https://www.encodeproject.org/files/ENCFF547MET/, Anshul Kundaje, Stanford
-# wget https://www.encodeproject.org/files/ENCFF547MET/@@download/ENCFF547MET.bed.gz
-# gzip --decompress --stdout ENCFF547MET.bed.gz | bedtools sort -i - > mm10.Kundaje.mm10.blacklist.bed
-# 
-# # mm10mitoblack.bed.gz
-# # https://www.encodeproject.org/files/ENCFF759PJK/, Barbara Wold, Caltech
-# wget https://www.encodeproject.org/files/ENCFF759PJK/@@download/ENCFF759PJK.bed.gz
-# gzip --decompress --stdout ENCFF759PJK.bed.gz | bedtools sort -i - > mm10.Wold.mm10mitoblack.bed
-# 
-# ## mm9 
-# 
-# # mm9mitoblack.bed.gz
-# # https://www.encodeproject.org/files/ENCFF299EZH/, Barbara Wold, Caltech
-# wget https://www.encodeproject.org/files/ENCFF299EZH/@@download/ENCFF299EZH.bed.gz
-# gzip --decompress --stdout ENCFF299EZH.bed.gz | bedtools sort -i - > mm9.Wold.mm9mitoblack.bed
-# 
-# # http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/
-# 
-# # http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/dm3-D.melanogaster/dm3-blacklist.bed.gz
-# wget http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/dm3-D.melanogaster/dm3-blacklist.bed.gz
-# gzip --decompress --stdout dm3-blacklist.bed.gz | bedtools sort -i - > dm3.Kundaje.dm3-blacklist.bed
-# 
-# # http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/ce10-C.elegans/ce10-blacklist.bed.gz
-# wget http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/ce10-C.elegans/ce10-blacklist.bed.gz
-# gzip --decompress --stdout ce10-blacklist.bed.gz | bedtools sort -i - > ce10.Kundaje.ce10-blacklist.bed
+# Update the filename in target_files so reprocessing loop builds correct output names
+target_files[target_files == "star_k101_1000_grey_T2T.rds"] <- "T2T.GreyListChIP.STAR_101bp_1000merge.rds"
+# -----------------------------------------------------------------------------
 
-# The following example demonstrate how the coordinates of assembly-specific 
-# problematic regions were converted into Rds objects
-
-# Download results data from https://drive.google.com/drive/folders/124DZtsU0YVWqkb7dgu8Nk6b3N8-ShVSC?usp=sharing
-# library(GenomicRanges)
-# library(GenomeInfoDb)
-# library(rtracklayer)
-# library(readr)
-# # Folder with results
-# dir_in <- "/Users/mdozmorov/Documents/Data/GoogleDrive/excludedata"
-# 
-# # All BED files
-# files <- list.files(path = dir_in, pattern = "bed$")
-# # In each subfolder
-# for (file in files) {
-#   # Read "fimo.bed" created by "fimo.qsub"
-#   excludeBED <- read_tsv(file.path(dir_in, file), col_names = FALSE)
-#   # Assign column names depending on the number of columns
-#   if (ncol(excludeBED) == 3) { # Only 3 columns
-#     colnames(excludeBED) <- c("chr", "start", "stop")
-#   } else { # If more than 3 columns, consider the first 6
-#     colnames(excludeBED) <- c("chr", "start", "stop", "name", "score", "strand")
-#   }
-#   # Convert to GRanges object
-#   denyGR <- GenomicRanges::makeGRangesFromDataFrame(excludeBED, keep.extra.columns = TRUE)
-#   # Add seqinfo
-#   # Parse out genome ID from the file name, to get hg19, hg38, mm9, mm10, etc.
-#   genome_id <- strsplit(file, ".", fixed = TRUE)[[1]][1]
-#   # Get chromosome info and match it to the chromosome order in excludeBED
-#   chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome = genome_id)
-#   chrom_data <- chrom_data[chrom_data$chrom %in% seqlevels(denyGR), ]
-#   chrom_data <- chrom_data[match(seqlevels(denyGR), chrom_data$chrom), ]
-#   # Check if chromosome order is the same
-#   if (!all.equal(seqlevels(denyGR), chrom_data$chrom)) {
-#     print(paste("Chromosome order does not match for", genome_id, "genome."))
-#     break
-#   }
-#   # Assign seqinfo data
-#   seqlengths(denyGR) <- chrom_data$size
-#   isCircular(denyGR) <- chrom_data$circular
-#   genome(denyGR)     <- genome_id
-#   # Reformat output file name
-#   fileNameOut <- sub("blacklist", "Excludable", file, ignore.case = TRUE)
-#   fileNameOut <- sub("black", "Excludable", fileNameOut, ignore.case = TRUE)
-#   
-#   # Save as Rds object. file extension is changed to rds
-#   saveRDS(object = denyGR, file = file.path(dir_in, sub("bed$", "rds", fileNameOut)))
-#   # excludeGR <- readRDS(file = file.path(dir_in, sub("bed$", "rds", fileNameOut)))
-# }
-# 
-# # The following example demonstrates how the UCSC gaps data were processed
-# # All genomes
-# genomes <- c("hg19", "hg38", "mm9", "mm10")
-# # Process each genome
-# for (genome_id in genomes) {
-#   print(paste("Genome", genome_id))
-#   # Get chromosome info
-#   chrom_data <- GenomeInfoDb::getChromInfoFromUCSC(genome = genome_id)
-#   # Get genome-specific gaps table
-#   mySession <- browserSession()
-#   genome(mySession) <- genome_id
-#   # gaps <- getTable(ucscTableQuery(mySession, track = "gap"))
-#   query <- ucscTableQuery(mySession, table = "gap")
-#   gaps <- getTable(query)
-#   # Process each gap type
-#   for (gap_type in sort(unique(gaps$type))) {
-#     # gap_type <- "heterochromatin"
-#     gaps_selected <- gaps[gaps$type == gap_type, ]
-#     gapsGR <- makeGRangesFromDataFrame(gaps_selected, keep.extra.columns = TRUE)
-#     # Select seqinfo data for the gaps object
-#     chrom_data_subset <- chrom_data[chrom_data$chrom %in% seqlevels(gapsGR), ]
-#     chrom_data_subset <- chrom_data_subset[match(seqlevels(gapsGR), chrom_data_subset$chrom), ]
-#     if (!all(seqlevels(gapsGR) == chrom_data_subset$chrom)) {
-#       stop("Chromosome names do not match.")
-#     }
-#     # Assign seqinfo data
-#     seqlengths(gapsGR) <- chrom_data_subset$size
-#     isCircular(gapsGR) <- chrom_data_subset$circular
-#     genome(gapsGR)     <- genome_id
-#     # Construct file name, e.g., hg19.UCSC.gap_centromere.rds
-#     fileNameOut <- paste0(genome_id, ".UCSC.", gap_type, ".rds")
-#     # Save as Rds object
-#     saveRDS(object = gapsGR, file = file.path(dir_in, fileNameOut))
-#     print(paste("Length", gap_type, length(gapsGR)))
-#   }
-# }
-# 
-# 
-# # Get genome-specific gaps table
-# mySession <- browserSession()
-# genome(mySession) <- "hg19"
-# query <- ucscTableQuery(mySession, table = "gap")
-# gaps <- getTable(query)
-# # Number of regions per gap type
-# library(ggplot2)
-# mtx_to_plot <- as.data.frame(table(gaps$type))
-# colnames(mtx_to_plot) <- c("Type", "Number")
-# mtx_to_plot <- mtx_to_plot[order(mtx_to_plot$Number), ]
-# mtx_to_plot$Type <- factor(mtx_to_plot$Type, levels = mtx_to_plot$Type)
-# ggplot(mtx_to_plot, aes(x = Number, y = Type, fill = Type)) +
-#   geom_bar(stat="identity") +
-#   theme_bw() + theme(legend.position = "none")
-# ggsave("man/figures/excluderanges_hg19_gaps_number.png", width = 5, height = 2.5)
-
+# Reprocess downloaded GreyListChIP objects
+for (file_name in target_files) {
+  fileNameOut1 <- file.path(dir_downloads, file_name)
+  base_name    <- tools::file_path_sans_ext(file_name)
+  fileNameOut2 <- file.path(dir_results, "bed", paste0(base_name, ".bed"))
+  fileNameOut3 <- file.path(dir_results, "rds", paste0(base_name, ".rds"))
+  
+  genome_id <- get_genome_id(file_name)
+  
+  raw_obj <- readRDS(fileNameOut1)
+  raw_df  <- as.data.frame(raw_obj)
+  
+  write_tsv(raw_df, file = fileNameOut2, col_names = FALSE)
+  
+  excludeBED <- read_tsv(fileNameOut2, col_names = FALSE, show_col_types = FALSE)
+  all_columns <- c("chr", "start", "stop", "name", "score", "strand", "signalValue", "pValue", "qValue", "peak")
+  colnames(excludeBED) <- all_columns[1:ncol(excludeBED)]
+  
+  gapsGR <- make_granges_from_source(excludeBED, source = c(fileNameOut1, fileNameOut2))
+  gapsGR <- sort(gapsGR)
+  
+  chrom_data <- GenomeInfoDb::getChromInfoFromNCBI(assembly = genome_id, assembled.molecules.only = TRUE)
+  chrom_data$AssignedMolecule <- as.character(paste0("chr", chrom_data$AssignedMolecule))
+  
+  chrom_data <- data.frame(
+    chrom     = chrom_data$AssignedMolecule,
+    size      = chrom_data$SequenceLength,
+    assembled = ifelse(chrom_data$AssemblyUnit == "Primary Assembly", TRUE, FALSE),
+    circular  = chrom_data$circular
+  )
+  
+  chromosomes_standard <- chrom_data$chrom
+  chromosomes_common <- intersect(chrom_data$chrom, seqlevels(gapsGR))
+  
+  gapsGR <- keepSeqlevels(gapsGR, chromosomes_common, pruning.mode = "tidy")     
+  chrom_data_subset <- chrom_data[chrom_data$chrom %in% chromosomes_common, ]
+  chrom_data_subset <- chrom_data_subset[match(seqlevels(gapsGR), chrom_data_subset$chrom), ]
+  
+  if (!all.equal(seqlevels(gapsGR), chrom_data_subset$chrom)) {
+    warning(paste("Chromosome order does not match for", genome_id, "genome in file:", file_name))
+    next
+  }
+  
+  seqlengths(gapsGR) <- chrom_data_subset$size
+  isCircular(gapsGR) <- ifelse(is.na(chrom_data_subset$circular), FALSE, TRUE)
+  genome(gapsGR)     <- genome_id
+  
+  # Save outputs
+  saveRDS(object = gapsGR, file = fileNameOut3)
+  write_tsv(as.data.frame(gapsGR), file = fileNameOut2, col_names = FALSE)
+}
