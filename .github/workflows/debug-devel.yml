@@ -1,0 +1,51 @@
+name: Debug vignette in Bioconductor devel
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Pause and open tmate SSH session'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  debug-devel:
+    runs-on: ubuntu-latest
+    container:
+      image: bioconductor/bioconductor_docker:devel
+    steps:
+      - uses: actions/checkout@v4
+
+      # Cache installed R packages between runs to save time
+      - name: Cache R packages
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/lib/R/site-library
+          key: ${{ runner.os }}-bioc-devel-${{ hashFiles('DESCRIPTION') }}
+          restore-keys: ${{ runner.os }}-bioc-devel-
+
+      - name: Install package + dependencies (incl. Suggests, for vignette build)
+        run: |
+          Rscript -e '
+            options(repos = BiocManager::repositories())
+            remotes::install_deps(dependencies = TRUE, upgrade = "never")
+            BiocManager::install("rmarkdown", update = FALSE)
+          '
+
+      # Optional: try the normal build/check first so you see the real failure
+      - name: Attempt R CMD build (build the vignette)
+        id: build
+        continue-on-error: true
+        run: |
+          R CMD build . --no-manual
+          R CMD check --no-manual --no-tests *tar.gz
+
+      # Drop into an interactive shell in the SAME container, same R version,
+      # same system libs Bioconductor's build machines use.
+      - name: Open tmate session for interactive debugging
+        if: ${{ github.event.inputs.debug_enabled == 'true' }}
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+        timeout-minutes: 30
